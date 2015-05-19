@@ -1,3 +1,9 @@
 name: AmulyzeRPG
 main: com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG
 version: 0.1
+commands:
+  setlvl:
+    description: Sets player level.
+    usage: /setlvl <player>
+    permission: AmulyzeRPG.setlvl
+    permission-message: You don't have permission.
