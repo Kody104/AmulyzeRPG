@@ -2,6 +2,11 @@ name: AmulyzeRPG
 main: com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG
 version: 0.1
 commands:
+  amchat:
+    description: Toggles amulyze chat for player.
+    usage: /amchat
+    permission: AmulyzeRPG.amchat
+    permission-message: You don't have permission. Contact an admin.
   setlvl:
     description: Sets player level.
     usage: /setlvl <player>
