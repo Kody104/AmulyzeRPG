@@ -68,15 +68,15 @@ public class BasicCommands implements CommandExecutor {
 		if(iLvl > 100) { //Make sure lvl parameter's are inbounds.
 			iLvl = 100;
 		}
-		else if(iLvl < 1) {
-			iLvl = 1;
+		else if(iLvl < 0) {
+			iLvl = 0;
 		}
 		Global.AllPlayers.get(player).setLvl(iLvl); //Sets player level to lvl
 		Player p = Bukkit.getServer().getPlayer(player);
-		String dlvl = "[Lvl " + iLvl + "] ";
-		p.setDisplayName(dlvl + p.getName());
-		p.setPlayerListName(dlvl + p.getName());
-		p.sendMessage("An admin has set your level to " + lvl + ".");
+		p.setLevel(iLvl);
+		p.setExp(0.0f);
+		p.setDisplayName("[Lvl " + iLvl + "] " + p.getName());
+		p.sendMessage("An admin has set your level to " + iLvl + ".");
 	}
 	
 	private void toggleAmChat(UUID player)
