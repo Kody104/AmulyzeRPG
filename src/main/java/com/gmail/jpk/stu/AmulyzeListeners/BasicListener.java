@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
@@ -51,6 +50,93 @@ public final class BasicListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onEntityTakeDamage(EntityDamageByEntityEvent e) {
+		if(e.getEntity() instanceof LivingEntity) { //Is the victim alive?
+			LivingEntity le = (LivingEntity) e.getEntity();
+			switch(le.getType()) {
+			case BAT:
+				break;
+			case BLAZE:
+				break;
+			case CAVE_SPIDER:
+				break;
+			case CHICKEN:
+				break;
+			case COW:
+				break;
+			case CREEPER:
+				break;
+			case ENDERMAN:
+				break;
+			case ENDER_DRAGON:
+				break;
+			case GHAST:
+				break;
+			case GIANT:
+				break;
+			case HORSE:
+				break;
+			case IRON_GOLEM:
+				break;
+			case MAGMA_CUBE:
+				break;
+			case MUSHROOM_COW:
+				break;
+			case OCELOT:
+				break;
+			case PIG:
+				break;
+			case PIG_ZOMBIE:
+				break;
+			case PLAYER: //If the victim is a player
+				if(e.getDamager() instanceof Player) { //If attacker is player
+					Player attacker = (Player) e.getDamager();
+					Player victim = (Player) le;
+					double aDmg = Global.AllPlayers.get(attacker.getUniqueId()).getDmg(); //Get attacker dmg
+					double vAmr = Global.AllPlayers.get(victim.getUniqueId()).getAmr(); //Get victim amr
+					double Dmg = e.getDamage();
+					if(aDmg > (vAmr + 0.5d)) { //If attacker's dmg is more than victim's armor + 0.5
+						Dmg = aDmg - vAmr;
+					}
+					else if(aDmg < vAmr) { //If victim has more amr than attacker's dmg
+						Dmg = 0.25d;
+					}
+					else { // If attacker dmg is equal to or less than victim amr + 0.5
+						Dmg = 0.5d;
+					}
+					e.setDamage(Dmg);
+					break;
+				}
+				break;
+			case SHEEP:
+				break;
+			case SILVERFISH:
+				break;
+			case SKELETON:
+				break;
+			case SLIME:
+				break;
+			case SNOWMAN:
+				break;
+			case SPIDER:
+				break;
+			case SQUID:
+				break;
+			case WITCH:
+				break;
+			case WITHER:
+				break;
+			case WOLF:
+				break;
+			case ZOMBIE:
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
 		if(e.getRightClicked() instanceof LivingEntity) {
 			LivingEntity le = (LivingEntity) e.getRightClicked();
@@ -73,7 +159,7 @@ public final class BasicListener implements Listener {
 							break;
 						default:
 							break;
-					}
+				}
 			}
 		}
 	}
@@ -86,8 +172,19 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerLevel(PlayerLevelChangeEvent e) { //Keeps lvl on same page as player's actual level
 		Player p = e.getPlayer();
-		Global.AllPlayers.get(p.getUniqueId()).setLvl(p.getLevel());
-		p.setDisplayName("[Lvl " + p.getLevel() + "] " + p.getName());
+		if(e.getNewLevel() <= 100) { //Max level is 100
+			Global.AllPlayers.get(p.getUniqueId()).setLvl(p.getLevel());
+			p.setDisplayName("[Lvl " + e.getNewLevel() + "] " + p.getName());
+			
+			if(e.getNewLevel() > e.getOldLevel()) {
+				Global.AllPlayers.get(p.getUniqueId()).lvlUp();
+			}
+		}
+		else {
+			p.setLevel(100); //Reset player level to 100 and exp to 0
+			p.setDisplayName("[Lvl 100] " + p.getName());
+			p.setExp(0);
+		}
 	}
 	
 	@EventHandler
@@ -164,13 +261,13 @@ public final class BasicListener implements Listener {
 					Player dead = (Player) entity;
 					int expToDrop = 0;
 					if(dead.getLevel() < 16) {
-						expToDrop = (int) (Math.pow(dead.getLevel(), 2)) + (6 * dead.getLevel());
+						expToDrop = (int) ((Math.pow(dead.getLevel(), 2)) + (6 * dead.getLevel()) / 2); //If their level is below 16, divide exp drop by 2
 					}
 					else if(dead.getLevel() < 31) {
-						expToDrop = (int) ((2.5 * Math.pow(dead.getLevel(), 2) - (40.5 * dead.getLevel()) + 360));
+						expToDrop = (int) (((2.5 * Math.pow(dead.getLevel(), 2) - (40.5 * dead.getLevel()) + 360)) / 3); //If their level is between 16 and 31, divide exp drop by 3
 					}
 					else if(dead.getLevel() > 30) {
-						expToDrop = (int) ((4.5 * Math.pow(dead.getLevel(), 2) - (162.5 * dead.getLevel()) + 2220));
+						expToDrop = (int) (((4.5 * Math.pow(dead.getLevel(), 2) - (162.5 * dead.getLevel()) + 2220)) / 4); //If their level is above 30, divide exp drop by 4
 					}
 					e.setDroppedExp(expToDrop);
 					break;
