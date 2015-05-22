@@ -11,10 +11,22 @@ import org.bukkit.entity.Player;
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 
+/**
+ * 
+ * This class represents the base class for commands to be used in game.
+ * 
+ * @author Kody104
+ * @since AmulyzeRPG 0.1
+ */
 public class BasicCommands implements CommandExecutor {
 
 	private AmulyzeRPG plugin;
 	
+	/**
+	 * The default constructor for this class. Creates an instance of the
+	 * commands that may be used.
+	 * @param plugin 
+	 */
 	public BasicCommands(AmulyzeRPG plugin) {
 		this.plugin = plugin;
 	}
@@ -65,6 +77,7 @@ public class BasicCommands implements CommandExecutor {
 		} catch(NumberFormatException e) {
 			e.printStackTrace();
 		}
+		
 		if(iLvl > 100) { //Make sure lvl parameter's are inbounds.
 			iLvl = 100;
 		}
