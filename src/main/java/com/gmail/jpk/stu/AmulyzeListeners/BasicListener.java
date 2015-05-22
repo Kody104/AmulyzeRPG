@@ -270,7 +270,7 @@ public final class BasicListener implements Listener {
 			Global.AllPlayers.get(p.getUniqueId()).setLvl(p.getLevel());
 			p.setDisplayName("[Lvl " + e.getNewLevel() + "] " + p.getName());
 			
-			if(e.getNewLevel() > e.getOldLevel()) {
+			if(e.getNewLevel() > e.getOldLevel() && !(e.getNewLevel() >= 100)) {
 				Global.AllPlayers.get(p.getUniqueId()).lvlUp();
 			}
 		}
