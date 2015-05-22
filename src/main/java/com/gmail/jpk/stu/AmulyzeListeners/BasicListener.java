@@ -1,5 +1,9 @@
 package com.gmail.jpk.stu.AmulyzeListeners;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -9,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -97,6 +103,37 @@ public final class BasicListener implements Listener {
 			p.setLevel(Global.AllPlayers.get(p.getUniqueId()).getLvl());
 			p.setDisplayName(Global.AllPlayers.get(p.getUniqueId()).getPlayerName());//Sets the player's level to his lvl
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerChat(AsyncPlayerChatEvent e) // Realistic talking. Player's have to be within 50 blocks to hear chat.
+	{
+		Player sender = e.getPlayer();
+		GamePlayer player = Global.AllPlayers.get(sender.getUniqueId());
+		List<Player> InRange = new ArrayList<Player>(); //Collection of all players in range of chat
+		sender.sendMessage("<" + player.getPlayerName() + "> " + e.getMessage()); //Sends chatter what they sent
+		for(Entity entity : sender.getNearbyEntities(50, 50, 50)){ // For every entity near player with 50 blocks
+			if(entity instanceof Player) { // If entity is a player
+				Player recieve = (Player) entity;
+				recieve.sendMessage("<" + player.getPlayerName() + "> " + e.getMessage()); // Send player the chat
+				InRange.add(recieve); // Add the player to a collection
+			}
+		}
+		
+		if(InRange.isEmpty()) { // If no one was in range of the chat.
+			sender.sendMessage("No one has heard the message.");
+		}
+		else if(InRange.size() < 5) { // If less than 5 people were in range of the chat.
+			String names = InRange.get(0).getName();
+			for(int i = 1; i < InRange.size(); i++) {
+				names += "," + InRange.get(i).getName();
+			}
+			sender.sendMessage(names + " has heard the message.");
+		}
+		else { // If 5 or more people were in range of the chat.
+			sender.sendMessage(InRange.size() + " people have heard the message.");
+		}
+		e.setCancelled(true); // Cancels sending it to everyone else
 	}
 	
 	/**
