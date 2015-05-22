@@ -1,31 +1,88 @@
 package com.gmail.jpk.stu.AmulyzeListeners;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
 
+/**
+ * 
+ * The basic listener class object listens for events in the game.
+ * Depending on the event, it will execute a certain task that varies
+ * from greeting the player, granting exp, and managing the database
+ * of known players.
+ * 
+ * @author Kody104, TSHC
+ * @since AmulyzeRPG 0.1
+ */
 public final class BasicListener implements Listener {
 	private AmulyzeRPG plugin;
 	
+	/**
+	 * The default constructor for this class. Creates and registers this object to the plugin.
+	 * 
+	 * @author TSHC, Kody104
+	 * @param plugin
+	 */
 	public BasicListener(AmulyzeRPG plugin) {
 		this.plugin = plugin;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin); //Registers to plugin
 	}
 	
+	/**
+	 * This method handles when the player has logged in into the server and joins
+	 * the server. It will display a message with their level and class.
+	 * 
+	 * @author TSHC
+	 * @since AmulyzeRPG 0.1
+	 * @param e The invoked event
+	 */
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		Player p = e.getPlayer(); //The player that logged in
+		e.setJoinMessage(ChatColor.BLUE + p.getDisplayName() + " has joined the adventure!");
+	}
+	
+	/**
+	 * This method handles when the player is logging off of the server. 
+	 * It will display a message with their level and class.
+	 * 
+	 * @author TSHC
+	 * @since AmulyzeRPG 0.1
+	 * @param e The invoked event
+	 */
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		Player p = e.getPlayer(); //The player that logged in
+		e.setQuitMessage(ChatColor.BLUE + p.getDisplayName() + " has taken a break from the adventure.");
+	}
+	
+	
+	/**
+	 * 
+	 * This method handles when the player attempts to login into the server.
+	 * If the player is not in the database they will be added.
+	 * 
+	 * @author Kody104
+	 * @since AmulyzeRPG 0.1
+	 * @param e The invoked event
+	 */
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent e) {
 		Player p = (Player) e.getPlayer();
@@ -39,16 +96,39 @@ public final class BasicListener implements Listener {
 		}
 	}
 	
+	/**
+	 * This method handles when a player breaks a block and prevents them from earning exp.
+	 * 
+	 * @author Kody104
+	 * @since AmulyzeRPG 0.1
+	 * @param e The invoked event
+	 */
 	@EventHandler
 	public void onBlockGiveExp(BlockExpEvent e) {
 		e.setExpToDrop(0); //There is no exp gain from blocks.
 	}
 	
+	/**
+	 * This method handles when a player catches a fish and prevents them from earning exp.
+	 * 
+	 * @author Kody104
+	 * @since AmulyzeRPG 0.1
+	 * @param e The invoked event
+	 */
 	@EventHandler
 	public void onPlayerFish(PlayerFishEvent e) {
 		e.setExpToDrop(0); //There is no exp gain from fishing.
 	}
 	
+	/**
+	 * 
+	 * This method handles when an entity takes damage. Depending on the source and the level
+	 * of the player, the damage system is highly controlled by this method.
+	 * 
+	 * @author Kody104
+	 * @since AmulyzeRPG 0.1
+	 * @param e The invoked event
+	 */
 	@EventHandler
 	public void onEntityTakeDamage(EntityDamageByEntityEvent e) {
 		if(e.getEntity() instanceof LivingEntity) { //Is the victim alive?
@@ -136,6 +216,15 @@ public final class BasicListener implements Listener {
 		}
 	}
 	
+	/**
+	 * 
+	 * This method handles when players interact with various objects in the game. It
+	 * prevents certain items and entities from giving exp.
+	 * 
+	 * @author Kody104
+	 * @since AmulyzeRPG 0.1
+	 * @param e
+	 */
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
 		if(e.getRightClicked() instanceof LivingEntity) {
