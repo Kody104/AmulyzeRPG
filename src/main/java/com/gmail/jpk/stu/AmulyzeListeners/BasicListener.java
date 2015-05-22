@@ -37,7 +37,7 @@ public final class BasicListener implements Listener {
 	 * The default constructor for this class. Creates and registers this object to the plugin.
 	 * 
 	 * @author TSHC, Kody104
-	 * @param plugin
+	 * @param plugin The plugin that runs this
 	 */
 	public BasicListener(AmulyzeRPG plugin) {
 		this.plugin = plugin;
@@ -188,10 +188,10 @@ public final class BasicListener implements Listener {
 						Dmg = 0.5d;
 					}
 					e.setDamage(Dmg);
-					if(Global.AllPlayers.get(attacker.getUniqueId()).getChatOn()) { //If attacker has chat on
+					if(Global.AllPlayers.get(attacker.getUniqueId()).getInfoOn()) { //If attacker has chat on
 						attacker.sendMessage("You hit " + victim.getName() + " for " + Dmg + " damage!");
 					}
-					if(Global.AllPlayers.get(victim.getUniqueId()).getChatOn()) { //If victim has chat on
+					if(Global.AllPlayers.get(victim.getUniqueId()).getInfoOn()) { //If victim has chat on
 						victim.sendMessage(attacker.getName() + " hit you for " + Dmg + " damage!"); 
 					}
 					break;
@@ -288,7 +288,7 @@ public final class BasicListener implements Listener {
 			EntityDamageByEntityEvent ev = (EntityDamageByEntityEvent) entity.getLastDamageCause();
 			if(ev.getDamager() instanceof Player) { // If the killer is the player
 				Player killer = (Player) ev.getDamager();
-				if(Global.AllPlayers.get(killer.getUniqueId()).getChatOn()) { //Checks for player's chaton
+				if(Global.AllPlayers.get(killer.getUniqueId()).getInfoOn()) { //Checks for player's chaton
 					killer.sendMessage("You have slain " + e.getEntityType().toString().toLowerCase());
 				}
 				switch(entity.getType()) { //Gives experience depending on who the dead entity is. These are all default minecraft values.

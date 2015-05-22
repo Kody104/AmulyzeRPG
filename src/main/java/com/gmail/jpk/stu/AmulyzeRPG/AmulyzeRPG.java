@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.gmail.jpk.stu.AmulyzeCommands.BasicCommands;
 import com.gmail.jpk.stu.AmulyzeListeners.BasicListener;
+import com.gmail.jpk.stu.Recipes.Recipes;
 
 /**
  * 
@@ -27,6 +28,7 @@ public final class AmulyzeRPG extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		Global.Load(this);
+		Recipes.Init(this);
 		BasicCommands exec = new BasicCommands(this);
 		this.getCommand("amchat").setExecutor(exec);
 		this.getCommand("getlvl").setExecutor(exec);

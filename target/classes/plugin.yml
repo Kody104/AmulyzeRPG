@@ -1,6 +1,8 @@
 name: AmulyzeRPG
 main: com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG
 version: 0.1
+authors: [Kody104, TSHC]
+
 commands:
   amchat:
     description: Toggles amulyze chat for player.
@@ -17,3 +19,20 @@ commands:
     usage: /getlvl <player>
     permission: AmulyzeRPG.getlvl
     permission-message: You don't have permission.
+    
+permissions:
+  AmulyzeRPG.*:
+    description: Gives access to all AmulyzeRPG commands
+    children:
+      AmulyzeRPG.amchat: true
+      AmulyzeRPG.setlvl: true
+      AmulyzeRPG.getlvl: true
+  AmulyzeRPG.amchat:
+    description: Toggles amulyze chat for player.
+    default: true
+  AmulyzeRPG.setlvl:
+    description: Sets player's lvl.
+    default: false
+  AmulyzeRPG.getlvl:
+    description: Gets player's lvl.
+    default: true

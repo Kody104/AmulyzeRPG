@@ -38,7 +38,7 @@ public class BasicCommands implements CommandExecutor {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					toggleAmChat(p.getUniqueId()); //Toggles player amulyze chat info
-					p.sendMessage("Chat on is now set to " + Global.AllPlayers.get(p.getUniqueId()).getChatOn());
+					p.sendMessage("Chat on is now set to " + Global.AllPlayers.get(p.getUniqueId()).getInfoOn());
 					return true;
 				}
 				else { //Needs to be a player to toggle chat
@@ -109,7 +109,7 @@ public class BasicCommands implements CommandExecutor {
 	
 	private void toggleAmChat(UUID player)
 	{
-		Global.AllPlayers.get(player).setChatOn(!Global.AllPlayers.get(player).getChatOn()); //Sets chatOn to opposite of what it is
+		Global.AllPlayers.get(player).setInfoOn(!Global.AllPlayers.get(player).getInfoOn()); //Sets chatOn to opposite of what it is
 	}
 
 }

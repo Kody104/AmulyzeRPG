@@ -10,14 +10,14 @@ public class GamePlayer implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private String Name; //The player's name
-	private boolean chatOn; //The player's preference for chat
 	private int Lvl; //The player's current level
 	private double Dmg; //The amount of damage this player does
 	private double Amr; //The amount of armor this player does
+	private Options options; //The player's options
 	
 	public GamePlayer(Player p) {
 		Name = p.getPlayerListName();
-		chatOn = true;
+		options.InfoOn = true;
 		Lvl = 1;
 		Dmg = 0.5d;
 		Amr = 0.0d;
@@ -27,12 +27,12 @@ public class GamePlayer implements Serializable{
 		return ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.WHITE + Name;
 	}
 	
-	public void setChatOn(boolean chatOn) {
-		this.chatOn = chatOn;
+	public void setInfoOn(boolean InfoOn) {
+		this.options.InfoOn = InfoOn;
 	}
 	
-	public boolean getChatOn() {
-		return chatOn;
+	public boolean getInfoOn() {
+		return options.InfoOn;
 	}
 	
 	public void setLvl(int Lvl) {
