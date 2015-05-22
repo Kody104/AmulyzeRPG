@@ -56,7 +56,12 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer(); //The player that logged in
-		e.setJoinMessage(ChatColor.BLUE + p.getDisplayName() + " has joined the adventure!");
+		GamePlayer player = Global.AllPlayers.get(p);
+		
+		if (player != null)
+			e.setJoinMessage(player.toString());
+		else
+			e.setJoinMessage(ChatColor.RED + p.getDisplayName() + " has joined the adventure!");
 	}
 	
 	/**

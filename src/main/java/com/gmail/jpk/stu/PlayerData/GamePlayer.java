@@ -2,17 +2,18 @@ package com.gmail.jpk.stu.PlayerData;
 
 import java.io.Serializable;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class GamePlayer implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
-	private String Name;
-	private boolean chatOn;
-	private int Lvl;
-	private double Dmg;
-	private double Amr;
+	private String Name; //The player's name
+	private boolean chatOn; //The player's preference for chat
+	private int Lvl; //The player's current level
+	private double Dmg; //The amount of damage this player does
+	private double Amr; //The amount of armor this player does
 	
 	public GamePlayer(Player p) {
 		Name = p.getPlayerListName();
@@ -64,5 +65,11 @@ public class GamePlayer implements Serializable{
 	
 	public double getAmr() {
 		return Amr;
+	}
+	
+	public String toString()
+	{
+		String string = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.WHITE + Name;
+		return string;
 	}
 }
