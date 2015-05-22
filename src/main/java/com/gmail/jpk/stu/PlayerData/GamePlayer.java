@@ -24,7 +24,7 @@ public class GamePlayer implements Serializable{
 	}
 	
 	public String getPlayerName() {
-		return Name;
+		return ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.WHITE + Name;
 	}
 	
 	public void setChatOn(boolean chatOn) {
@@ -59,11 +59,5 @@ public class GamePlayer implements Serializable{
 	
 	public double getAmr() {
 		return Amr;
-	}
-	
-	public String toString()
-	{
-		String string = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.WHITE + Name;
-		return string;
 	}
 }

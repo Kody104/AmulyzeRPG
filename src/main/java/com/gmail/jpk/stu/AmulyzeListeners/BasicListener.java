@@ -1,6 +1,5 @@
 package com.gmail.jpk.stu.AmulyzeListeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -56,11 +55,10 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer(); //The player that logged in
-		GamePlayer player = Global.AllPlayers.get(p);
-		if (player != null)
-			e.setJoinMessage(player.toString());
-		else
-			e.setJoinMessage(ChatColor.BLUE + p.getDisplayName() + ChatColor.WHITE + " has joined the adventure!");
+		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+		if (player != null) { //Should this be here? Everyone should be a gameplayer at this point.
+			e.setJoinMessage(player.getPlayerName() + " has joined the adventure!");
+		}
 	}
 	
 	/**
@@ -74,7 +72,8 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Player p = e.getPlayer(); //The player that logged in
-		e.setQuitMessage(ChatColor.BLUE + p.getDisplayName() + ChatColor.WHITE + " has taken a break from the adventure.");
+		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+		e.setQuitMessage(player.getPlayerName() + " has taken a break from the adventure.");
 	}
 	
 	
@@ -92,11 +91,11 @@ public final class BasicListener implements Listener {
 		Player p = (Player) e.getPlayer();
 		if(!(Global.AllPlayers.containsKey(p.getUniqueId()))) {
 			Global.AllPlayers.put(p.getUniqueId(), new GamePlayer(p)); //Creates new player
-			p.setDisplayName(ChatColor.GOLD + "[Lvl 0] " + ChatColor.WHITE + p.getName());
+			p.setDisplayName(Global.AllPlayers.get(p.getUniqueId()).getPlayerName());
 		}
 		else {
 			p.setLevel(Global.AllPlayers.get(p.getUniqueId()).getLvl());
-			p.setDisplayName(ChatColor.GOLD + "[Lvl " + Global.AllPlayers.get(p.getUniqueId()).getLvl() + "] " + ChatColor.WHITE + p.getName());//Sets the player's level to his lvl
+			p.setDisplayName(Global.AllPlayers.get(p.getUniqueId()).getPlayerName());//Sets the player's level to his lvl
 		}
 	}
 	
@@ -272,12 +271,12 @@ public final class BasicListener implements Listener {
 	public void onPlayerLevel(PlayerLevelChangeEvent e) { //Keeps lvl on same page as player's actual level
 		Player p = e.getPlayer();
 		if(e.getNewLevel() <= 100) { //Max level is 100
-			Global.AllPlayers.get(p.getUniqueId()).setLvl(p.getLevel());
-			p.setDisplayName("[Lvl " + e.getNewLevel() + "] " + p.getName());
+			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+			player.setLvl(p.getLevel());
+			p.setDisplayName(player.getPlayerName());
 		}
 		else {
 			p.setLevel(100); //Reset player level to 100 and exp to 0
-			p.setDisplayName("[Lvl 100] " + p.getName());
 			p.setExp(0);
 		}
 	}
