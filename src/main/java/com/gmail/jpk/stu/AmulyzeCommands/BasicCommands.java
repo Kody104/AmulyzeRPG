@@ -51,6 +51,17 @@ public class BasicCommands implements CommandExecutor {
 				return true;
 			}
 		}
+		else if(cmd.getName().equalsIgnoreCase("getlvl")) {
+			if(args.length == 1) {
+				Player target = Bukkit.getServer().getPlayer(args[0]);
+				if(target == null) { //Checks if player is online
+					sender.sendMessage("That player isn't online!");
+					return true;
+				}
+				sender.sendMessage(args[0] + "'s lvl is: " + getLvl(target.getUniqueId()));
+				return true;
+			}
+		}
 		else if(cmd.getName().equalsIgnoreCase("setlvl")) {
 			if(args.length == 2) {
 				Player target = Bukkit.getServer().getPlayer(args[0]);
@@ -90,6 +101,10 @@ public class BasicCommands implements CommandExecutor {
 		p.setExp(0.0f);
 		p.setDisplayName("[Lvl " + iLvl + "] " + p.getName());
 		p.sendMessage("An admin has set your level to " + iLvl + ".");
+	}
+	
+	private int getLvl(UUID player) {
+		return Global.AllPlayers.get(player).getLvl(); //Returns player's lvl
 	}
 	
 	private void toggleAmChat(UUID player)

@@ -8,7 +8,12 @@ commands:
     permission: AmulyzeRPG.amchat
     permission-message: You don't have permission. Contact an admin.
   setlvl:
-    description: Sets player level.
+    description: Sets player's lvl.
     usage: /setlvl <player>
     permission: AmulyzeRPG.setlvl
+    permission-message: You don't have permission.
+  getlvl:
+    description: Gets player's lvl.
+    usage: /getlvl <player>
+    permission: AmulyzeRPG.getlvl
     permission-message: You don't have permission.
