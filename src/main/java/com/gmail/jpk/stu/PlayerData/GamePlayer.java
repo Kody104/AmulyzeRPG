@@ -17,7 +17,7 @@ public class GamePlayer implements Serializable{
 	
 	public GamePlayer(Player p) {
 		Name = p.getPlayerListName();
-		options.InfoOn = true;
+		options = new Options();
 		Lvl = 1;
 		Dmg = 0.5d;
 		Amr = 0.0d;
