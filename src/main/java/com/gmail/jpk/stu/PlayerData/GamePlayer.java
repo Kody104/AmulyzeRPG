@@ -22,12 +22,6 @@ public class GamePlayer implements Serializable{
 		Amr = 0.0d;
 	}
 	
-	public void lvlUp() {
-		Lvl++;
-		Dmg += 0.25;
-		Amr += 0.25;
-	}
-	
 	public String getPlayerName() {
 		return Name;
 	}

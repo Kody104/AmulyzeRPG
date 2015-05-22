@@ -49,28 +49,28 @@ public final class BasicListener implements Listener {
 	 * This method handles when the player has logged in into the server and joins
 	 * the server. It will display a message with their level and class.
 	 * 
-	 * @author TSHC
+	 * @author TSHC, Kody104
 	 * @since AmulyzeRPG 0.1
 	 * @param e The invoked event
 	 */
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer(); //The player that logged in
-		e.setJoinMessage(ChatColor.BLUE + p.getDisplayName() + " has joined the adventure!");
+		e.setJoinMessage(ChatColor.BLUE + p.getDisplayName() + ChatColor.WHITE + " has joined the adventure!");
 	}
 	
 	/**
 	 * This method handles when the player is logging off of the server. 
 	 * It will display a message with their level and class.
 	 * 
-	 * @author TSHC
+	 * @author TSHC, Kody104
 	 * @since AmulyzeRPG 0.1
 	 * @param e The invoked event
 	 */
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Player p = e.getPlayer(); //The player that logged in
-		e.setQuitMessage(ChatColor.BLUE + p.getDisplayName() + " has taken a break from the adventure.");
+		e.setQuitMessage(ChatColor.BLUE + p.getDisplayName() + ChatColor.WHITE + " has taken a break from the adventure.");
 	}
 	
 	
@@ -88,11 +88,11 @@ public final class BasicListener implements Listener {
 		Player p = (Player) e.getPlayer();
 		if(!(Global.AllPlayers.containsKey(p.getUniqueId()))) {
 			Global.AllPlayers.put(p.getUniqueId(), new GamePlayer(p)); //Creates new player
-			p.setDisplayName("[Lvl 0] " + p.getName());
+			p.setDisplayName(ChatColor.GOLD + "[Lvl 0] " + ChatColor.WHITE + p.getName());
 		}
 		else {
 			p.setLevel(Global.AllPlayers.get(p.getUniqueId()).getLvl());
-			p.setDisplayName("[Lvl " + Global.AllPlayers.get(p.getUniqueId()).getLvl() + "] " + p.getName());//Sets the player's level to his lvl
+			p.setDisplayName(ChatColor.GOLD + "[Lvl " + Global.AllPlayers.get(p.getUniqueId()).getLvl() + "] " + ChatColor.WHITE + p.getName());//Sets the player's level to his lvl
 		}
 	}
 	
@@ -185,6 +185,12 @@ public final class BasicListener implements Listener {
 						Dmg = 0.5d;
 					}
 					e.setDamage(Dmg);
+					if(Global.AllPlayers.get(attacker.getUniqueId()).getChatOn()) { //If attacker has chat on
+						attacker.sendMessage("You hit " + victim.getName() + " for " + Dmg + " damage!");
+					}
+					if(Global.AllPlayers.get(victim.getUniqueId()).getChatOn()) { //If victim has chat on
+						victim.sendMessage(attacker.getName() + " hit you for " + Dmg + " damage!"); 
+					}
 					break;
 				}
 				break;
@@ -264,10 +270,6 @@ public final class BasicListener implements Listener {
 		if(e.getNewLevel() <= 100) { //Max level is 100
 			Global.AllPlayers.get(p.getUniqueId()).setLvl(p.getLevel());
 			p.setDisplayName("[Lvl " + e.getNewLevel() + "] " + p.getName());
-			
-			if(e.getNewLevel() > e.getOldLevel() && !(e.getNewLevel() >= 100)) {
-				Global.AllPlayers.get(p.getUniqueId()).lvlUp();
-			}
 		}
 		else {
 			p.setLevel(100); //Reset player level to 100 and exp to 0
