@@ -110,7 +110,7 @@ public final class BasicListener implements Listener {
 		int range = 50; //The range at which the message can be heard.
 		
 		if (message.equals(message.toUpperCase())) //If the player is using caps, the range will be further.
-			range = 200;
+			range = 100;
 
 		sender.sendMessage("<" + player.getPlayerName() + "> " + message); //Sends chatter what they sent		
 		
@@ -123,7 +123,12 @@ public final class BasicListener implements Listener {
 		}
 		
 		if(InRange.isEmpty()) { // If no one was in range of the chat.
-			sender.sendMessage("You speak, but no one can your message. Try shouting. Or using /say for global chat");
+			if(range == 50){
+				sender.sendMessage("You speak, but no one can hear your message. Try shouting. Or using /global for global chat.");
+			}
+			else {
+				sender.sendMessage("You speak, but no one can hear your message. Try using /global for global chat.");
+			}
 		}
 		else if(InRange.size() < 5) { // If less than 5 people were in range of the chat.
 			String names = InRange.get(0).getName();

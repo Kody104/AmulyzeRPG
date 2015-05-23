@@ -99,6 +99,7 @@ public class BasicCommands implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("setlvl")) {
 			if(args.length == 2) {
 				Player target = Bukkit.getServer().getPlayer(args[0]);
+				Bukkit.getServer().getOnlinePlayers();
 				if(target == null) { //Checks if player is online
 					sender.sendMessage("That player isn't online!");
 					return true;
@@ -117,16 +118,16 @@ public class BasicCommands implements CommandExecutor {
 				if (args.length == 0) { //if the user doesn't say anything
 					sender.sendMessage("You must say at least one word!");
 					return true;
-				} else {
+				} 
+				else {
 					StringBuffer buffer = new StringBuffer();
 					GamePlayer player = Global.AllPlayers.get(((Player) sender).getUniqueId());
 					
 					//Aggregate all arguments from 1 through the final index
-					for (int i = 1; i < args.length; i++)
+					for (int i = 0; i < args.length; i++)
 						buffer.append(args[i] + " ");
 					
 					plugin.getServer().broadcastMessage(player.getPlayerName() + buffer.toString()); 
-					
 				}
 			}
 		}

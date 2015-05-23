@@ -21,14 +21,14 @@ commands:
     permission-message: You don't have permission.
   setclass:
     description: Sets the player's classtype
-    usage: /setlvl <class>
+    usage: /setclass <class>
     permission: AmulyzeRPG.setclass
     permission-message: You don't have permission.
   global:
-    description: Allows the player to chat globally
-	usage: /global <message>
-	permission: AmulyzeRPG.global
-	permission-message: If you see this, you have probably been silenced.
+    description: Allows the player to chat globally.
+    usage: /global <message>
+    permission: AmulyzeRPG.global
+    permission-message: If you see this, you have probably been silenced.
     
 permissions:
   AmulyzeRPG.*:
@@ -37,7 +37,8 @@ permissions:
       AmulyzeRPG.amchat: true
       AmulyzeRPG.setlvl: true
       AmulyzeRPG.getlvl: true
-	  AmulyzeRPG.global: true
+      AmulyzeRPG.setclass: true
+      AmulyzeRPG.global: true
   AmulyzeRPG.amchat:
     description: Toggles amulyze chat for player.
     default: true
@@ -49,4 +50,7 @@ permissions:
     default: true
   AmulyzeRPG.setclass:
     description: Sets player's class
+    default: true
+  AmulyzeRPG.global:
+    description: Allows the player to chat globally
     default: true

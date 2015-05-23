@@ -25,7 +25,28 @@ public class GamePlayer implements Serializable{
 	}
 	
 	public String getPlayerName() {
-		return ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.WHITE + Name;
+		String output = "";
+		if(classType == null) {
+			output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.WHITE + Name;
+		}
+		else {
+			if(classType == ClassType.WARRIOR) {
+				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.DARK_RED + Name + ChatColor.WHITE;
+			}
+			else if(classType == ClassType.MAGE) {
+				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.BLUE + Name + ChatColor.WHITE;
+			}
+			else if(classType == ClassType.BESERKER) {
+				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.LIGHT_PURPLE + Name + ChatColor.WHITE;
+			}
+			else if(classType == ClassType.ROGUE) {
+				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.GRAY + Name + ChatColor.WHITE;
+			}
+			else if(classType == ClassType.ARCHER) {
+				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.GREEN + Name + ChatColor.WHITE;
+			}
+		}
+		return output;
 	}
 	
 	public void setLvl(int Lvl) {
