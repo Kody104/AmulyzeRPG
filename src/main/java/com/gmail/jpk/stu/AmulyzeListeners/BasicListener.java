@@ -102,13 +102,19 @@ public final class BasicListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerChat(AsyncPlayerChatEvent e) // Realistic talking. Player's have to be within 50 blocks to hear chat.
-	{
-		Player sender = e.getPlayer();
-		GamePlayer player = Global.AllPlayers.get(sender.getUniqueId());
+	public void onPlayerChat(AsyncPlayerChatEvent e) {// Realistic talking. Player's have to be within 50 blocks to hear chat.
+		Player sender = e.getPlayer(); //The player who fired this event
+		GamePlayer player = Global.AllPlayers.get(sender.getUniqueId()); //Gets the GamePlayer representation
 		List<Player> InRange = new ArrayList<Player>(); //Collection of all players in range of chat
-		sender.sendMessage("<" + player.getPlayerName() + "> " + e.getMessage()); //Sends chatter what they sent
-		for(Entity entity : sender.getNearbyEntities(50, 50, 50)){ // For every entity near player with 50 blocks
+		String message = e.getMessage(); //The message that this player said
+		int range = 50; //The range at which the message can be heard.
+		
+		if (message.equals(message.toUpperCase())) //If the player is using caps, the range will be further.
+			range = 200;
+
+		sender.sendMessage("<" + player.getPlayerName() + "> " + message); //Sends chatter what they sent		
+		
+		for(Entity entity : sender.getNearbyEntities(range, range, range)){ // For every entity near player with 50 blocks
 			if(entity instanceof Player) { // If entity is a player
 				Player recieve = (Player) entity;
 				recieve.sendMessage("<" + player.getPlayerName() + "> " + e.getMessage()); // Send player the chat
@@ -117,7 +123,7 @@ public final class BasicListener implements Listener {
 		}
 		
 		if(InRange.isEmpty()) { // If no one was in range of the chat.
-			sender.sendMessage("No one has heard the message.");
+			sender.sendMessage("You speak, but no one can your message. Try shouting. Or using /say for global chat");
 		}
 		else if(InRange.size() < 5) { // If less than 5 people were in range of the chat.
 			String names = InRange.get(0).getName();

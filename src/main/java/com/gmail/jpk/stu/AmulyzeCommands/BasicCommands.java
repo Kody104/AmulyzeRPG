@@ -112,6 +112,24 @@ public class BasicCommands implements CommandExecutor {
 				return true;
 			}
 		}
+		else if(cmd.getName().equalsIgnoreCase("global")) {
+			if (sender instanceof Player) { //Console may not use this command...use /say instead
+				if (args.length == 0) { //if the user doesn't say anything
+					sender.sendMessage("You must say at least one word!");
+					return true;
+				} else {
+					StringBuffer buffer = new StringBuffer();
+					GamePlayer player = Global.AllPlayers.get(((Player) sender).getUniqueId());
+					
+					//Aggregate all arguments from 1 through the final index
+					for (int i = 1; i < args.length; i++)
+						buffer.append(args[i] + " ");
+					
+					plugin.getServer().broadcastMessage(player.getPlayerName() + buffer.toString()); 
+					
+				}
+			}
+		}
 		return false;
 	}
 	

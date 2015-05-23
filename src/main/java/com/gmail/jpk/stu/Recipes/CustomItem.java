@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  * 
  * The custom item class allows creation of custom items for the game.
  * It allows you to create a shaped or shapeless recipe, name the item,
- * create lore, amoung other things. After its creation
+ * create lore, among other things. 
  * 
  * @author TSHC
  * @since AmulyzeRPG 0.1 
@@ -61,33 +61,27 @@ public class CustomItem {
 		return recipe;
 	}
 	
-	public ItemStack getItemBase()
-	{
+	public ItemStack getItemBase() {
 		return itemBase;
 	}
 	
-	public String getDisplayName()
-	{
+	public String getDisplayName() {
 		return displayName;
 	}
 	
-	public List<String> getLore()
-	{
+	public List<String> getLore() {
 		return lore;
 	}
 	
-	public void setItemBase(ItemStack stack)
-	{
+	public void setItemBase(ItemStack stack) {
 		this.itemBase = stack;
 	}
 	
-	public void setDisplayName(String displayName)
-	{
+	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
 	
-	public void setLore(String... lore)
-	{
+	public void setLore(String... lore) {
 		for (String s : lore)
 			this.lore.add(s);
 	}
