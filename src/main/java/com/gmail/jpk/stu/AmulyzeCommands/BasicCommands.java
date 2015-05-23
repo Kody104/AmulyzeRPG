@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
-import com.gmail.jpk.stu.PlayerData.ClassType;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
 
 /**
@@ -144,7 +143,7 @@ public class BasicCommands implements CommandExecutor {
 	}
 	
 	private boolean setClass(UUID player, String type) {
-		for(ClassType ct : ClassType.values()) { // For all classtypes that exist
+		for(GamePlayer.ClassType ct : GamePlayer.ClassType.values()) { // For all classtypes that exist
 			if(type.equalsIgnoreCase(ct.toString())) { // If user inputted type equals one of the classtypes
 				Global.AllPlayers.get(player).setClassType(ct); // Set player's classtype to itself
 				return true;

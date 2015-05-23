@@ -7,6 +7,10 @@ import org.bukkit.entity.Player;
 
 public class GamePlayer implements Serializable{
 	
+	public enum ClassType {
+		WARRIOR, MAGE, BESERKER, ROGUE, ARCHER;
+	}
+	
 	private static final long serialVersionUID = 1L;
 	
 	private String Name; //The player's name
