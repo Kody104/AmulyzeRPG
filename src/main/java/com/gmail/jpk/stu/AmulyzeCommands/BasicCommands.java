@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
+import com.gmail.jpk.stu.PlayerData.ClassType;
+import com.gmail.jpk.stu.PlayerData.GamePlayer;
 
 /**
  * 
@@ -42,12 +44,41 @@ public class BasicCommands implements CommandExecutor {
 					return true;
 				}
 				else { //Needs to be a player to toggle chat
-					sender.sendMessage("You need to be a player!");
+					sender.sendMessage("You need to be a player to use this command.");
 					return true;
 				}
 			}
 			else {
-				sender.sendMessage("Too many arguments!");
+				sender.sendMessage("This command takes zero arguments.");
+				return true;
+			}
+		}
+		else if(cmd.getName().equalsIgnoreCase("setclass")) {
+			if(args.length == 1) { // Only 1 argument
+				if(sender instanceof Player) {
+					Player p = (Player) sender;
+					if(Global.AllPlayers.get(p.getUniqueId()).getClassType() != null) { // If the player has a classtype, stops them from picking a new one.
+						p.sendMessage("You already have a class!");
+						return true;
+					}
+					else { // If the player doesn't have a classtype, let's the pick
+						if(setClass(p.getUniqueId(), args[0])) { // If this method returns true, we have set the classtype
+							p.sendMessage("You have selected " + args[0] + " as your class!");
+							return true;
+						}
+						else { // If the method returns false, we weren't able to set the classtype
+							p.sendMessage("That's not a class that's playable!");
+							return true;
+						}
+					}
+				}
+				else { // Needs to be a player to select a classtype
+					sender.sendMessage("You need to be a player to use this command.");
+					return true;
+				}
+			}
+			else { // Argument length doesn't match
+				sender.sendMessage("This command takes one argument.");
 				return true;
 			}
 		}
@@ -59,6 +90,10 @@ public class BasicCommands implements CommandExecutor {
 					return true;
 				}
 				sender.sendMessage(args[0] + "'s lvl is: " + getLvl(target.getUniqueId()));
+				return true;
+			}
+			else {
+				sender.sendMessage("This command takes one argument");
 				return true;
 			}
 		}
@@ -74,7 +109,7 @@ public class BasicCommands implements CommandExecutor {
 				return true;
 			}
 			else { //If argument length doesn't match
-				sender.sendMessage("Must have two arguments!");
+				sender.sendMessage("This command takes two arguments.");
 				return true;
 			}
 		}
@@ -105,6 +140,16 @@ public class BasicCommands implements CommandExecutor {
 	
 	private int getLvl(UUID player) {
 		return Global.AllPlayers.get(player).getLvl(); //Returns player's lvl
+	}
+	
+	private boolean setClass(UUID player, String type) {
+		for(ClassType ct : ClassType.values()) { // For all classtypes that exist
+			if(type.equalsIgnoreCase(ct.toString())) { // If user inputted type equals one of the classtypes
+				Global.AllPlayers.get(player).setClassType(ct); // Set player's classtype to itself
+				return true;
+			}
+		}
+		return false; // User input didn't match classtypes
 	}
 	
 	private void toggleAmChat(UUID player)

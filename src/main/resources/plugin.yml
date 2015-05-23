@@ -19,6 +19,11 @@ commands:
     usage: /getlvl <player>
     permission: AmulyzeRPG.getlvl
     permission-message: You don't have permission.
+  setclass:
+    description: Sets the player's classtype
+    usage: /setlvl <class>
+    permission: AmulyzeRPG.setclass
+    permission-message: You don't have permission.
     
 permissions:
   AmulyzeRPG.*:
@@ -35,4 +40,7 @@ permissions:
     default: false
   AmulyzeRPG.getlvl:
     description: Gets player's lvl.
+    default: true
+  AmulyzeRPG.setclass:
+    description: Sets player's class
     default: true
