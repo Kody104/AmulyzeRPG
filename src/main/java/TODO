@@ -2,6 +2,8 @@ THINGS TO DO / ADD
 
 Last Edited: 23 May, 2015
 
+CustomItems is under complete reconstruction!
+
 Roles: Allows the player to further expand their experience and allow communities to flourish.
 
 	- Farmers (DEFAULT): Have increased yield on crops, can use items to give certain food buffs, have unique class recipes.
@@ -12,3 +14,14 @@ Roles: Allows the player to further expand their experience and allow communitie
 	- Builders (SPECIAL): For the great builders of the game. Have easy access to building material.
 
 Trade System | Economy
+
+**********CURRENT ISSUESS**********
+
+(Write as a specific question)
+
+1. How should the program know when the user is USING a CustomItem? 
+	Possible solutions:
+		1. Upon using the item, check to see if the item is an instanceof a CustomItem. If so, perhaps a uniqueID to identify
+		   which item it is.
+		2. Create a class for each customItem and have CustomItem have an abstract method 'useItem()'. Each item defines how
+		   it can be used.

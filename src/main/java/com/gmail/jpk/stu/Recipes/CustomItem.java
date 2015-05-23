@@ -18,33 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class CustomItem extends ItemStack {
 	
-	/* 
-	private ItemStack itemBase; //The base item that will be used for this Item
-	private String displayName; //The name that will be shown for this item
-	private List<String> lore; //The lore of this item; information about it
-	*/
-	
-	/**
-	 * Creates a CustomItem that can be used by the player.
-	 * @param itemBase The base item that will be used for this item (i.e. Wood Sword, Iron Sword, etc)
-	 * @param displayName The name that will be displayed for this item
-	 * @param lore The lore for this item
-	 */
-	
-	/* public CustomItem(ItemStack itemBase, String displayName, String... lore) {
-		this.itemBase = itemBase;
-		this.displayName = displayName;
-		this.lore = new ArrayList<String>();
-		this.setLore(lore);
-		
-		ItemMeta meta = itemBase.getItemMeta();
-		meta.setDisplayName(displayName);
-		meta.setLore(this.lore);
-		
-		itemBase.setItemMeta(meta);
-	}
-	 */
-	
 	public CustomItem(Material type, int amount, String displayName, String... lore) {
 		super(type, amount);
 		
@@ -57,6 +30,33 @@ public class CustomItem extends ItemStack {
 		meta.setLore(Lore);
 		
 		this.setItemMeta(meta);
+	}	
+
+	
+	/* 
+	private ItemStack itemBase; //The base item that will be used for this Item
+	private String displayName; //The name that will be shown for this item
+	private List<String> lore; //The lore of this item; information about it
+	
+	
+	/**
+	 * Creates a CustomItem that can be used by the player.
+	 * @param itemBase The base item that will be used for this item (i.e. Wood Sword, Iron Sword, etc)
+	 * @param displayName The name that will be displayed for this item
+	 * @param lore The lore for this item
+	 
+	
+	 	public CustomItem(ItemStack itemBase, String displayName, String... lore) {
+		this.itemBase = itemBase;
+		this.displayName = displayName;
+		this.lore = new ArrayList<String>();
+		this.setLore(lore);
+		
+		ItemMeta meta = itemBase.getItemMeta();
+		meta.setDisplayName(displayName);
+		meta.setLore(this.lore);
+		
+		itemBase.setItemMeta(meta);
 	}
 	
 	/**
@@ -71,7 +71,6 @@ public class CustomItem extends ItemStack {
 	 * 
 	 * @param pattern The ShapedRecipes pattern. Rows are separated by dots.
 	 * @return The ShapedRecipe to add to the server
-	 */
 	/*
 	public ShapedRecipe createShapedRecipe(String pattern) {
 		ShapedRecipe recipe = new ShapedRecipe(itemBase);

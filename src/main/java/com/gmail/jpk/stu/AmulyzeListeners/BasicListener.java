@@ -3,7 +3,11 @@ package com.gmail.jpk.stu.AmulyzeListeners;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -24,7 +29,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
-import com.gmail.jpk.stu.Recipes.CustomItem;
 
 /**
  * 
@@ -51,6 +55,41 @@ public final class BasicListener implements Listener {
 	}
 	
 	/**
+	 * 
+	 * Called when a player enters the bed. If the player lies down, the plugin
+	 * will do a count of how many other players are laying in bed. If a certain percentage
+	 * of the players on the server are sleeping then time will advance to just before dawn.
+	 * This percentage is calculated depending on the number of players online.
+	 * 
+	 * @param e The invoked event
+	 */
+	@EventHandler
+	public void onPlayerLayDown(PlayerBedEnterEvent e) {
+		Player[] players = Bukkit.getOnlinePlayers(); //Online Players
+		Player rester = e.getPlayer(); //The player that has laid down
+		World world = rester.getWorld(); //**********THIS IS A TEMPORARY FIX; WE NEED TO ACCOUNT FOR PLAYERS IN THE NETHER
+		Server server = rester.getServer(); //Get the server the player is on
+		int total = players.length; //Number of online players
+		int part = 0; //The amount of players in bed.
+		
+		for (Player player : players) {
+			if (player.isSleeping()) {
+				++part;
+			}
+		}
+		
+		double percentThreshhold = (total < 6 ? 0.50 : 0.75); //This is tenative...will be updated as needed
+		
+		if ( ((double)(part / total) > percentThreshhold) ) {
+			server.broadcastMessage(ChatColor.GOLD + "Enough players are sleeping! Advancing time...");
+			world.setTime(22800); //A few ticks before dawn
+		}
+		else {
+			server.broadcastMessage(ChatColor.GOLD + "Not enough players sleeping to advance time yet!");
+		}
+	}
+	
+	/**
 	 * This method handles when the player has logged in into the server and joins
 	 * the server. It will display a message with their level and class.
 	 * 
@@ -60,9 +99,25 @@ public final class BasicListener implements Listener {
 	 */
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		Player p = e.getPlayer(); //The player that logged in
-		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
-		e.setJoinMessage(player.getPlayerName() + " has joined the adventure!");	
+		Player player = e.getPlayer(); //The player that logged in
+		String joinMessage = "";
+		
+		if (!player.hasPlayedBefore()) {
+			joinMessage = player.getName() + " has begun their adventure!";
+			
+			//TODO: What should we send the player on their first join?
+			//    : Basic commands? Class info? Link to a wiki? (TSHC)
+			player.sendMessage(ChatColor.GOLD + "Welcome to Amulyze!");
+		} 
+		else {
+			joinMessage = player.getDisplayName() + " has returned to their adventure!";
+			
+			//TODO: What should we send player's upon returning?
+			//    : Town updates? Custom reminders (I think this would be interesting)? (TSHC)
+			player.sendMessage(ChatColor.GOLD + "Welcome back!");
+		}
+		
+		e.setJoinMessage(joinMessage);
 	}
 	
 	/**
@@ -146,7 +201,8 @@ public final class BasicListener implements Listener {
 	}
 	
 	/**
-	 * This method handles when a player breaks a block and prevents them from earning exp.
+	 * This method handles when a player breaks a block. If the player is a miner, they will earn exp
+	 * from mining an ore. Otherwise, no experience is given.
 	 * 
 	 * @author Kody104
 	 * @since AmulyzeRPG 0.1

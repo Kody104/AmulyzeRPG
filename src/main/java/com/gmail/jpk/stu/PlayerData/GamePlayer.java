@@ -8,7 +8,11 @@ import org.bukkit.entity.Player;
 public class GamePlayer implements Serializable{
 	
 	public enum ClassType {
-		WARRIOR, MAGE, BESERKER, ROGUE, ARCHER;
+		ARCHER, BESERKER, MAGE, ROGUE, WARRIOR;
+	}
+	
+	public enum PlayerRole {
+		BREW_MASTER, FARMER, MINER;
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -16,6 +20,7 @@ public class GamePlayer implements Serializable{
 	private String Name; //The player's name
 	private int Lvl; //The player's current level
 	private ClassType classType; //The player's class (type)
+	private PlayerRole role; //The Player's role
 	private Options options; //The player's options
 	
 	public GamePlayer(Player p) {
@@ -70,6 +75,10 @@ public class GamePlayer implements Serializable{
 	
 	public ClassType getClassType() {
 		return classType;
+	}
+	
+	public PlayerRole getPlayerRole() {
+		return role;
 	}
 	
 	public void setInfoOn(boolean InfoOn) {
