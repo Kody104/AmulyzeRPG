@@ -173,12 +173,14 @@ public class BasicCommands implements CommandExecutor {
 	private void sendGlobalMessage(Player player, String[] args) {
 		String message = "";
 		
-		for (int i = 0; i < args.length; i++)
+		for (int i = 0; i < args.length; i++) {
 			message += (args + " ");
+		}
 		
 		
-		for (Player target : Bukkit.getOnlinePlayers()) 
+		for (Player target : Bukkit.getOnlinePlayers()) {
 			target.sendMessage(player.getDisplayName() + message);
+		}
 		
 	}
 	

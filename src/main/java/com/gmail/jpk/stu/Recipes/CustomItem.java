@@ -3,8 +3,8 @@ package com.gmail.jpk.stu.Recipes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
@@ -16,11 +16,13 @@ import org.bukkit.inventory.meta.ItemMeta;
  * @author TSHC
  * @since AmulyzeRPG 0.1 
  */
-public class CustomItem {
-		
+public class CustomItem extends ItemStack {
+	
+	/* 
 	private ItemStack itemBase; //The base item that will be used for this Item
 	private String displayName; //The name that will be shown for this item
 	private List<String> lore; //The lore of this item; information about it
+	*/
 	
 	/**
 	 * Creates a CustomItem that can be used by the player.
@@ -28,7 +30,8 @@ public class CustomItem {
 	 * @param displayName The name that will be displayed for this item
 	 * @param lore The lore for this item
 	 */
-	public CustomItem(ItemStack itemBase, String displayName, String... lore) {
+	
+	/* public CustomItem(ItemStack itemBase, String displayName, String... lore) {
 		this.itemBase = itemBase;
 		this.displayName = displayName;
 		this.lore = new ArrayList<String>();
@@ -39,6 +42,21 @@ public class CustomItem {
 		meta.setLore(this.lore);
 		
 		itemBase.setItemMeta(meta);
+	}
+	 */
+	
+	public CustomItem(Material type, int amount, String displayName, String... lore) {
+		super(type, amount);
+		
+		ItemMeta meta = this.getItemMeta();
+		meta.setDisplayName(displayName);
+		List<String> Lore = new ArrayList<String>();
+		for(String s : lore) {
+			Lore.add(s);
+		}
+		meta.setLore(Lore);
+		
+		this.setItemMeta(meta);
 	}
 	
 	/**
@@ -54,6 +72,7 @@ public class CustomItem {
 	 * @param pattern The ShapedRecipes pattern. Rows are separated by dots.
 	 * @return The ShapedRecipe to add to the server
 	 */
+	/*
 	public ShapedRecipe createShapedRecipe(String pattern) {
 		ShapedRecipe recipe = new ShapedRecipe(itemBase);
 		recipe.shape(pattern.split("\\."));
@@ -61,7 +80,7 @@ public class CustomItem {
 		return recipe;
 	}
 	
-	public ItemStack getItemBase() {
+	 public ItemStack getItemBase() {
 		return itemBase;
 	}
 	
@@ -85,4 +104,5 @@ public class CustomItem {
 		for (String s : lore)
 			this.lore.add(s);
 	}
+	*/
 }

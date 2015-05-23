@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -23,6 +24,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
+import com.gmail.jpk.stu.Recipes.CustomItem;
 
 /**
  * 
@@ -292,6 +294,13 @@ public final class BasicListener implements Listener {
 							break;
 				}
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerCraftItem(CraftItemEvent e) {  // The method that returns the item name is getCurrentItem()
+		if(e.getWhoClicked() instanceof Player) { // Check just in case. It does return human entity. :| ?
+			
 		}
 	}
 	
