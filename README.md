@@ -1,5 +1,9 @@
 # AmulyzeRPG
-**Currently not stable but being worked on!**
+
+**A Work In Progess!**
+
+*21 May, 2015*. Player levels were added, seems to be working.<br/>
+*23 May, 2015*. Began adding Custom Items (Sword A was born!)
 
 ##Cloning
 1. `git clone --recursive https://github.com/Kody104/AmulyzeRPG.git`

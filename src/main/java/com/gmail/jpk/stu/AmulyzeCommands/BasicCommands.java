@@ -130,6 +130,7 @@ public class BasicCommands implements CommandExecutor {
 		else if(iLvl < 0) {
 			iLvl = 0;
 		}
+		
 		Global.AllPlayers.get(player).setLvl(iLvl); //Sets player level to lvl
 		Player p = Bukkit.getServer().getPlayer(player);
 		p.setLevel(iLvl);
