@@ -19,6 +19,8 @@ import com.gmail.jpk.stu.PlayerData.GamePlayer;
  * @author Kody104
  * @since AmulyzeRPG 0.1
  */
+
+@SuppressWarnings("deprecation")
 public class BasicCommands implements CommandExecutor {
 
 	private AmulyzeRPG plugin;
@@ -118,14 +120,8 @@ public class BasicCommands implements CommandExecutor {
 					sender.sendMessage("You must say at least one word!");
 					return true;
 				} else {
-					StringBuffer buffer = new StringBuffer();
-					GamePlayer player = Global.AllPlayers.get(((Player) sender).getUniqueId());
-					
-					//Aggregate all arguments from 1 through the final index
-					for (int i = 1; i < args.length; i++)
-						buffer.append(args[i] + " ");
-					
-					plugin.getServer().broadcastMessage("<" + player.getPlayerName() + "> " + buffer.toString()); 
+					Player player = (Player) sender;
+					sendGlobalMessage(player, args);
 				}
 			} else {
 				sender.sendMessage("You must a player to use this command.");
@@ -171,8 +167,19 @@ public class BasicCommands implements CommandExecutor {
 		return false; // User input didn't match classtypes
 	}
 	
-	private void toggleAmChat(UUID player)
-	{
+	private void sendGlobalMessage(Player player, String[] args) {
+		String message = "";
+		
+		for (int i = 0; i < args.length; i++)
+			message += (args + " ");
+		
+		
+		for (Player target : Bukkit.getOnlinePlayers()) 
+			target.sendMessage(player.getDisplayName() + message);
+		
+	}
+	
+	private void toggleAmChat(UUID player) {
 		Global.AllPlayers.get(player).setInfoOn(!Global.AllPlayers.get(player).getInfoOn()); //Sets chatOn to opposite of what it is
 	}
 
