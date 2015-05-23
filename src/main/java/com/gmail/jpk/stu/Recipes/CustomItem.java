@@ -17,9 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  * @since AmulyzeRPG 0.1 
  */
 public class CustomItem {
-	
-	public static enum RecipeShape { SHAPED, SHAPELESS };
-	
+		
 	private ItemStack itemBase; //The base item that will be used for this Item
 	private String displayName; //The name that will be shown for this item
 	private List<String> lore; //The lore of this item; information about it

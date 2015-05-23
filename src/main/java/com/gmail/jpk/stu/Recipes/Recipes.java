@@ -24,9 +24,10 @@ public class Recipes {
 		server.getLogger().info("*****Registering Recipes*****");
 		
 		server.getLogger().info("Creating Item: ISwordA");
+		
 		/* ISwordA - The test sword! */
 		CustomItem ISwordA = new CustomItem(new ItemStack(Material.DIAMOND_SWORD), "Sword A", "This is Sword A", "This is a test Sword.", "Please disregard");
 		ShapedRecipe ISwoardA_recipe = ISwordA.createShapedRecipe(" D .DDD. D ").setIngredient('D', Material.DIAMOND);
-		plugin.getServer().addRecipe(ISwoardA_recipe);
+		server.addRecipe(ISwoardA_recipe);
 	}
 }
