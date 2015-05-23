@@ -1,3 +1,56 @@
 name: AmulyzeRPG
 main: com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG
 version: 0.1
+authors: [Kody104, TSHC]
+
+commands:
+  amchat:
+    description: Toggles amulyze chat for player.
+    usage: /amchat
+    permission: AmulyzeRPG.amchat
+    permission-message: You don't have permission. Contact an admin.
+  setlvl:
+    description: Sets player's lvl.
+    usage: /setlvl <player>
+    permission: AmulyzeRPG.setlvl
+    permission-message: You don't have permission.
+  getlvl:
+    description: Gets player's lvl.
+    usage: /getlvl <player>
+    permission: AmulyzeRPG.getlvl
+    permission-message: You don't have permission.
+  setclass:
+    description: Sets the player's classtype
+    usage: /setclass <class>
+    permission: AmulyzeRPG.setclass
+    permission-message: You don't have permission.
+  global:
+    description: Allows the player to chat globally.
+    usage: /global <message>
+    permission: AmulyzeRPG.global
+    permission-message: If you see this, you have probably been silenced.
+    
+permissions:
+  AmulyzeRPG.*:
+    description: Gives access to all AmulyzeRPG commands
+    children:
+      AmulyzeRPG.amchat: true
+      AmulyzeRPG.setlvl: true
+      AmulyzeRPG.getlvl: true
+      AmulyzeRPG.setclass: true
+      AmulyzeRPG.global: true
+  AmulyzeRPG.amchat:
+    description: Toggles amulyze chat for player.
+    default: true
+  AmulyzeRPG.setlvl:
+    description: Sets player's lvl.
+    default: false
+  AmulyzeRPG.getlvl:
+    description: Gets player's lvl.
+    default: true
+  AmulyzeRPG.setclass:
+    description: Sets player's class
+    default: true
+  AmulyzeRPG.global:
+    description: Allows the player to chat globally
+    default: true
