@@ -208,18 +208,7 @@ public final class BasicListener implements Listener {
 				if(e.getDamager() instanceof Player) { //If attacker is player
 					Player attacker = (Player) e.getDamager();
 					Player victim = (Player) le;
-					double aDmg = Global.AllPlayers.get(attacker.getUniqueId()).getDmg(); //Get attacker dmg
-					double vAmr = Global.AllPlayers.get(victim.getUniqueId()).getAmr(); //Get victim amr
 					double Dmg = e.getDamage();
-					if(aDmg > (vAmr + 0.5d)) { //If attacker's dmg is more than victim's armor + 0.5
-						Dmg = aDmg - vAmr;
-					}
-					else if(aDmg < vAmr) { //If victim has more amr than attacker's dmg
-						Dmg = 0.25d;
-					}
-					else { // If attacker dmg is equal to or less than victim amr + 0.5
-						Dmg = 0.5d;
-					}
 					e.setDamage(Dmg);
 					if(Global.AllPlayers.get(attacker.getUniqueId()).getInfoOn()) { //If attacker has chat on
 						attacker.sendMessage("You hit " + victim.getName() + " for " + Dmg + " damage!");
