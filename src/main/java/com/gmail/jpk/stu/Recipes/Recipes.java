@@ -1,32 +1,32 @@
 package com.gmail.jpk.stu.Recipes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 
+/**
+ * The Recipes class always the creation and addition of custom recipes to the plugin.
+ * 
+ * @author Kody104, TSHC
+ * @since AmulyzeRPG 0.1
+ */
 public class Recipes {
 	
-	public static ShapedRecipe SwordA; //Test sword recipe. It works.
-	
+	/**
+	 * Initializes ALL recipes for the plugin
+	 * @param plugin YOU KNOW WHAT DIS IS COME ON
+	 */
 	public static void Init(AmulyzeRPG plugin) {
-		ItemStack ISwordA = new ItemStack(Material.DIAMOND_SWORD); // The sword will be diamond
-		ItemMeta ISwordAMeta = ISwordA.getItemMeta(); // Brings ItemMeta out for editing
-		ISwordAMeta.setDisplayName("Sword A"); // Sets the sword name
-		List<String> ISwordAMetaLore = new ArrayList<String>(); // ItemMetaLore is a List<String>
-		ISwordAMetaLore.add("This is Sword A."); // Adding some test strings
-		ISwordAMetaLore.add("This is a test sword.");
-		ISwordAMetaLore.add("Please disregard.");
-		ISwordAMeta.setLore(ISwordAMetaLore); // Sets the lore of the ItemMeta
-		ISwordA.setItemMeta(ISwordAMeta); // Sets the ItemMeta of the ItemStack
-		SwordA = new ShapedRecipe(ISwordA); // Sets the outcome of the custom recipe to be what we created.
-		SwordA.shape(" D ", "DDD", " D "); // The shape of the sword on the workbench.
-		SwordA.setIngredient('D', Material.DIAMOND); // Spaces are empty spots. Chars are defined here.
-		plugin.getServer().addRecipe(SwordA); // Finally add it to ther server plugin. Registers it.
+		Server server = plugin.getServer(); //The server this plugin is running on.	
+		server.getLogger().info("*****Registering Recipes*****");
+		
+		server.getLogger().info("Creating Item: ISwordA");
+		/* ISwordA - The test sword! */
+		CustomItem ISwordA = new CustomItem(new ItemStack(Material.DIAMOND_SWORD), "Sword A", "This is Sword A", "This is a test Sword.", "Please disregard");
+		ShapedRecipe ISwoardA_recipe = ISwordA.createShapedRecipe(" D .DDD. D ").setIngredient('D', Material.DIAMOND);
+		plugin.getServer().addRecipe(ISwoardA_recipe);
 	}
 }
