@@ -3,7 +3,6 @@ package com.gmail.jpk.stu.AmulyzeListeners;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -14,7 +13,6 @@ import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -62,9 +60,7 @@ public final class BasicListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer(); //The player that logged in
 		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
-		if (player != null) { //Should this be here? Everyone should be a gameplayer at this point.
-			e.setJoinMessage(player.getPlayerName() + " has joined the adventure!");
-		}
+		e.setJoinMessage(player.getPlayerName() + " has joined the adventure!");	
 	}
 	
 	/**
