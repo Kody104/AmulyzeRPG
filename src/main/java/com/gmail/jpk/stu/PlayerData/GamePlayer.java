@@ -25,27 +25,34 @@ public class GamePlayer implements Serializable{
 	}
 	
 	public String getPlayerName() {
-		String output = "";
-		if(classType == null) {
-			output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.WHITE + Name;
+		String output = ChatColor.GOLD + "[Lvl " + Lvl + "] ";
+		
+		switch (classType) {
+			case ARCHER:
+				output += ChatColor.GREEN + Name + ChatColor.WHITE;
+			break;
+			
+			case BESERKER:
+				output += ChatColor.LIGHT_PURPLE + Name + ChatColor.WHITE;
+			break;
+			
+			case MAGE:
+				output += ChatColor.BLUE + Name + ChatColor.WHITE;
+			break;
+			
+			case ROGUE:
+				output += ChatColor.GRAY + Name + ChatColor.WHITE;
+			break;
+			
+			case WARRIOR:
+				output += ChatColor.DARK_RED + Name + ChatColor.WHITE;
+			break;
+			
+			default:
+				output += ChatColor.WHITE + Name;
+			break;
 		}
-		else {
-			if(classType == ClassType.WARRIOR) {
-				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.DARK_RED + Name + ChatColor.WHITE;
-			}
-			else if(classType == ClassType.MAGE) {
-				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.BLUE + Name + ChatColor.WHITE;
-			}
-			else if(classType == ClassType.BESERKER) {
-				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.LIGHT_PURPLE + Name + ChatColor.WHITE;
-			}
-			else if(classType == ClassType.ROGUE) {
-				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.GRAY + Name + ChatColor.WHITE;
-			}
-			else if(classType == ClassType.ARCHER) {
-				output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + ChatColor.GREEN + Name + ChatColor.WHITE;
-			}
-		}
+		
 		return output;
 	}
 	

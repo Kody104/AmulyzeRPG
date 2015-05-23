@@ -1,0 +1,14 @@
+THINGS TO DO / ADD
+
+Last Edited: 23 May, 2015
+
+Roles: Allows the player to further expand their experience and allow communities to flourish.
+
+	- Farmers (DEFAULT): Have increased yield on crops, can use items to give certain food buffs, have unique class recipes.
+	- Miners (DEFAULT): Have a 100% change of picking up ore (50% for non-miners). Can smelt ores to obtain (1 + rand(4)) ingots.
+	- BlackSmith (SPECIAL): Ability to create chain-mail. Can grant players rolls on armor and weapons (per 24 hours)
+	- Mercenary (SPECIAL): Earns credit killing speicial mobs or certain players through contracts. 
+	- Brew Masters (DEFAULT): Can create a variety of potions with a slew of effects. They can also fake label their potions if their skill is high enough.
+	- Builders (SPECIAL): For the great builders of the game. Have easy access to building material.
+
+Trade System | Economy

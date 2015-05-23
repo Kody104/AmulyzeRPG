@@ -28,5 +28,6 @@ public class Recipes {
 		CustomItem ISwordA = new CustomItem(new ItemStack(Material.DIAMOND_SWORD), "Sword A", "This is Sword A", "This is a test Sword.", "Please disregard");
 		ShapedRecipe ISwoardA_recipe = ISwordA.createShapedRecipe(" D .DDD. D ").setIngredient('D', Material.DIAMOND);
 		server.addRecipe(ISwoardA_recipe);
+		
 	}
 }
