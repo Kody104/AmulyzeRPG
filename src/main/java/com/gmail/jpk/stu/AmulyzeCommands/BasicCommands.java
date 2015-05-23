@@ -125,9 +125,10 @@ public class BasicCommands implements CommandExecutor {
 					for (int i = 1; i < args.length; i++)
 						buffer.append(args[i] + " ");
 					
-					plugin.getServer().broadcastMessage(player.getPlayerName() + buffer.toString()); 
-					
+					plugin.getServer().broadcastMessage("<" + player.getPlayerName() + "> " + buffer.toString()); 
 				}
+			} else {
+				sender.sendMessage("You must a player to use this command.");
 			}
 		}
 		return false;
