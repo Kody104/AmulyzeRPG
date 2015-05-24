@@ -70,7 +70,7 @@ public final class BasicListener implements Listener {
 		World world = rester.getWorld(); //**********THIS IS A TEMPORARY FIX; WE NEED TO ACCOUNT FOR PLAYERS IN THE NETHER
 		Server server = rester.getServer(); //Get the server the player is on
 		int total = players.length; //Number of online players
-		int part = 0; //The amount of players in bed.
+		int part = 1; //The amount of players in bed. 1 because the player that has laid down isn't counted.
 		
 		for (Player player : players) {
 			if (player.isSleeping()) {
@@ -85,7 +85,7 @@ public final class BasicListener implements Listener {
 			world.setTime(22800); //A few ticks before dawn
 		}
 		else {
-			server.broadcastMessage(ChatColor.GOLD + "Not enough players sleeping to advance time yet!");
+			server.broadcastMessage(ChatColor.GOLD + "Not enough players sleeping to advance time yet! " + (double)(part / total));
 		}
 	}
 	
@@ -197,6 +197,9 @@ public final class BasicListener implements Listener {
 		else { // If 5 or more people were in range of the chat.
 			sender.sendMessage(InRange.size() + " people have heard the message.");
 		}
+		
+		AmulyzeRPG.info(sender.getName() + ": " + message);
+		
 		e.setCancelled(true); // Cancels sending it to everyone else
 	}
 	
@@ -210,7 +213,7 @@ public final class BasicListener implements Listener {
 	 */
 	@EventHandler
 	public void onBlockGiveExp(BlockExpEvent e) {
-		e.setExpToDrop(0); //There is no exp gain from blocks.
+		e.setExpToDrop(0);
 	}
 	
 	/**

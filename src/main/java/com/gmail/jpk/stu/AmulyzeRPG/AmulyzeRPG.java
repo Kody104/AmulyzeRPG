@@ -27,16 +27,19 @@ public final class AmulyzeRPG extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
+		info("AmulyzeRPG v0.1 starting up...");
 		Global.Load(this);
 		Recipes.Init(this);
 		BasicCommands exec = new BasicCommands(this);
+		info("Registering commands...");
 		this.getCommand("amchat").setExecutor(exec);
 		this.getCommand("getlvl").setExecutor(exec);
 		this.getCommand("setlvl").setExecutor(exec);
 		this.getCommand("setclass").setExecutor(exec);
 		this.getCommand("global").setExecutor(exec);
+		this.getCommand("setrole").setExecutor(exec);
 		new BasicListener(this);
-		getLogger().info("AmulyzeRPG  v0.1 has been enabled!");
+		info("AmulyzeRPG  v0.1 has successfully been enabled!");
 	}
 	
 	/**
@@ -50,5 +53,9 @@ public final class AmulyzeRPG extends JavaPlugin {
 	public void onDisable() {
 		Global.Save(this);
 		getLogger().info("AmulyzeRPG has been disabled!");
+	}
+	
+	public static void info(String text) {
+		System.out.println("[AmuylzeRPG]: " + text);
 	}
 }
