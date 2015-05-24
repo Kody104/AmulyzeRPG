@@ -83,6 +83,17 @@ public class BasicCommands implements CommandExecutor {
 				return true;
 			}
 		}
+		else if(cmd.getName().equalsIgnoreCase("quitrole")) {
+			if(args.length == 0) { // No arguments for this command
+				Player player = (Player) sender;
+				Global.AllPlayers.get(player.getUniqueId()).setRole(null);
+				return true;
+			}
+			else {
+				sender.sendMessage("This command takes zero arguments.");
+				return true;
+			}
+		}
 		else if(cmd.getName().equalsIgnoreCase("setclass")) {
 			if(args.length == 1) { // Only 1 argument
 				if(sender instanceof Player) {

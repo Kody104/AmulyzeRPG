@@ -24,6 +24,11 @@ commands:
     usage: /quitclass
     permission: AmulyzeRPG.quitclass
     permission-message: You don't have permission.
+  quitrole:
+    description: Quits player's role
+    usage: /quitrole
+    permission: AmulyzeRPG.quitrole
+    permission-message: You don't have permission.
   setclass:
     description: Sets the player's classtype
     usage: /setclass <class>
@@ -48,6 +53,7 @@ permissions:
       AmulyzeRPG.getlvl: true
       AmulyzeRPG.global: true
       AmulyzeRPG.quitclass: true
+      AmulyzeRPG.quitrole: true
       AmulyzeRPG.setclass: true
       AmulyzeRPG.setlvl: true
       AmulyzeRPG.setrole: true
@@ -62,6 +68,9 @@ permissions:
     default: true
   AmulyzeRPG.quitclass:
     description: Quits player's class
+    default: true
+  AmulyzeRPG.quitrole:
+    description: Quits player's role
     default: true
   AmulyzeRPG.setclass:
     description: Sets player's class
