@@ -44,6 +44,11 @@ commands:
     usage: /setrole <role>
     permission: AmulyzeRPG.setrole
     permission-message: You don't have permission.
+  roll:
+    description: Rolls player's item
+    usage: /roll
+    permission: AmulyzeRPG.roll
+    permission-message: You don't have permission.
     
 permissions:
   AmulyzeRPG.*:
@@ -80,4 +85,7 @@ permissions:
     default: false
   AmulyzeRPG.setrole:
     description: Allows the player to set their role
+    default: true
+  AmulyzeRPG.roll:
+    description: Rolls player's item
     default: true

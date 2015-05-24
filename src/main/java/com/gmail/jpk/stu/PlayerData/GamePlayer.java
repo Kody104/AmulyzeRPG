@@ -97,9 +97,9 @@ public class GamePlayer implements Serializable{
 	}
 	
 	public Ability getAbility(String name) {
-		for(Ability a : abilities) {
-			if(a.getName().equalsIgnoreCase(name)) {
-				return a;
+		for(int x = abilities.size()-1; x > 0; x--) {
+			if(abilities.get(x).getName().equalsIgnoreCase(name)){
+				return abilities.get(x);
 			}
 		}
 		return null;

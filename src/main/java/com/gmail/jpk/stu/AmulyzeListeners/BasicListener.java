@@ -361,7 +361,7 @@ public final class BasicListener implements Listener {
 		}
 	}
 	
-	@EventHandler
+	/*@EventHandler
 	public void onPlayerCraftItem(CraftItemEvent e) {  // The method that returns the item name is getCurrentItem()
 		if(e.getWhoClicked() instanceof Player) { // Check just in case. It does return human entity. :| ?
 			if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("sword a")) {
@@ -377,7 +377,7 @@ public final class BasicListener implements Listener {
 			}
 		}
 	}
-	
+	*/
 	/**
 	 * Todo: Figure out how to keep player level's on death/respawn
 	 * 

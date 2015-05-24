@@ -7,9 +7,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
+import com.gmail.jpk.stu.PlayerData.Ability;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
 
 /**
@@ -45,6 +48,29 @@ public class BasicCommands implements CommandExecutor {
 					return true;
 				}
 				else { //Needs to be a player to toggle chat
+					sender.sendMessage("You need to be a player to use this command.");
+					return true;
+				}
+			}
+			else {
+				sender.sendMessage("This command takes zero arguments.");
+				return true;
+			}
+		}
+		else if(cmd.getName().equalsIgnoreCase("roll")) {
+			if(args.length == 0) {
+				if(sender instanceof Player) {
+					Player p = (Player) sender;
+					if(rollItem(p)) {
+						p.sendMessage("This item has had it's stats rolled!");
+						return true;
+					}
+					else {
+						p.sendMessage("This item can't be rolled.");
+						return false;
+					}
+				}
+				else {
 					sender.sendMessage("You need to be a player to use this command.");
 					return true;
 				}
@@ -264,6 +290,25 @@ public class BasicCommands implements CommandExecutor {
 		
 		AmulyzeRPG.info(player.getName() + ": " + message);
 		
+	}
+	
+	private boolean rollItem(Player p) {
+		ItemStack i = p.getItemInHand(); // Item in hand
+		if(i.getItemMeta().getDisplayName().equalsIgnoreCase("sword a")) { // If the item is ours
+			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+			Ability gen = new Ability(player.getClassType()); // Create an ability for it
+			player.setAbility(gen);
+			ItemMeta meta = i.getItemMeta();
+			meta.setLore(null);
+			i.setItemMeta(meta); // Set item lore
+			meta.setLore(player.getAbility(gen.getName()).getWhatis());
+			i.setItemMeta(meta); // Sets item lore
+			for(String s : gen.getWhatis()) {
+				p.sendMessage(s);
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	private void toggleAmChat(UUID player) {
