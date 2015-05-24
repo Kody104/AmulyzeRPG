@@ -140,7 +140,6 @@ public final class BasicListener implements Listener {
 		e.setQuitMessage(player.getPlayerName() + " has taken a break from the adventure.");
 	}
 	
-	
 	/**
 	 * 
 	 * This method handles when the player attempts to login into the server.
@@ -361,7 +360,7 @@ public final class BasicListener implements Listener {
 		}
 	}
 	
-	/*@EventHandler
+	@EventHandler
 	public void onPlayerCraftItem(CraftItemEvent e) {  // The method that returns the item name is getCurrentItem()
 		if(e.getWhoClicked() instanceof Player) { // Check just in case. It does return human entity. :| ?
 			if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("sword a")) {
@@ -371,13 +370,14 @@ public final class BasicListener implements Listener {
 				Ability gen = new Ability(player.getClassType());
 				player.setAbility(gen);
 				ItemMeta meta = item.getItemMeta();
-				meta.setLore(null);
+				List<String> metadata = player.getAbility(gen.getName()).getWhatis();
+				System.out.println("METADATA: " + metadata);
 				meta.setLore(player.getAbility(gen.getName()).getWhatis());
 				item.setItemMeta(meta);
 			}
 		}
 	}
-	*/
+	
 	/**
 	 * Todo: Figure out how to keep player level's on death/respawn
 	 * 

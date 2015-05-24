@@ -26,21 +26,61 @@ public class GamePlayer implements Serializable{
 	}
 	
 	private static final long serialVersionUID = 1L;
+	public static int memoCap = 10; //The maximum number of memos a player can set
 	
-	private String Name; //The player's name
-	private int Lvl; //The player's current level
 	private ClassType classType; //The player's class (type)
 	private PlayerRole role; //The Player's role
-	private List<Ability> abilities;
 	private Options options; //The player's options
+	private List<Ability> abilities;
+	private List<String> memos; //reminders this player has set
+	private String Name; //The player's name
+	private int Lvl; //The player's current level
 	
 	public GamePlayer(Player p) {
 		Name = p.getPlayerListName();
 		Lvl = 0;
 		classType = null;
 		role = null;
-		abilities = new ArrayList<Ability>();
 		options = new Options();
+		abilities = new ArrayList<Ability>();
+		memos = new ArrayList<String>();
+		Name = p.getPlayerListName();
+		Lvl = 1;
+	}
+	
+	public boolean addMemo(String memo) {
+		if (memos.size() >= memoCap) {
+			return false;
+		} 
+		else {
+			memos.add(memo);
+		}
+		
+		return true;
+	}
+	
+	public boolean removeMemo(int index) {
+		if (memos.size() == 0 || (index < 0 && index > memos.size() - 1)) {
+			return false;
+		} 
+		else {
+			memos.remove(index);
+		}
+		
+		return true;
+	}
+	
+	public void clearMemos() {
+		memos.clear();
+	}
+	
+	public boolean popMemos() {
+		if (memos.size() == 0)
+			return false;
+		
+		memos.remove(0);
+		
+		return true;
 	}
 	
 	public String getPlayerName() {
@@ -109,6 +149,10 @@ public class GamePlayer implements Serializable{
 		return options.InfoOn;
 	}
 	
+	public List<String> getMemos() {
+		return memos;
+	}
+	
 	public void setLvl(int Lvl) {
 		this.Lvl = Lvl;
 	}
@@ -136,6 +180,10 @@ public class GamePlayer implements Serializable{
 		else {
 			abilities.set(3, a);
 		}
+	}
+	
+	public void setMemos(ArrayList<String> memos) {
+		this.memos = memos;
 	}
 
 }
