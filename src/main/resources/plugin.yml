@@ -29,6 +29,10 @@ commands:
     usage: /global <message>
     permission: AmulyzeRPG.global
     permission-message: If you see this, you have probably been silenced.
+  setrole:
+    description: Sets the player's role
+    permission: AmulyzeRPG.setrole
+    permission-message: You don't have permission.
     
 permissions:
   AmulyzeRPG.*:
@@ -39,6 +43,7 @@ permissions:
       AmulyzeRPG.getlvl: true
       AmulyzeRPG.setclass: true
       AmulyzeRPG.global: true
+      AmulyzeRPG.setrole: true
   AmulyzeRPG.amchat:
     description: Toggles amulyze chat for player.
     default: true
@@ -53,4 +58,7 @@ permissions:
     default: true
   AmulyzeRPG.global:
     description: Allows the player to chat globally
+    default: true
+  AmulyzeRPG.setrole:
+    description: Allows the player to set their role
     default: true

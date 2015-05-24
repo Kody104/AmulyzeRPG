@@ -5,6 +5,14 @@ import java.io.Serializable;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+/**
+ * The GamePlayer class is a representation of the player
+ * after they have joined the server. It serves to hold information
+ * about them on an individual level including their preferences, class,
+ * and role.
+ * @author Kody104, TSHC
+ *
+ */
 public class GamePlayer implements Serializable{
 	
 	public enum ClassType {
@@ -25,12 +33,19 @@ public class GamePlayer implements Serializable{
 	
 	public GamePlayer(Player p) {
 		Name = p.getPlayerListName();
-		options = new Options();
 		Lvl = 1;
+		classType = null;
+		role = null;
+		options = new Options();
 	}
 	
 	public String getPlayerName() {
 		String output = ChatColor.GOLD + "[Lvl " + Lvl + "] ";
+		
+		if (classType == null) {
+			output += ChatColor.WHITE + Name;
+			return output;
+		}
 		
 		switch (classType) {
 			case ARCHER:
@@ -61,16 +76,8 @@ public class GamePlayer implements Serializable{
 		return output;
 	}
 	
-	public void setLvl(int Lvl) {
-		this.Lvl = Lvl;
-	}
-	
 	public int getLvl() {
 		return Lvl;
-	}
-	
-	public void setClassType(ClassType classType) {
-		this.classType =  classType;
 	}
 	
 	public ClassType getClassType() {
@@ -81,11 +88,24 @@ public class GamePlayer implements Serializable{
 		return role;
 	}
 	
-	public void setInfoOn(boolean InfoOn) {
-		this.options.InfoOn = InfoOn;
-	}
-	
 	public boolean getInfoOn() {
 		return options.InfoOn;
 	}
+	
+	public void setLvl(int Lvl) {
+		this.Lvl = Lvl;
+	}
+	
+	public void setClassType(ClassType classType) {
+		this.classType =  classType;
+	}
+	
+	public void setRole(PlayerRole role) {
+		this.role = role;
+	}
+
+	public void setInfoOn(boolean InfoOn) {
+		this.options.InfoOn = InfoOn;
+	}
+
 }

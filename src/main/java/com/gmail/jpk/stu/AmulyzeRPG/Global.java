@@ -19,7 +19,7 @@ public class Global {
 	
 	public static void Save(JavaPlugin plugin) {
 		try {
-			plugin.getLogger().info("Saving Player Data...");
+			AmulyzeRPG.info("Saving Player Data...");
 			File dir = new File("plugins/AmulyzeRPG/"); //Makes file directory
 			dir.mkdirs();
 			File file = new File(dir, "players.aur"); //Creates file
@@ -28,8 +28,9 @@ public class Global {
 			out.writeObject(AllPlayers); //Saves file and directory
 			out.close();
 			fos.close();
-			plugin.getLogger().info("Player Data Saved!");
+			AmulyzeRPG.info("Player Data Saved!");
 		} catch(IOException io) {
+			AmulyzeRPG.info("Player Data save Error... caught it");
 			io.printStackTrace();
 		}
 	}
@@ -37,7 +38,7 @@ public class Global {
 	public static void Load(JavaPlugin plugin)
 	{
 		try {
-			plugin.getLogger().info("Loading Player Data...");
+			AmulyzeRPG.info("Attempting to load Player Data...");
 			File file = new File("plugins/AmulyzeRPG/players.aur"); //Attempts to load from file
 			FileInputStream fin = new FileInputStream(file);
 			ObjectInputStream in = new ObjectInputStream(fin);
@@ -46,8 +47,10 @@ public class Global {
 			fin.close();
 			plugin.getLogger().info("Player Data Loaded!");
 		} catch(IOException io) {
+			AmulyzeRPG.info("Player Data did not load correctly...caught it");
 			io.printStackTrace();
 		} catch(ClassNotFoundException cnfe) {
+			AmulyzeRPG.info("Player Data did not load correctly...caught it");
 			cnfe.printStackTrace();
 		}
 	}

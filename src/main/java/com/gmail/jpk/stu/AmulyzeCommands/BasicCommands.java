@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
+import com.gmail.jpk.stu.PlayerData.GamePlayer.ClassType;
+import com.gmail.jpk.stu.PlayerData.GamePlayer.PlayerRole;
 
 /**
  * 
@@ -54,35 +56,6 @@ public class BasicCommands implements CommandExecutor {
 				return true;
 			}
 		}
-		else if(cmd.getName().equalsIgnoreCase("setclass")) {
-			if(args.length == 1) { // Only 1 argument
-				if(sender instanceof Player) {
-					Player p = (Player) sender;
-					if(Global.AllPlayers.get(p.getUniqueId()).getClassType() != null) { // If the player has a classtype, stops them from picking a new one.
-						p.sendMessage("You already have a class!");
-						return true;
-					}
-					else { // If the player doesn't have a classtype, let's the pick
-						if(setClass(p.getUniqueId(), args[0])) { // If this method returns true, we have set the classtype
-							p.sendMessage("You have selected " + args[0] + " as your class!");
-							return true;
-						}
-						else { // If the method returns false, we weren't able to set the classtype
-							p.sendMessage("That's not a class that's playable!");
-							return true;
-						}
-					}
-				}
-				else { // Needs to be a player to select a classtype
-					sender.sendMessage("You need to be a player to use this command.");
-					return true;
-				}
-			}
-			else { // Argument length doesn't match
-				sender.sendMessage("This command takes one argument.");
-				return true;
-			}
-		}
 		else if(cmd.getName().equalsIgnoreCase("getlvl")) {
 			if(args.length == 1) {
 				Player target = Bukkit.getServer().getPlayer(args[0]);
@@ -95,6 +68,35 @@ public class BasicCommands implements CommandExecutor {
 			}
 			else {
 				sender.sendMessage("This command takes one argument");
+				return true;
+			}
+		}
+		else if(cmd.getName().equalsIgnoreCase("setclass")) {
+			if(args.length == 1) { // Only 1 argument
+				if(sender instanceof Player) {
+					Player p = (Player) sender;
+					if(Global.AllPlayers.get(p.getUniqueId()).getClassType() != null) { 
+						p.sendMessage("You already have a class!");
+						return true;
+					}
+					else { // If the player doesn't have a classtype, let's the pick
+						if(setClass(p.getUniqueId(), args[0])) { // If this method returns true, we have set the classtype
+							p.sendMessage("You have selected " + args[0] + " as your class!");
+							return true;
+						}
+						else { // If the method returns false, we weren't able to set the classtype
+							p.sendMessage("That's not a class that's playable! Current classes: Archer, Beserker, Mage, Rogue, or Warrior");
+							return true;
+						}
+					}
+				}
+				else { // Needs to be a player to select a classtype
+					sender.sendMessage("You need to be a player to use this command.");
+					return true;
+				}
+			}
+			else { // Argument length doesn't match
+				sender.sendMessage("This command takes one argument.");
 				return true;
 			}
 		}
@@ -115,6 +117,33 @@ public class BasicCommands implements CommandExecutor {
 				return true;
 			}
 		}
+		else if(cmd.getName().equalsIgnoreCase("setrole")) {
+			if (args.length == 1) {
+				if (sender instanceof Player) {
+					Player player = (Player) sender;
+					if (Global.AllPlayers.get(player.getUniqueId()).getPlayerRole() != null) {
+						sender.sendMessage("You already have a role!");
+					}
+					else {
+						if (setRole(player.getUniqueId(), args[0])) {
+							player.sendMessage("You have selected " + args[0] + " as your role!");
+							return true;
+						} 
+						else {
+							player.sendMessage("Unknown or mistyped role! Current roles: Brew_Master, Farmer, Miner");
+							return true;
+						}
+					}
+				} 
+				else {
+					sender.sendMessage("Only players may use this command.");
+				}
+			}
+			else {
+				sender.sendMessage("This command only takes one argument.");
+				return true;
+			}
+		}
 		else if(cmd.getName().equalsIgnoreCase("global")) {
 			if (sender instanceof Player) { //Console may not use this command...use /say instead
 				if (args.length == 0) { //if the user doesn't say anything
@@ -124,6 +153,7 @@ public class BasicCommands implements CommandExecutor {
 				else {
 					Player player = (Player) sender;
 					sendGlobalMessage(player, args);
+					return true;
 				}
 			} 
 			else {
@@ -170,17 +200,30 @@ public class BasicCommands implements CommandExecutor {
 		return false; // User input didn't match classtypes
 	}
 	
+	private boolean setRole(UUID player, String type) {
+		for (GamePlayer.PlayerRole role : GamePlayer.PlayerRole.values()) {
+			if (type.equalsIgnoreCase(role.toString())) {
+				Global.AllPlayers.get(player).setRole(role);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	private void sendGlobalMessage(Player player, String[] args) {
 		String message = "";
 		
 		for (int i = 0; i < args.length; i++) {
-			message += (args + " ");
+			message += (args[i] + " ");
 		}
 		
 		
 		for (Player target : Bukkit.getOnlinePlayers()) {
 			target.sendMessage(player.getDisplayName() + message);
 		}
+		
+		AmulyzeRPG.info(player.getName() + ": " + message);
 		
 	}
 	
