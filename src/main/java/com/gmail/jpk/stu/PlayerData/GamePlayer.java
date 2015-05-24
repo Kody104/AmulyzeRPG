@@ -36,7 +36,7 @@ public class GamePlayer implements Serializable{
 	
 	public GamePlayer(Player p) {
 		Name = p.getPlayerListName();
-		Lvl = 1;
+		Lvl = 0;
 		classType = null;
 		role = null;
 		abilities = new ArrayList<Ability>();
@@ -65,7 +65,7 @@ public class GamePlayer implements Serializable{
 			break;
 			
 			case ROGUE:
-				output += ChatColor.GRAY + Name + ChatColor.WHITE;
+				output += ChatColor.DARK_GRAY + Name + ChatColor.WHITE;
 			break;
 			
 			case WARRIOR:
@@ -97,7 +97,7 @@ public class GamePlayer implements Serializable{
 	}
 	
 	public Ability getAbility(String name) {
-		for(int x = abilities.size()-1; x > 0; x--) {
+		for(int x = abilities.size()-1; x >= 0; x--) {
 			if(abilities.get(x).getName().equalsIgnoreCase(name)){
 				return abilities.get(x);
 			}

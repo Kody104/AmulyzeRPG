@@ -25,7 +25,7 @@ public class Recipes {
 		
 		/* ISwordA - The test sword! */
 		AmulyzeRPG.info("Creating Item: ISwordA");
-		CustomItem ISwordA = new CustomItem(Material.DIAMOND_SWORD, 1, "Sword A", "This is Sword A", "This is a test Sword.", "Please disregard");
+		CustomItem ISwordA = new CustomItem(Material.DIAMOND_SWORD, 1, "Sword A", "This is Sword A", "This is a test Sword.", "Use /roll while holding this");
 		ShapedRecipe recipe = new ShapedRecipe(ISwordA);
 		recipe.shape(" D ", "DDD", " D ");
 		recipe.setIngredient('D', Material.DIAMOND);

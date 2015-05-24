@@ -61,13 +61,20 @@ public class BasicCommands implements CommandExecutor {
 			if(args.length == 0) {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
-					if(rollItem(p)) {
-						p.sendMessage("This item has had it's stats rolled!");
-						return true;
+					GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+					if(player.getClassType() != null) {
+						if(rollItem(p)) {
+							p.sendMessage("This item has had it's stats rolled!");
+							return true;
+						}
+						else {
+							p.sendMessage("This item can't be rolled.");
+							return false;
+						}
 					}
 					else {
-						p.sendMessage("This item can't be rolled.");
-						return false;
+						p.sendMessage("You need to use /setclass and choose your class.");
+						return true;
 					}
 				}
 				else {
@@ -298,6 +305,7 @@ public class BasicCommands implements CommandExecutor {
 			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
 			Ability gen = new Ability(player.getClassType()); // Create an ability for it
 			player.setAbility(gen);
+			AmulyzeRPG.info("" + player.getAbility(gen.getName()).getWhatis());
 			ItemMeta meta = i.getItemMeta();
 			meta.setLore(null);
 			i.setItemMeta(meta); // Set item lore
