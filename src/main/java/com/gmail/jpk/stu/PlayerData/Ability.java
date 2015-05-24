@@ -1,29 +1,41 @@
 package com.gmail.jpk.stu.PlayerData;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Ability {
+import org.bukkit.Bukkit;
+
+public class Ability implements Serializable{
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 1L;
+
 	private enum AbilityData {
-		ENRAGE("Enrage", "Increases your next attack's damage by ", GamePlayer.ClassType.WARRIOR, AbilityType.BUFF, 0.5, 5.0);
+		ENRAGE("Enrage", GamePlayer.ClassType.WARRIOR, AbilityType.BUFF, 0.5f, 5.0f, "Increases your next attack's damage by ");
 		
-		private String Name;
-		private String WhatIs;
-		private GamePlayer.ClassType reqClassType;
-		private AbilityType abilityType;
-		private double MinMultiplier;
-		private double MaxMultiplier;
+		private String name;
+		private List<String> whatIs;
+		private GamePlayer.ClassType ReqClassType;
+		private AbilityType abilitytype;
+		private float minMultiplier;
+		private float maxMultiplier;
 		
-		AbilityData(String Name, String WhatIs, GamePlayer.ClassType reqClassType, AbilityType abilityType,
-				double MinMultiplier, double MaxMultiplier) {
-			this.Name = Name;
-			this.WhatIs = WhatIs;
-			this.reqClassType = reqClassType;
-			this.abilityType = abilityType;
-			this.MinMultiplier = MinMultiplier;
-			this.MaxMultiplier = MaxMultiplier;
+		AbilityData(String name, GamePlayer.ClassType ReqClassType, AbilityType abilitytype,
+				float minMultiplier, float maxMultiplier, String... whatIs) {
+			this.name = name;
+			this.whatIs = new ArrayList<String>();
+			for(String s : whatIs) {
+				this.whatIs.add(s);
+			}
+			this.ReqClassType = ReqClassType;
+			this.abilitytype = abilitytype;
+			this.minMultiplier = minMultiplier;
+			this.maxMultiplier = maxMultiplier;
 		}
 	}
 	
@@ -32,47 +44,48 @@ public class Ability {
 	}
 	
 	private String Name; // The ability's name
-	private String WhatIs; // Explains what the ability does
+	private List<String> WhatIs; // Explains what the ability does
 	private GamePlayer.ClassType reqClassType; // The ability's required classtype
 	private AbilityType abilityType; // The ability's type
-	private double Multiplier; // The variable
+	private float Multiplier; // The variable
 	
 	public Ability(GamePlayer.ClassType playerType) {
-		Random r = new Random();
+		Random r = new Random(System.currentTimeMillis());
 		List<AbilityData> classAbilities = new ArrayList<AbilityData>();
 		for(int i = 0; i < AbilityData.values().length; i++) {
-			if(AbilityData.values()[i].reqClassType == playerType) {
+			if(AbilityData.values()[i].ReqClassType == playerType) {
 				classAbilities.add(AbilityData.values()[i]);
 			}
 		}
-		int i = (classAbilities.size() - 1) > 0 ? (classAbilities.size() - 1) : 0;
+		int i = classAbilities.size();
 		AbilityData a = classAbilities.get(r.nextInt(i));
-		this.Name = a.Name;
-		WhatIs = a.WhatIs;
-		this.reqClassType = a.reqClassType;
-		this.abilityType = a.abilityType;
+		this.Name = a.name;
+		this.WhatIs = new ArrayList<String>();
+		this.WhatIs = a.whatIs;
+		this.reqClassType = a.ReqClassType;
+		this.abilityType = a.abilitytype;
 		/* Randomly generates a multiplier for the ability through the min and max */
-		this.Multiplier = a.MinMultiplier + (a.MaxMultiplier - a.MinMultiplier) * r.nextDouble();
-		WhatIs += Multiplier;
+		this.Multiplier = a.minMultiplier + (a.maxMultiplier - a.minMultiplier) * r.nextFloat();
+		this.WhatIs.add(String.format("%.2f", Multiplier));
 	}
 	
 	public String getName() {
-		return Name;
+		return this.Name;
 	}
 	
-	public String getWhatis() {
-		return WhatIs;
+	public List<String> getWhatis() {
+		return this.WhatIs;
 	}
 	
 	public GamePlayer.ClassType getReqClassType() {
-		return reqClassType;
+		return this.reqClassType;
 	}
 	
 	public AbilityType getAbilityType() {
-		return abilityType;
+		return this.abilityType;
 	}
 	
 	public double getMultiplier() {
-		return Multiplier;
+		return this.Multiplier;
 	}
 }

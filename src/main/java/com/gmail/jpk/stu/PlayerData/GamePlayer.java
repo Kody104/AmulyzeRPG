@@ -1,6 +1,8 @@
 package com.gmail.jpk.stu.PlayerData;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -29,6 +31,7 @@ public class GamePlayer implements Serializable{
 	private int Lvl; //The player's current level
 	private ClassType classType; //The player's class (type)
 	private PlayerRole role; //The Player's role
+	private List<Ability> abilities;
 	private Options options; //The player's options
 	
 	public GamePlayer(Player p) {
@@ -36,6 +39,7 @@ public class GamePlayer implements Serializable{
 		Lvl = 1;
 		classType = null;
 		role = null;
+		abilities = new ArrayList<Ability>();
 		options = new Options();
 	}
 	
@@ -88,6 +92,19 @@ public class GamePlayer implements Serializable{
 		return role;
 	}
 	
+	public Ability getAbility(int index) {
+		return abilities.get(index);
+	}
+	
+	public Ability getAbility(String name) {
+		for(Ability a : abilities) {
+			if(a.getName().equalsIgnoreCase(name)) {
+				return a;
+			}
+		}
+		return null;
+	}
+	
 	public boolean getInfoOn() {
 		return options.InfoOn;
 	}
@@ -106,6 +123,19 @@ public class GamePlayer implements Serializable{
 
 	public void setInfoOn(boolean InfoOn) {
 		this.options.InfoOn = InfoOn;
+	}
+	
+	public void setAbility(int index, Ability a) {
+		abilities.set(index, a);
+	}
+	
+	public void setAbility(Ability a) {
+		if(abilities.size() < 4) {
+			abilities.add(a);
+		}
+		else {
+			abilities.set(3, a);
+		}
 	}
 
 }

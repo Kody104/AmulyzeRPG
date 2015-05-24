@@ -25,10 +25,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
+import com.gmail.jpk.stu.PlayerData.Ability;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
+import com.gmail.jpk.stu.PlayerData.GamePlayer.ClassType;
 import com.gmail.jpk.stu.Recipes.CustomItem;
 
 /**
@@ -361,10 +365,15 @@ public final class BasicListener implements Listener {
 	public void onPlayerCraftItem(CraftItemEvent e) {  // The method that returns the item name is getCurrentItem()
 		if(e.getWhoClicked() instanceof Player) { // Check just in case. It does return human entity. :| ?
 			if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("sword a")) {
-				plugin.getLogger().info("This is a custom item!");
-			}
-			else {
-				plugin.getLogger().info("This isn't a custom item!");
+				Player p = (Player) e.getWhoClicked();
+				GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+				ItemStack item = e.getCurrentItem();
+				Ability gen = new Ability(player.getClassType());
+				player.setAbility(gen);
+				ItemMeta meta = item.getItemMeta();
+				meta.setLore(null);
+				meta.setLore(player.getAbility(gen.getName()).getWhatis());
+				item.setItemMeta(meta);
 			}
 		}
 	}

@@ -31,4 +31,8 @@ public class CustomItem extends ItemStack {
 		
 		this.setItemMeta(meta);
 	}
+	
+	public String getInfo() {
+		return this.getItemMeta().getDisplayName();
+	}
 }
