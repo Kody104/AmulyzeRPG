@@ -72,8 +72,15 @@ public class BasicCommands implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("quitclass")) {
 			if(args.length == 0) { // No arguments for this command
 				Player player = (Player) sender;
-				Global.AllPlayers.get(player.getUniqueId()).setClassType(null);
-				sender.sendMessage("You have quit your class.");
+				GamePlayer gplayer = Global.AllPlayers.get(player.getUniqueId());
+				
+				if (gplayer.getClassType() == null) {
+					sender.sendMessage("You currently do not have a class!");
+					return true;
+				}
+				
+				sender.sendMessage("You have quit your class: " + gplayer.getClassType());
+				gplayer.setClassType(null);
 				return true;
 			}
 			else {
@@ -84,8 +91,16 @@ public class BasicCommands implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("quitrole")) {
 			if(args.length == 0) { // No arguments for this command
 				Player player = (Player) sender;
-				Global.AllPlayers.get(player.getUniqueId()).setRole(null);
-				sender.sendMessage("You have quit your role");
+				GamePlayer gplayer = Global.AllPlayers.get(player.getUniqueId());
+				
+				if (gplayer.getPlayerRole() == null) {
+					sender.sendMessage("You currently do not have a role!");
+					return true;
+				}
+				
+				sender.sendMessage("You have quit your role: " + gplayer.getPlayerRole());
+				
+				gplayer.setRole(null);
 				return true;
 			}
 			else {
@@ -145,6 +160,7 @@ public class BasicCommands implements CommandExecutor {
 					Player player = (Player) sender;
 					if (Global.AllPlayers.get(player.getUniqueId()).getPlayerRole() != null) {
 						sender.sendMessage("You already have a role!");
+						return true;
 					}
 					else {
 						if (setRole(player.getUniqueId(), args[0])) {
@@ -159,6 +175,7 @@ public class BasicCommands implements CommandExecutor {
 				} 
 				else {
 					sender.sendMessage("Only players may use this command.");
+					return true;
 				}
 			}
 			else {

@@ -65,7 +65,7 @@ public final class BasicListener implements Listener {
 	 * @param e The invoked event
 	 */
 	@EventHandler
-	public void onPlayerLayDown(PlayerBedEnterEvent e) {
+	public void onPlayerLieDown(PlayerBedEnterEvent e) {
 		Player[] players = Bukkit.getOnlinePlayers(); //Online Players
 		Player rester = e.getPlayer(); //The player that has laid down
 		World world = rester.getWorld(); //**********THIS IS A TEMPORARY FIX; WE NEED TO ACCOUNT FOR PLAYERS IN THE NETHER
