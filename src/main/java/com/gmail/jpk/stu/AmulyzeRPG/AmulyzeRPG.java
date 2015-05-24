@@ -34,9 +34,10 @@ public final class AmulyzeRPG extends JavaPlugin {
 		info("Registering commands...");
 		this.getCommand("amchat").setExecutor(exec);
 		this.getCommand("getlvl").setExecutor(exec);
-		this.getCommand("setlvl").setExecutor(exec);
-		this.getCommand("setclass").setExecutor(exec);
 		this.getCommand("global").setExecutor(exec);
+		this.getCommand("quitclass").setExecutor(exec);
+		this.getCommand("setclass").setExecutor(exec);
+		this.getCommand("setlvl").setExecutor(exec);
 		this.getCommand("setrole").setExecutor(exec);
 		new BasicListener(this);
 		info("AmulyzeRPG  v0.1 has successfully been enabled!");
