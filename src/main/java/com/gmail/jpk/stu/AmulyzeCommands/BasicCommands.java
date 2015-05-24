@@ -1,5 +1,6 @@
 package com.gmail.jpk.stu.AmulyzeCommands;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -93,6 +94,71 @@ public class BasicCommands implements CommandExecutor {
 			else {
 				sender.sendMessage("This command takes one argument");
 				return true;
+			}
+		}
+		else if (cmd.getName().equalsIgnoreCase("memos")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("You must be a player to use this command.");
+				return true;
+			}
+			else {
+				Player player = (Player) sender;
+				GamePlayer gp = Global.AllPlayers.get(player.getUniqueId());
+				
+				if (args.length == 0) {
+					for (int i = 0; i < gp.getMemos().size(); i++) {
+						player.sendMessage(i + ". " + gp.getMemos().get(i));
+					}
+					
+					return true;
+				} 
+				else if (args.length == 1) {
+					if (args[0].equalsIgnoreCase("clear")) {
+						player.sendMessage("Deleting ALL memos.");
+						gp.clearMemos();
+						return true;
+					} 
+					else if (args[0].equalsIgnoreCase("pop")) {
+						player.sendMessage("Deleting first memo");
+						gp.popMemos();
+					}
+					else {
+						return false;
+					}
+				}
+				else if (args.length == 2 && args[0].equalsIgnoreCase("delete")) {
+					int index = 0;
+					
+					try {
+						index = Integer.parseInt(args[1]);
+					} 
+					catch (NumberFormatException e) {
+						player.sendMessage(args[1] + " isn't quite a number...");
+						return true;
+					}
+					
+					player.sendMessage("Deleting reminder number " + index);
+					gp.removeMemo(index);
+					return true;
+				} else if (args.length > 2) {
+					if (args[0].equalsIgnoreCase("add")) {
+						String memo = "";
+						
+						for (int i = 1; i < args.length; i++) {
+							memo += (args[i] + " ");
+						}
+						
+						if (gp.getMemos() == null) {
+							gp.setMemos(new ArrayList<String>());
+						}
+						
+						gp.addMemo(memo);
+						player.sendMessage("Added memo: " + memo);
+						return true;
+					}
+				} else {
+					return false;
+				}
 			}
 		}
 		else if(cmd.getName().equalsIgnoreCase("quitclass")) {

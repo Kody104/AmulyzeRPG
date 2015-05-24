@@ -49,6 +49,11 @@ commands:
     usage: /roll
     permission: AmulyzeRPG.roll
     permission-message: You don't have permission.
+  memos:
+    description: Allows the player to manage memos
+    usage: /memo <add | clear | delete | pop> <number | message>
+    permission: AmulyzeRPG.memo
+    permission-message: You don't have permission.
     
 permissions:
   AmulyzeRPG.*:
@@ -62,6 +67,7 @@ permissions:
       AmulyzeRPG.setclass: true
       AmulyzeRPG.setlvl: true
       AmulyzeRPG.setrole: true
+      AmulyzeRPG.memos: true
   AmulyzeRPG.amchat:
     description: Toggles amulyze chat for player.
     default: true
@@ -88,4 +94,7 @@ permissions:
     default: true
   AmulyzeRPG.roll:
     description: Rolls player's item
+    default: true
+  AmulyzeRPG.memos:
+    description: Allows players to use memos
     default: true
