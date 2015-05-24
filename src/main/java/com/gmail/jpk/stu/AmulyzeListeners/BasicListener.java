@@ -29,6 +29,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
+import com.gmail.jpk.stu.Recipes.CustomItem;
 
 /**
  * 
@@ -359,7 +360,12 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerCraftItem(CraftItemEvent e) {  // The method that returns the item name is getCurrentItem()
 		if(e.getWhoClicked() instanceof Player) { // Check just in case. It does return human entity. :| ?
-			
+			if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("sword a")) {
+				plugin.getLogger().info("This is a custom item!");
+			}
+			else {
+				plugin.getLogger().info("This isn't a custom item!");
+			}
 		}
 	}
 	

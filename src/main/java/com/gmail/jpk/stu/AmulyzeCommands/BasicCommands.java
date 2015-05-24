@@ -11,8 +11,6 @@ import org.bukkit.entity.Player;
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
-import com.gmail.jpk.stu.PlayerData.GamePlayer.ClassType;
-import com.gmail.jpk.stu.PlayerData.GamePlayer.PlayerRole;
 
 /**
  * 
