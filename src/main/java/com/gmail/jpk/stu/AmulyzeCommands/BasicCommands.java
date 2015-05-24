@@ -87,6 +87,7 @@ public class BasicCommands implements CommandExecutor {
 			if(args.length == 0) { // No arguments for this command
 				Player player = (Player) sender;
 				Global.AllPlayers.get(player.getUniqueId()).setRole(null);
+				sender.sendMessage("You have quit your role");
 				return true;
 			}
 			else {
