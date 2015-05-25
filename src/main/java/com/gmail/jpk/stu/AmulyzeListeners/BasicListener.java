@@ -2,6 +2,7 @@ package com.gmail.jpk.stu.AmulyzeListeners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,10 +14,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -25,13 +26,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.NetherWarts;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
-import com.gmail.jpk.stu.PlayerData.Ability;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
+import com.gmail.jpk.stu.PlayerData.GamePlayer.RoleType;
+import com.gmail.jpk.stu.Roles.Role;
+import com.gmail.jpk.stu.Roles.RoleTask;
 
 /**
  * 
@@ -46,6 +48,8 @@ import com.gmail.jpk.stu.PlayerData.GamePlayer;
 public final class BasicListener implements Listener {
 	private AmulyzeRPG plugin;
 	
+	private Random random; //Used for random events
+	
 	/**
 	 * The default constructor for this class. Creates and registers this object to the plugin.
 	 * 
@@ -55,6 +59,72 @@ public final class BasicListener implements Listener {
 	public BasicListener(AmulyzeRPG plugin) {
 		this.plugin = plugin;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin); //Registers to plugin
+		this.random = new Random();
+	}
+	
+	
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent e) {
+		GamePlayer player = Global.getPlayer(e.getPlayer());
+		
+		if (player.getRoleType() == null)
+			return;
+		
+		Material type = e.getBlock().getType();
+		Role role = player.getRole();
+		RoleType roleType = player.getRoleType();
+		
+		if (roleType == RoleType.FARMER) {
+			switch (type)
+			{
+				case CROPS:
+					role.earnReward(RoleTask.FARM_WHEAT);
+				break;
+				
+				case MELON_BLOCK:
+					role.earnReward(RoleTask.FARM_MELON);
+				break;
+				
+				case CARROT:
+					role.earnReward(RoleTask.FARM_CARROT);
+				break;
+			
+				default:
+					break;
+			}
+		} 
+		else if (roleType == RoleType.MINER) {			
+			switch (type) {
+				case COAL_ORE:
+					role.earnReward(RoleTask.MINE_COAL);
+				break;
+				
+				case IRON_ORE:
+					role.earnReward(RoleTask.MINE_IRON);
+				break;
+				
+				case GOLD_ORE:
+					role.earnReward(RoleTask.MINE_GOLD);
+				break;
+				
+				case DIAMOND_ORE:
+					role.earnReward(RoleTask.MINE_DMND);
+				break;
+				
+				default:
+					break;
+			}
+		}
+		else if (roleType == RoleType.BREW_MASTER) {
+			switch (type) {
+				case NETHER_WARTS:
+					role.earnReward(RoleTask.EARN_WARTS);
+				break;
+				
+				default:
+					break;
+			}
+		}
 	}
 	
 	/**
@@ -133,7 +203,7 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Player p = e.getPlayer(); //The player that logged in
-		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+		GamePlayer player = Global.getPlayer(p);
 		e.setQuitMessage(player.getPlayerName() + " has taken a break from the adventure.");
 	}
 	
@@ -149,7 +219,7 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent e) {
 		Player p = (Player) e.getPlayer();
-		if(!(Global.AllPlayers.containsKey(p.getUniqueId()))) {
+		if(!(Global.containsPlayer(p))) {
 			Global.AllPlayers.put(p.getUniqueId(), new GamePlayer(p)); //Creates new player
 			p.setDisplayName(Global.AllPlayers.get(p.getUniqueId()).getPlayerName());
 		}
@@ -162,7 +232,7 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent e) {// Realistic talking. Player's have to be within 50 blocks to hear chat.
 		Player sender = e.getPlayer(); //The player who fired this event
-		GamePlayer player = Global.AllPlayers.get(sender.getUniqueId()); //Gets the GamePlayer representation
+		GamePlayer player = Global.getPlayer(sender); //Gets the GamePlayer representation
 		List<Player> InRange = new ArrayList<Player>(); //Collection of all players in range of chat
 		String message = e.getMessage(); //The message that this player said
 		int range = 50; //The range at which the message can be heard.
@@ -351,24 +421,6 @@ public final class BasicListener implements Listener {
 		}
 	}
 	
-	@EventHandler
-	public void onPlayerCraftItem(CraftItemEvent e) {  // The method that returns the item name is getCurrentItem()
-		if(e.getWhoClicked() instanceof Player) { // Check just in case. It does return human entity. :| ?
-			if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("sword a")) {
-				Player p = (Player) e.getWhoClicked();
-				GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
-				ItemStack item = e.getCurrentItem();
-				Ability gen = new Ability(player.getClassType());
-				player.setAbility(gen);
-				ItemMeta meta = item.getItemMeta();
-				List<String> metadata = player.getAbility(gen.getName()).getWhatis();
-				System.out.println("METADATA: " + metadata);
-				meta.setLore(player.getAbility(gen.getName()).getWhatis());
-				item.setItemMeta(meta);
-			}
-		}
-	}
-	
 	/**
 	 * Todo: Figure out how to keep player level's on death/respawn
 	 * 
@@ -378,7 +430,7 @@ public final class BasicListener implements Listener {
 	public void onPlayerLevel(PlayerLevelChangeEvent e) { //Keeps lvl on same page as player's actual level
 		Player p = e.getPlayer();
 		if(e.getNewLevel() <= 100) { //Max level is 100
-			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+			GamePlayer player = Global.getPlayer(p);
 			player.setLvl(p.getLevel());
 			p.setDisplayName(player.getPlayerName());
 		}
