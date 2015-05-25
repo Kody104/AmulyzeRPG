@@ -56,6 +56,14 @@ public class Global {
 		}
 	}
 	
+	public static GamePlayer getPlayer(Player player) {
+		return AllPlayers.get(player.getUniqueId());
+	}
+	
+	public static boolean containsPlayer(Player player) {
+		return AllPlayers.containsKey(player.getUniqueId());
+	}
+	
 	/**
 	 * Sends chat to the player that is toggable by the /amchat command.
 	 * If the player has AMCHAT set to TRUE, the message will be send to them,
@@ -65,7 +73,7 @@ public class Global {
 	 */
 	public static void amChat(Player player, String text) {
 		if (AllPlayers.get(player.getUniqueId()).getInfoOn()) {
-			player.sendMessage(text);
+			AmulyzeRPG.sendMessage(player, text);
 		} 
 	}
 }

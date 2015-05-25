@@ -8,6 +8,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.gmail.jpk.stu.Recipes.RollItem;
+import com.gmail.jpk.stu.Roles.Alchemist;
+import com.gmail.jpk.stu.Roles.Farmer;
+import com.gmail.jpk.stu.Roles.Miner;
+import com.gmail.jpk.stu.Roles.Role;
 
 /**
  * The GamePlayer class is a representation of the player
@@ -23,7 +27,7 @@ public class GamePlayer implements Serializable{
 		ARCHER, BESERKER, MAGE, ROGUE, WARRIOR;
 	}
 	
-	public enum PlayerRole {
+	public enum RoleType {
 		BREW_MASTER, FARMER, MINER;
 	}
 	
@@ -31,18 +35,18 @@ public class GamePlayer implements Serializable{
 	public static int memoCap = 10; //The maximum number of memos a player can set
 	
 	private ClassType classType; //The player's class (type)
-	private PlayerRole role; //The Player's role
+	private RoleType roleType; //The Player's role
+	private Role role;
 	private Options options; //The player's options
 	private List<RollItem> currentItems;
 	private List<String> memos; //reminders this player has set
 	private String Name; //The player's name
 	private int Lvl; //The player's current level
+	private Player player;
 	
 	public GamePlayer(Player p) {
-		Name = p.getPlayerListName();
-		Lvl = 0;
 		classType = null;
-		role = null;
+		roleType = null;
 		options = new Options();
 		currentItems = new ArrayList<RollItem>();
 		memos = new ArrayList<String>();
@@ -115,6 +119,10 @@ public class GamePlayer implements Serializable{
 		}
 	}
 	
+	public Role getRole() {
+		return role;
+	}
+	
 	public int getLvl() {
 		return Lvl;
 	}
@@ -123,8 +131,8 @@ public class GamePlayer implements Serializable{
 		return classType;
 	}
 	
-	public PlayerRole getPlayerRole() {
-		return role;
+	public RoleType getRoleType() {
+		return roleType;
 	}
 	
 	public RollItem getRollItem(int index) {
@@ -139,6 +147,10 @@ public class GamePlayer implements Serializable{
 		return memos;
 	}
 	
+	public void setRole(Role role) {
+		this.role = role;
+	}
+	
 	public void setLvl(int Lvl) {
 		this.Lvl = Lvl;
 	}
@@ -147,8 +159,25 @@ public class GamePlayer implements Serializable{
 		this.classType =  classType;
 	}
 	
-	public void setRole(PlayerRole role) {
-		this.role = role;
+	public void deleteRole() {
+		roleType = null;
+		role = null;
+	}
+	
+	public void setRoleType(RoleType roleType) {
+		switch (roleType) {
+			case BREW_MASTER:
+				role = new Alchemist(player);
+			break;
+			case FARMER:
+				role = new Farmer(player);
+			break;
+			case MINER:
+				role = new Miner(player);
+			break;
+		}
+		
+		this.roleType = roleType;
 	}
 
 	public void setInfoOn(boolean InfoOn) {

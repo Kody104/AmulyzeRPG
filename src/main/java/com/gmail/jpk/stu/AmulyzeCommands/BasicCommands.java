@@ -46,8 +46,8 @@ public class BasicCommands implements CommandExecutor {
 			if(args.length == 0) { // No arguments for this command
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
-					toggleAmChat(p.getUniqueId()); //Toggles player amulyze chat info
-					AmulyzeRPG.sendMessage(p, "Chat is now set to " + Global.AllPlayers.get(p.getUniqueId()).getInfoOn());
+					toggleAmChat(p); //Toggles player amulyze chat info
+					AmulyzeRPG.sendMessage(p, "Chat is now set to " + Global.getPlayer(p).getInfoOn());
 					return true;
 				}
 				else { //Needs to be a player to toggle chat
@@ -64,7 +64,7 @@ public class BasicCommands implements CommandExecutor {
 			if(args.length == 0) {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
-					GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+					GamePlayer player = Global.getPlayer(p);
 					if(player.getClassType() != null) {
 						if(rollItem(p)) {
 							AmulyzeRPG.sendMessage(p, "This item has had it's stats rolled!");
@@ -97,7 +97,7 @@ public class BasicCommands implements CommandExecutor {
 					AmulyzeRPG.sendMessage(sender, "That player isn't online!");
 					return true;
 				}
-				AmulyzeRPG.sendMessage(sender, args[0] + "'s lvl is: " + getLvl(target.getUniqueId()));
+				AmulyzeRPG.sendMessage(sender, args[0] + "'s lvl is: " + getLvl(target));
 				return true;
 			}
 			else {
@@ -112,7 +112,7 @@ public class BasicCommands implements CommandExecutor {
 			}
 			else {
 				Player player = (Player) sender;
-				GamePlayer gp = Global.AllPlayers.get(player.getUniqueId());
+				GamePlayer gp = Global.getPlayer(player);
 				
 				if (args.length == 0) {
 					if (gp.getMemos().size() == 0) {
@@ -195,7 +195,7 @@ public class BasicCommands implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("quitclass")) {
 			if(args.length == 0) { // No arguments for this command
 				Player player = (Player) sender;
-				GamePlayer gplayer = Global.AllPlayers.get(player.getUniqueId());
+				GamePlayer gplayer = Global.getPlayer(player);
 				
 				if (gplayer.getClassType() == null) {
 					AmulyzeRPG.sendMessage(sender, "You currently do not have a class!");
@@ -214,16 +214,16 @@ public class BasicCommands implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("quitrole")) {
 			if(args.length == 0) { // No arguments for this command
 				Player player = (Player) sender;
-				GamePlayer gplayer = Global.AllPlayers.get(player.getUniqueId());
+				GamePlayer gplayer = Global.getPlayer(player);
 				
-				if (gplayer.getPlayerRole() == null) {
+				if (gplayer.getRoleType() == null) {
 					AmulyzeRPG.sendMessage(sender, "You currently do not have a role!");
 					return true;
 				}
 				
-				AmulyzeRPG.sendMessage(sender, "You have quit your role: " + gplayer.getPlayerRole());
+				AmulyzeRPG.sendMessage(sender, "You have quit your role: " + gplayer.getRoleType());
 				
-				gplayer.setRole(null);
+				gplayer.deleteRole();
 				return true;
 			}
 			else {
@@ -235,13 +235,13 @@ public class BasicCommands implements CommandExecutor {
 			if(args.length == 1) { // Only 1 argument
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
-					if(Global.AllPlayers.get(p.getUniqueId()).getClassType() != null) { 
+					if(Global.getPlayer(p).getClassType() != null) { 
 						AmulyzeRPG.sendMessage(p, "You already have a class!");
 						return true;
 					}
 					else { // If the player doesn't have a classtype, let's the pick
-						if(setClass(p.getUniqueId(), args[0])) { // If this method returns true, we have set the classtype
-							AmulyzeRPG.sendMessage(p, "You have selected " + (Global.AllPlayers.get(p.getUniqueId()).getClassColor()) + args[0] + ChatColor.WHITE + " as your class!");
+						if(setClass(p, args[0])) { // If this method returns true, we have set the classtype
+							AmulyzeRPG.sendMessage(p, "You have selected " + (Global.getPlayer(p).getClassColor()) + args[0] + ChatColor.WHITE + " as your class!");
 							return true;
 						}
 						else { // If the method returns false, we weren't able to set the classtype
@@ -268,7 +268,7 @@ public class BasicCommands implements CommandExecutor {
 					AmulyzeRPG.sendMessage(sender, "That player isn't online!");
 					return true;
 				}
-				setLvl(target.getUniqueId(), args[1]); //Sets player's lvl
+				setLvl(target, args[1]); //Sets player's lvl
 				AmulyzeRPG.sendMessage(sender, args[0] + "'s level changed to " + args[1] + ".");
 				return true;
 			}
@@ -281,12 +281,12 @@ public class BasicCommands implements CommandExecutor {
 			if (args.length == 1) {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
-					if (Global.AllPlayers.get(player.getUniqueId()).getPlayerRole() != null) {
+					if (Global.getPlayer(player).getRoleType() != null) {
 						AmulyzeRPG.sendMessage(sender, "You already have a role!");
 						return true;
 					}
 					else {
-						if (setRole(player.getUniqueId(), args[0])) {
+						if (setRole(player, args[0])) {
 							AmulyzeRPG.sendMessage(player, "You have selected " + args[0] + " as your role!");
 							return true;
 						} 
@@ -325,8 +325,8 @@ public class BasicCommands implements CommandExecutor {
 		return false;
 	}
 	
-	private void setLvl(UUID player, String lvl) {
-		int iLvl = Global.AllPlayers.get(player).getLvl(); //Sets to player's lvl as default
+	private void setLvl(Player player, String lvl) {
+		int iLvl = Global.getPlayer(player).getLvl(); //Sets to player's lvl as default
 		try{
 			iLvl = Integer.parseInt(lvl); //Parses string to integer hopefully
 		} catch(NumberFormatException e) {
@@ -340,32 +340,32 @@ public class BasicCommands implements CommandExecutor {
 			iLvl = 0;
 		}
 		
-		Global.AllPlayers.get(player).setLvl(iLvl); //Sets player level to lvl
-		Player p = Bukkit.getServer().getPlayer(player);
+		Global.getPlayer(player).setLvl(iLvl); //Sets player level to lvl
+		Player p = Bukkit.getServer().getPlayer(player.getUniqueId());
 		p.setLevel(iLvl);
 		p.setExp(0.0f);
 		p.setDisplayName("[Lvl " + iLvl + "] " + p.getName());
 		AmulyzeRPG.sendMessage(p, "An admin has set your level to " + iLvl + ".");
 	}
 	
-	private int getLvl(UUID player) {
-		return Global.AllPlayers.get(player).getLvl(); //Returns player's lvl
+	private int getLvl(Player player) {
+		return Global.getPlayer(player).getLvl(); //Returns player's lvl
 	}
 	
-	private boolean setClass(UUID player, String type) {
+	private boolean setClass(Player player, String type) {
 		for(GamePlayer.ClassType ct : GamePlayer.ClassType.values()) { // For all classtypes that exist
 			if(type.equalsIgnoreCase(ct.toString())) { // If user inputted type equals one of the classtypes
-				Global.AllPlayers.get(player).setClassType(ct); // Set player's classtype to itself
+				Global.getPlayer(player).setClassType(ct); // Set player's classtype to itself
 				return true;
 			}
 		}
 		return false; // User input didn't match classtypes
 	}
 	
-	private boolean setRole(UUID player, String type) {
-		for (GamePlayer.PlayerRole role : GamePlayer.PlayerRole.values()) {
+	private boolean setRole(Player player, String type) {
+		for (GamePlayer.RoleType role : GamePlayer.RoleType.values()) {
 			if (type.equalsIgnoreCase(role.toString())) {
-				Global.AllPlayers.get(player).setRole(role);
+				Global.getPlayer(player).setRoleType(role);
 				return true;
 			}
 		}
@@ -414,8 +414,8 @@ public class BasicCommands implements CommandExecutor {
 		return false;
 	}
 	
-	private void toggleAmChat(UUID player) {
-		Global.AllPlayers.get(player).setInfoOn(!Global.AllPlayers.get(player).getInfoOn()); //Sets chatOn to opposite of what it is
+	private void toggleAmChat(Player player) {
+		Global.getPlayer(player).setInfoOn(!Global.getPlayer(player).getInfoOn()); //Sets chatOn to opposite of what it is
 	}
 
 }
