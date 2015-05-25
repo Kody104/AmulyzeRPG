@@ -510,6 +510,15 @@ public final class BasicListener implements Listener {
 					}
 				}
 			}
+			for(int i = 4; i < inven.getSize(); i++) {
+				if(inven.getContents()[i] != null) {
+					if(inven.getContents()[i].hasItemMeta()) { // Safety check for null pointer
+						if((inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item"))) {
+							inven.clear(i);
+						}
+					}
+				}
+			}
 		}
 	}
 	
