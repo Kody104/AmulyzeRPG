@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -13,25 +14,27 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
-import com.gmail.jpk.stu.PlayerData.Ability;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
+import com.gmail.jpk.stu.Recipes.RollItem;
 
 /**
  * 
@@ -352,19 +355,27 @@ public final class BasicListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerCraftItem(CraftItemEvent e) {  // The method that returns the item name is getCurrentItem()
-		if(e.getWhoClicked() instanceof Player) { // Check just in case. It does return human entity. :| ?
-			if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("sword a")) {
-				Player p = (Player) e.getWhoClicked();
-				GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
-				ItemStack item = e.getCurrentItem();
-				Ability gen = new Ability(player.getClassType());
-				player.setAbility(gen);
-				ItemMeta meta = item.getItemMeta();
-				List<String> metadata = player.getAbility(gen.getName()).getWhatis();
-				System.out.println("METADATA: " + metadata);
-				meta.setLore(player.getAbility(gen.getName()).getWhatis());
-				item.setItemMeta(meta);
+	public void onPlayerInteract(PlayerInteractEvent e){ 
+		Player p = e.getPlayer();
+		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+		if(player.getClassType() != null) {
+			if(p.getItemInHand().hasItemMeta()){
+				if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) {
+					if(e.getAction() == Action.RIGHT_CLICK_AIR) {
+						Inventory in = p.getInventory();
+						int index = -1;
+						for(int i = 0; i < 4; i++) {
+							if(in.getContents()[i] != null) {
+								if(in.getContents()[i].equals(p.getItemInHand())) {
+									index = i;
+								}
+							}
+						}
+						if(index > -1 && index < 4) {
+							
+						}
+					}
+				}
 			}
 		}
 	}

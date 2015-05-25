@@ -16,6 +16,7 @@ import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.Ability;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
+import com.gmail.jpk.stu.Recipes.RollItem;
 
 /**
  * 
@@ -390,18 +391,23 @@ public class BasicCommands implements CommandExecutor {
 	
 	private boolean rollItem(Player p) {
 		ItemStack i = p.getItemInHand(); // Item in hand
-		if(i.getItemMeta().getDisplayName().equalsIgnoreCase("sword a")) { // If the item is ours
+		if(i.getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If the item is ours
 			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
 			Ability gen = new Ability(player.getClassType()); // Create an ability for it
-			player.setAbility(gen);
-			AmulyzeRPG.info("" + player.getAbility(gen.getName()).getWhatis());
-			ItemMeta meta = i.getItemMeta();
-			meta.setLore(null);
-			i.setItemMeta(meta); // Set item lore
-			meta.setLore(player.getAbility(gen.getName()).getWhatis());
-			i.setItemMeta(meta); // Sets item lore
-			for(String s : gen.getWhatis()) {
-				p.sendMessage(s);
+			RollItem rolled = new RollItem(i, gen);
+			if(player.addRollItem(rolled)) {
+				ItemMeta meta = i.getItemMeta();
+				meta.setLore(null);
+				i.setItemMeta(meta); // Set item lore
+				meta.setLore(rolled.getAbility().getWhatis());
+				i.setItemMeta(meta); // Sets item lore
+				for(String s : gen.getWhatis()) {
+					p.sendMessage(s);
+				}
+			}
+			else {
+				p.sendMessage("You need to drop one of your current roll items.");
+				return false;
 			}
 			return true;
 		}

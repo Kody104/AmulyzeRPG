@@ -1,11 +1,14 @@
 package com.gmail.jpk.stu.Recipes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import com.gmail.jpk.stu.PlayerData.Ability;
 
 /**
  * 
@@ -16,9 +19,16 @@ import org.bukkit.inventory.meta.ItemMeta;
  * @author TSHC
  * @since AmulyzeRPG 0.1 
  */
-public class CustomItem extends ItemStack {
+public class RollItem extends ItemStack implements Serializable {
 	
-	public CustomItem(Material type, int amount, String displayName, String... lore) {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private Ability ability;
+	
+	public RollItem(Material type, int amount, String displayName, String... lore) {
 		super(type, amount);
 		
 		ItemMeta meta = this.getItemMeta();
@@ -30,5 +40,15 @@ public class CustomItem extends ItemStack {
 		meta.setLore(Lore);
 		
 		this.setItemMeta(meta);
+	}
+	
+	public RollItem(ItemStack clone, Ability add) {
+		super(clone.getData().getItemType(), 1);
+		
+		ability = add;
+	}
+	
+	public Ability getAbility() {
+		return ability;
 	}
 }

@@ -24,9 +24,9 @@ public class Recipes {
 		Server server = plugin.getServer();
 		
 		/* ISwordA - The test sword! */
-		AmulyzeRPG.info("Creating Item: ISwordA");
-		CustomItem ISwordA = new CustomItem(Material.DIAMOND_SWORD, 1, "Sword A", "This is Sword A", "This is a test Sword.", "Use /roll while holding this");
-		ShapedRecipe recipe = new ShapedRecipe(ISwordA);
+		AmulyzeRPG.info("Creating Item: Diamond_Roll_Sword");
+		RollItem Diamond_Roll_Sword = new RollItem(Material.DIAMOND_SWORD, 1, "Roll Item", "This is a Roll Item", "Use /roll while holding this to roll ability");
+		ShapedRecipe recipe = new ShapedRecipe(Diamond_Roll_Sword);
 		recipe.shape(" D ", "DDD", " D ");
 		recipe.setIngredient('D', Material.DIAMOND);
 		server.addRecipe(recipe);

@@ -7,6 +7,8 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import com.gmail.jpk.stu.Recipes.RollItem;
+
 /**
  * The GamePlayer class is a representation of the player
  * after they have joined the server. It serves to hold information
@@ -31,7 +33,7 @@ public class GamePlayer implements Serializable{
 	private ClassType classType; //The player's class (type)
 	private PlayerRole role; //The Player's role
 	private Options options; //The player's options
-	private List<Ability> abilities;
+	private List<RollItem> currentItems;
 	private List<String> memos; //reminders this player has set
 	private String Name; //The player's name
 	private int Lvl; //The player's current level
@@ -42,10 +44,9 @@ public class GamePlayer implements Serializable{
 		classType = null;
 		role = null;
 		options = new Options();
-		abilities = new ArrayList<Ability>();
+		currentItems = new ArrayList<RollItem>();
 		memos = new ArrayList<String>();
 		Name = p.getPlayerListName();
-		Lvl = 1;
 	}
 	
 	public boolean addMemo(String memo) {
@@ -98,7 +99,7 @@ public class GamePlayer implements Serializable{
 				return ChatColor.GREEN;
 			
 			case BESERKER:
-				return ChatColor.LIGHT_PURPLE;
+				return ChatColor.DARK_PURPLE;
 			
 			case MAGE:
 				return ChatColor.BLUE;
@@ -126,17 +127,8 @@ public class GamePlayer implements Serializable{
 		return role;
 	}
 	
-	public Ability getAbility(int index) {
-		return abilities.get(index);
-	}
-	
-	public Ability getAbility(String name) {
-		for(int x = abilities.size()-1; x >= 0; x--) {
-			if(abilities.get(x).getName().equalsIgnoreCase(name)){
-				return abilities.get(x);
-			}
-		}
-		return null;
+	public RollItem getRollItem(int index) {
+		return currentItems.get(index);
 	}
 	
 	public boolean getInfoOn() {
@@ -163,16 +155,17 @@ public class GamePlayer implements Serializable{
 		this.options.InfoOn = InfoOn;
 	}
 	
-	public void setAbility(int index, Ability a) {
-		abilities.set(index, a);
+	public void setRollItem(int index, RollItem i) {
+		currentItems.set(index, i);
 	}
 	
-	public void setAbility(Ability a) {
-		if(abilities.size() < 4) {
-			abilities.add(a);
+	public boolean addRollItem(RollItem i) {
+		if(currentItems.size() < 4) {
+			currentItems.add(i);
+			return true;
 		}
 		else {
-			abilities.set(3, a);
+			return false;
 		}
 	}
 	
