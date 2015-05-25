@@ -27,6 +27,8 @@ public class RollItem extends ItemStack implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Ability ability;
+	private boolean isActive; // Used for toggeable abilities
+	private long nextTime;
 	
 	public RollItem(Material type, int amount, String displayName, String... lore) {
 		super(type, amount);
@@ -44,11 +46,29 @@ public class RollItem extends ItemStack implements Serializable {
 	
 	public RollItem(ItemStack clone, Ability add) {
 		super(clone.getData().getItemType(), 1);
-		
-		ability = add;
+		this.ability = add;
+		this.isActive = false;
+		this.nextTime = 0;
+	}
+	
+	
+	public void setNextTime(long nextTime) {
+		this.nextTime = nextTime;
+	}
+	
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 	
 	public Ability getAbility() {
 		return ability;
+	}
+	
+	public boolean getIsActive() {
+		return isActive;
+	}
+	
+	public long getNextTime() {
+		return nextTime;
 	}
 }

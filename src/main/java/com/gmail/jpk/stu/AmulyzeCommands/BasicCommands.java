@@ -1,7 +1,6 @@
 package com.gmail.jpk.stu.AmulyzeCommands;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -391,25 +390,27 @@ public class BasicCommands implements CommandExecutor {
 	
 	private boolean rollItem(Player p) {
 		ItemStack i = p.getItemInHand(); // Item in hand
-		if(i.getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If the item is ours
-			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
-			Ability gen = new Ability(player.getClassType()); // Create an ability for it
-			RollItem rolled = new RollItem(i, gen);
-			if(player.addRollItem(rolled)) {
-				ItemMeta meta = i.getItemMeta();
-				meta.setLore(null);
-				i.setItemMeta(meta); // Set item lore
-				meta.setLore(rolled.getAbility().getWhatis());
-				i.setItemMeta(meta); // Sets item lore
-				for(String s : gen.getWhatis()) {
-					p.sendMessage(s);
+		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+		if(player.getClassType() != null){
+			if(i.getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If the item is ours
+				Ability gen = new Ability(player.getClassType()); // Create an ability for it
+				RollItem rolled = new RollItem(i, gen);
+				if(player.addRollItem(p.getInventory().getHeldItemSlot(), rolled)) {
+					ItemMeta meta = i.getItemMeta();
+					meta.setLore(null);
+					i.setItemMeta(meta); // Set item lore
+					meta.setLore(rolled.getAbility().getWhatis());
+					i.setItemMeta(meta); // Sets item lore
+					for(String s : gen.getWhatis()) {
+						p.sendMessage(s);
+					}
 				}
+				else {
+					p.sendMessage("You need to drop one of your current roll items.");
+					return false;
+				}
+				return true;
 			}
-			else {
-				p.sendMessage("You need to drop one of your current roll items.");
-				return false;
-			}
-			return true;
 		}
 		return false;
 	}

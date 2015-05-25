@@ -20,6 +20,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -30,9 +31,6 @@ import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
-import org.bukkit.material.NetherWarts;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
@@ -316,6 +314,7 @@ public final class BasicListener implements Listener {
 		if(e.getEntity() instanceof LivingEntity) { //Is the victim alive?
 			LivingEntity le = (LivingEntity) e.getEntity();
 			switch(le.getType()) {
+			/*
 			case BAT:
 				break;
 			case BLAZE:
@@ -350,11 +349,21 @@ public final class BasicListener implements Listener {
 				break;
 			case PIG_ZOMBIE:
 				break;
+			*/
 			case PLAYER: //If the victim is a player
 				if(e.getDamager() instanceof Player) { //If attacker is player
 					Player attacker = (Player) e.getDamager();
+					GamePlayer aPlayer = Global.getPlayer(attacker);
 					Player victim = (Player) le;
 					double Dmg = e.getDamage();
+					int count = 0;
+					while(aPlayer.hasActiveAbility()) {
+						RollItem i = aPlayer.getActiveAbilityItem(count);
+						if(i.getAbility().getName().equalsIgnoreCase("enrage")) {
+							Dmg += i.getAbility().getMultiplier();
+							i.setIsActive(false);
+						}
+					}
 					e.setDamage(Dmg);
 					
 					Global.amChat(attacker, String.format("You hit %s for \u00A74%.2f\u00A7f damage!", victim.getName(), Dmg));
@@ -363,6 +372,7 @@ public final class BasicListener implements Listener {
 					break;
 				}
 				break;
+			/*
 			case SHEEP:
 				break;
 			case SILVERFISH:
@@ -385,7 +395,25 @@ public final class BasicListener implements Listener {
 				break;
 			case ZOMBIE:
 				break;
-			default:
+			*/
+			default: // If victim is anything else
+				if(e.getDamager() instanceof Player) {
+					Player attacker = (Player) e.getDamager();
+					GamePlayer player = Global.getPlayer(attacker);
+					double Dmg = e.getDamage();
+					int count = 0;
+					while(player.hasActiveAbility()) {
+						RollItem i = player.getActiveAbilityItem(count);
+						if(i.getAbility().getName().equalsIgnoreCase("enrage")) {
+							Dmg += i.getAbility().getMultiplier();
+							i.setIsActive(false);
+						}
+					}
+					e.setDamage(Dmg);
+					
+					Global.amChat(attacker, String.format("You hit %s for \u00A74%.2f\u00A7f damage!", le.getType(), Dmg));
+					break;
+				}
 				break;
 			}
 		}
@@ -405,6 +433,7 @@ public final class BasicListener implements Listener {
 		if(e.getRightClicked() instanceof LivingEntity) {
 			LivingEntity le = (LivingEntity) e.getRightClicked();
 			Player p = e.getPlayer();
+			GamePlayer player = Global.getPlayer(p);
 			if((p.getItemInHand().getType() == Material.WHEAT) || 
 					(p.getItemInHand().getType() == Material.CARROT) ||
 					(p.getItemInHand().getType() == Material.SEEDS)) {
@@ -425,6 +454,62 @@ public final class BasicListener implements Listener {
 							break;
 				}
 			}
+			if(player.getClassType() != null) { // If player has classtype
+				if(p.getItemInHand().hasItemMeta()) { // Safety check for itemmeta
+					if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If item is ours
+						Inventory in = p.getInventory();
+						int index = -1;
+						for(int i = 0; i < 4; i++) { // Run through the first 4 items of the quickbar
+							if(in.getContents()[i] != null) { // Safety check for null pointers
+								if(in.getContents()[i].equals(p.getItemInHand())) { // If they have our item in one of those slots
+									index = i;
+								}
+							}
+						}
+						if(index > -1 && index < 4) { // If index was changed
+							if(player.getRollItem(index) != null) { // Safety check to make sure it's there
+								RollItem item = player.getRollItem(index);
+								if(item.getAbility().getReqClassType() == player.getClassType()){ // Make sure they are the right classtype
+									if(item.getAbility().getName().equalsIgnoreCase("flash")) { //Ability: FLASH
+										if(System.currentTimeMillis() >= item.getNextTime()) { // Cooldown equation
+											Location loc = e.getRightClicked().getLocation();
+											loc.setX(loc.getX() + 1.0d); 
+											loc.setDirection(p.getLocation().getDirection());
+											p.teleport(loc);
+											p.sendMessage("You have flashed to " + e.getRightClicked().getType());
+											item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
+										}
+										else {
+											p.sendMessage(String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerCloseInventory(InventoryCloseEvent e) { // Checks if player drops ability to reset HashMap
+		Player p = (Player) e.getPlayer();
+		GamePlayer player = Global.getPlayer(p);
+		if(player.getClassType() != null) {
+			Inventory inven = p.getInventory();
+			for(int i = 0; i < 4; i++) { //For the first four slots on the quickbar
+				if(inven.getContents()[i] != null) {
+					if(inven.getContents()[i].hasItemMeta()) { // Safety check for null pointer
+						if(!(inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item"))) {
+							if(player.hasRollItem(i)) {
+								player.deleteRollItem(i); // If the player had a roll item there, it deletes it from the hashmap
+							}
+						}
+						//TODO: Figure out how to drag roll items back into one of the first four slots
+					}
+				}
+			}
 		}
 	}
 	
@@ -435,7 +520,7 @@ public final class BasicListener implements Listener {
 		if(player.getClassType() != null) {
 			if(p.getItemInHand().hasItemMeta()){
 				if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) {
-					if(e.getAction() == Action.RIGHT_CLICK_AIR) {
+					if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 						Inventory in = p.getInventory();
 						int index = -1;
 						for(int i = 0; i < 4; i++) {
@@ -446,13 +531,27 @@ public final class BasicListener implements Listener {
 							}
 						}
 						if(index > -1 && index < 4) {
-							
+							if(player.getRollItem(index) != null) { // Safety check to make sure it's there
+								RollItem item = player.getRollItem(index);
+								if(item.getAbility().getReqClassType() == player.getClassType()){
+									if(item.getAbility().getName().equalsIgnoreCase("enrage")) { //Ability: ENRAGE
+										if(System.currentTimeMillis() >= item.getNextTime()) { // Cooldown equation
+											item.setIsActive(true);
+											item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
+											p.sendMessage("You are enraged!");
+										}
+										else {
+											p.sendMessage(String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
+										}
+									}
+								}
+							}
+						}
 						}
 					}
 				}
 			}
 		}
-	}
 	/**
 	 * Todo: Figure out how to keep player level's on death/respawn
 	 * 

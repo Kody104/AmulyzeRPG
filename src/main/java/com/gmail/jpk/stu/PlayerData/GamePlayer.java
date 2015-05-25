@@ -2,7 +2,9 @@ package com.gmail.jpk.stu.PlayerData;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -38,7 +40,7 @@ public class GamePlayer implements Serializable{
 	private RoleType roleType; //The Player's role
 	private Role role;
 	private Options options; //The player's options
-	private List<RollItem> currentItems;
+	private Map<Integer, RollItem> currentItems;
 	private List<String> memos; //reminders this player has set
 	private String Name; //The player's name
 	private int Lvl; //The player's current level
@@ -48,7 +50,7 @@ public class GamePlayer implements Serializable{
 		classType = null;
 		roleType = null;
 		options = new Options();
-		currentItems = new ArrayList<RollItem>();
+		currentItems = new HashMap<Integer, RollItem>();
 		memos = new ArrayList<String>();
 		Name = p.getPlayerListName();
 	}
@@ -139,6 +141,33 @@ public class GamePlayer implements Serializable{
 		return currentItems.get(index);
 	}
 	
+	public boolean hasActiveAbility() {
+		for(int i = 0; i < currentItems.size(); i++) {
+			if(currentItems.get(i) != null) {
+				if(currentItems.get(i).getIsActive()){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public RollItem getActiveAbilityItem(int startFrom) {
+		for(int i = 0; i < currentItems.size(); i++) {
+			if(currentItems.get(i) != null) {
+				if(currentItems.get(i).getIsActive()){
+					if(startFrom == 0) {
+						return currentItems.get(i);
+					}
+					else {
+						startFrom--;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 	public boolean getInfoOn() {
 		return options.InfoOn;
 	}
@@ -184,18 +213,29 @@ public class GamePlayer implements Serializable{
 		this.options.InfoOn = InfoOn;
 	}
 	
-	public void setRollItem(int index, RollItem i) {
-		currentItems.set(index, i);
+	public boolean hasRollItem(int index) {
+		if(currentItems.get(index) != null) {
+			return true;
+		}
+		return false;
 	}
 	
-	public boolean addRollItem(RollItem i) {
-		if(currentItems.size() < 4) {
-			currentItems.add(i);
+	public void deleteRollItem(int index) {
+		currentItems.remove(index);
+	}
+	
+	public boolean addRollItem(int index, RollItem i) {
+		if(index < 4) {
+			currentItems.put(index, i);
 			return true;
 		}
 		else {
 			return false;
 		}
+	}
+	
+	public int getCurrentItemsSize() {
+		return currentItems.size();
 	}
 	
 	public void setMemos(ArrayList<String> memos) {

@@ -16,27 +16,29 @@ public class Ability implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private enum AbilityData {
-		ENRAGE(GamePlayer.ClassType.WARRIOR, 0.5f, 5.0f, 0, 0, "ENRAGE", "Increases your next attack's damage by "),
-		VANISH(GamePlayer.ClassType.ROGUE, 0.0f, 0.0f, 1000, 5000, "VANISH", "You are able to stealth for this long in seconds: "),
-		FIREBALL(GamePlayer.ClassType.MAGE, 0.5f, 7.5f, 0, 0, "FIREBALL", "Send a fireball at your target that hits for "),
-		FLASH(GamePlayer.ClassType.BESERKER, 0.0f, 0.0f, 0, 0, "FLASH", "Instantly leaps to your target"),
-		BACKSTEP(GamePlayer.ClassType.ARCHER, 0.0f, 0.0f, 0, 0, "BACKSTEP", "Instantly steps back from anything around");
+		ENRAGE(GamePlayer.ClassType.WARRIOR, 5000, 0.5f, 5.0f, 0, 0, "ENRAGE", "Increases your attack by "),
+		VANISH(GamePlayer.ClassType.ROGUE, 10000, 0.0f, 0.0f, 1000, 5000, "VANISH", "You are able to stealth for this long in seconds: "),
+		FIREBALL(GamePlayer.ClassType.MAGE, 2500, 0.5f, 7.5f, 0, 0, "FIREBALL", "Send a fireball at your target that hits for "),
+		FLASH(GamePlayer.ClassType.BESERKER, 1500, 0.0f, 0.0f, 0, 0, "FLASH", "Instantly leaps to your target"),
+		BACKSTEP(GamePlayer.ClassType.ARCHER, 2500, 0.0f, 0.0f, 0, 0, "BACKSTEP", "Instantly steps back from anything around");
 		
 		
 		private List<String> lore;
 		private GamePlayer.ClassType neededClass;
+		private long cooldown;
 		private float minMultiplier;
 		private float maxMultiplier;
-		private int minTime;
-		private int maxTime;
+		private long minTime;
+		private long maxTime;
 		
-		AbilityData(GamePlayer.ClassType neededClass,
-				float minMultiplier, float maxMultiplier, int minTime, int maxTime, String... lore) {
+		AbilityData(GamePlayer.ClassType neededClass, long cooldown,
+				float minMultiplier, float maxMultiplier, long minTime, long maxTime, String... lore) {
 			this.lore = new ArrayList<String>();
 			for(String s : lore) {
 				this.lore.add(s);
 			}
 			this.neededClass = neededClass;
+			this.cooldown = cooldown;
 			this.minMultiplier = minMultiplier;
 			this.maxMultiplier = maxMultiplier;
 			this.minTime = minTime;
@@ -47,8 +49,9 @@ public class Ability implements Serializable{
 	private String Name; // The ability's name
 	private List<String> WhatIs; // Explains what the ability does
 	private GamePlayer.ClassType reqClassType; // The ability's required classtype
+	private long Cooldown;
 	private float Multiplier; // The variable of certain spells
-	private int Duration; // Duration of certain spells
+	private long Duration; // Duration of certain spells
 	
 	public Ability(GamePlayer.ClassType playerType) {
 		Random r = new Random(System.currentTimeMillis()); // Seed is current time
@@ -63,9 +66,11 @@ public class Ability implements Serializable{
 		this.Name = a.toString(); 
 		this.WhatIs = new ArrayList<String>();
 		this.reqClassType = a.neededClass;
+		this.Cooldown = a.cooldown;
 		/* Randomly generates a multiplier for the ability through the min and max */
 		this.Multiplier = (a.minMultiplier + (a.maxMultiplier - a.minMultiplier)) * r.nextFloat();
-		this.Duration = r.nextInt(((a.maxTime - a.minTime) + 1)) + a.minTime;
+		//this.Duration = r.nextLong(((a.maxTime - a.minTime) + 1)) + a.minTime;
+		this.Duration = (a.minTime + (a.maxTime - a.minTime)) * r.nextLong();
 		if(this.WhatIs.isEmpty()) {
 			this.WhatIs.add(a.lore.get(0));
 			this.WhatIs.add(a.lore.get(1));
@@ -101,11 +106,15 @@ public class Ability implements Serializable{
 		return reqClassType;
 	}
 	
+	public long getCooldown() {
+		return Cooldown;
+	}
+	
 	public double getMultiplier() {
 		return Multiplier;
 	}
 	
-	public int getDuration() {
+	public long getDuration() {
 		return Duration;
 	}
 }
