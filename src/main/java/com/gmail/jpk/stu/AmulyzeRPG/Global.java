@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
@@ -53,5 +54,18 @@ public class Global {
 			AmulyzeRPG.info("Player Data did not load correctly...caught it");
 			cnfe.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Sends chat to the player that is toggable by the /amchat command.
+	 * If the player has AMCHAT set to TRUE, the message will be send to them,
+	 * otherwise, it will not.
+	 * 
+	 * @param text the message to send to the player
+	 */
+	public static void amChat(Player player, String text) {
+		if (AllPlayers.get(player.getUniqueId()).getInfoOn()) {
+			player.sendMessage(text);
+		} 
 	}
 }

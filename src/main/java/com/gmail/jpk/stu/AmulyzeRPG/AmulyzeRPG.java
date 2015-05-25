@@ -1,5 +1,7 @@
 package com.gmail.jpk.stu.AmulyzeRPG;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.gmail.jpk.stu.AmulyzeCommands.BasicCommands;
@@ -17,6 +19,8 @@ import com.gmail.jpk.stu.Recipes.Recipes;
  */
 
 public final class AmulyzeRPG extends JavaPlugin {
+	
+	public static final String TITLE = "<\u00A75[AmulyzeRPG]\u00A7f>: "; //Unicode because it's easier to put into a string then continually separating them.
 	
 	/**
 	 * This method initiates the plugins; it registers the
@@ -61,5 +65,35 @@ public final class AmulyzeRPG extends JavaPlugin {
 	
 	public static void info(String text) {
 		System.out.println("[AmuylzeRPG]: " + text);
+	}
+		
+	public static void infoFormat(String format, String text) {
+		System.out.printf(format + "%n", text);
+	}
+	
+	/**
+	 * 
+	 * Sends the player a formatted message. This
+	 * will allow the plugin's text to remain consistent through-out.
+	 * 
+	 * @param player the target player who will receive the message
+	 * @param text the message to tell the player
+	 */
+	public static void sendMessage(Player player, String text) {
+		player.sendMessage(TITLE + text);
+	}
+	
+	/**
+	 * Sends the command sender a formatted message. If the sender
+	 * is a player, they will see the colored title, otherwise,
+	 * it will be plain. 
+	 * 
+	 * @param sender the target sender who will receive the message
+	 * @param text the message to tell the sender
+	 */
+	public static void sendMessage(CommandSender sender, String text) {
+		String title = (sender instanceof Player) ? TITLE : "[AmulyzeRPG]: ";
+		
+		sender.sendMessage(title + text);
 	}
 }

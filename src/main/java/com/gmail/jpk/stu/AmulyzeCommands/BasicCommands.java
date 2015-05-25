@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -45,16 +46,16 @@ public class BasicCommands implements CommandExecutor {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					toggleAmChat(p.getUniqueId()); //Toggles player amulyze chat info
-					p.sendMessage("Chat on is now set to " + Global.AllPlayers.get(p.getUniqueId()).getInfoOn());
+					AmulyzeRPG.sendMessage(p, "Chat is now set to " + Global.AllPlayers.get(p.getUniqueId()).getInfoOn());
 					return true;
 				}
 				else { //Needs to be a player to toggle chat
-					sender.sendMessage("You need to be a player to use this command.");
+					AmulyzeRPG.sendMessage(sender, "You need to be a player to use this command.");
 					return true;
 				}
 			}
 			else {
-				sender.sendMessage("This command takes zero arguments.");
+				AmulyzeRPG.sendMessage(sender, "This command takes zero arguments.");
 				return true;
 			}
 		}
@@ -65,26 +66,26 @@ public class BasicCommands implements CommandExecutor {
 					GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
 					if(player.getClassType() != null) {
 						if(rollItem(p)) {
-							p.sendMessage("This item has had it's stats rolled!");
+							AmulyzeRPG.sendMessage(p, "This item has had it's stats rolled!");
 							return true;
 						}
 						else {
-							p.sendMessage("This item can't be rolled.");
+							AmulyzeRPG.sendMessage(p, "This item can't be rolled.");
 							return false;
 						}
 					}
 					else {
-						p.sendMessage("You need to use /setclass and choose your class.");
+						AmulyzeRPG.sendMessage(p, "You need to use /setclass and choose your class.");
 						return true;
 					}
 				}
 				else {
-					sender.sendMessage("You need to be a player to use this command.");
+					AmulyzeRPG.sendMessage(sender, "You need to be a player to use this command.");
 					return true;
 				}
 			}
 			else {
-				sender.sendMessage("This command takes zero arguments.");
+				AmulyzeRPG.sendMessage(sender, "This command takes zero arguments.");
 				return true;
 			}
 		}
@@ -92,20 +93,20 @@ public class BasicCommands implements CommandExecutor {
 			if(args.length == 1) {
 				Player target = Bukkit.getServer().getPlayer(args[0]);
 				if(target == null) { //Checks if player is online
-					sender.sendMessage("That player isn't online!");
+					AmulyzeRPG.sendMessage(sender, "That player isn't online!");
 					return true;
 				}
-				sender.sendMessage(args[0] + "'s lvl is: " + getLvl(target.getUniqueId()));
+				AmulyzeRPG.sendMessage(sender, args[0] + "'s lvl is: " + getLvl(target.getUniqueId()));
 				return true;
 			}
 			else {
-				sender.sendMessage("This command takes one argument");
+				AmulyzeRPG.sendMessage(sender, "This command takes one argument");
 				return true;
 			}
 		}
 		else if (cmd.getName().equalsIgnoreCase("memos")) {
 			if (!(sender instanceof Player)) {
-				sender.sendMessage("You must be a player to use this command.");
+				AmulyzeRPG.sendMessage(sender, "You must be a player to use this command.");
 				return true;
 			}
 			else {
@@ -113,21 +114,33 @@ public class BasicCommands implements CommandExecutor {
 				GamePlayer gp = Global.AllPlayers.get(player.getUniqueId());
 				
 				if (args.length == 0) {
+					if (gp.getMemos().size() == 0) {
+						AmulyzeRPG.sendMessage(player, "You currently have no memos.");
+						return true;
+					}
+					
+					player.sendMessage("----------Current Memos----------"); //looks better without tag
 					for (int i = 0; i < gp.getMemos().size(); i++) {
-						player.sendMessage(i + ". " + gp.getMemos().get(i));
+						player.sendMessage((i + 1) + ". " + gp.getMemos().get(i));
 					}
 					
 					return true;
 				} 
 				else if (args.length == 1) {
 					if (args[0].equalsIgnoreCase("clear")) {
-						player.sendMessage("Deleting ALL memos.");
+						AmulyzeRPG.sendMessage(player, "Deleting ALL memos.");
 						gp.clearMemos();
 						return true;
 					} 
 					else if (args[0].equalsIgnoreCase("pop")) {
-						player.sendMessage("Deleting first memo");
-						gp.popMemos();
+						if (gp.popMemos()) {
+							AmulyzeRPG.sendMessage(player, "Deleted first memo");
+							return true;
+						}
+						else {
+							AmulyzeRPG.sendMessage(player, "You do not have any memos to pop!");
+							return true;
+						}
 					}
 					else {
 						return false;
@@ -140,13 +153,18 @@ public class BasicCommands implements CommandExecutor {
 						index = Integer.parseInt(args[1]);
 					} 
 					catch (NumberFormatException e) {
-						player.sendMessage(args[1] + " isn't quite a number...");
+						AmulyzeRPG.sendMessage(player, ("\"" + args[1] + "\" isn't quite a number..."));
 						return true;
 					}
 					
-					player.sendMessage("Deleting reminder number " + index);
-					gp.removeMemo(index);
-					return true;
+					if (gp.removeMemo(index - 1)) {
+						AmulyzeRPG.sendMessage(player, "Deleting reminder number " + index);
+						return true;
+					} 
+					else {
+						AmulyzeRPG.sendMessage(player, "A memo with this number does not exist.");
+						return true;
+					}
 				} else if (args.length > 2) {
 					if (args[0].equalsIgnoreCase("add")) {
 						String memo = "";
@@ -159,9 +177,14 @@ public class BasicCommands implements CommandExecutor {
 							gp.setMemos(new ArrayList<String>());
 						}
 						
-						gp.addMemo(memo);
-						player.sendMessage("Added memo: " + memo);
-						return true;
+						if (gp.addMemo(memo)) {
+							AmulyzeRPG.sendMessage(player, "Added memo: " + memo);
+							return true;
+						}
+						else {
+							AmulyzeRPG.sendMessage(player, "Memo cap has been reached! Try deleting a few before adding more.");
+							return true;
+						}
 					}
 				} else {
 					return false;
@@ -174,16 +197,16 @@ public class BasicCommands implements CommandExecutor {
 				GamePlayer gplayer = Global.AllPlayers.get(player.getUniqueId());
 				
 				if (gplayer.getClassType() == null) {
-					sender.sendMessage("You currently do not have a class!");
+					AmulyzeRPG.sendMessage(sender, "You currently do not have a class!");
 					return true;
 				}
 				
-				sender.sendMessage("You have quit your class: " + gplayer.getClassType());
+				AmulyzeRPG.sendMessage(sender, "You have quit your class: " + gplayer.getClassColor() + gplayer.getClassType());
 				gplayer.setClassType(null);
 				return true;
 			}
 			else {
-				sender.sendMessage("This command takes zero arguments.");
+				AmulyzeRPG.sendMessage(sender, "This command takes zero arguments.");
 				return true;
 			}
 		}
@@ -193,17 +216,17 @@ public class BasicCommands implements CommandExecutor {
 				GamePlayer gplayer = Global.AllPlayers.get(player.getUniqueId());
 				
 				if (gplayer.getPlayerRole() == null) {
-					sender.sendMessage("You currently do not have a role!");
+					AmulyzeRPG.sendMessage(sender, "You currently do not have a role!");
 					return true;
 				}
 				
-				sender.sendMessage("You have quit your role: " + gplayer.getPlayerRole());
+				AmulyzeRPG.sendMessage(sender, "You have quit your role: " + gplayer.getPlayerRole());
 				
 				gplayer.setRole(null);
 				return true;
 			}
 			else {
-				sender.sendMessage("This command takes zero arguments.");
+				AmulyzeRPG.sendMessage(sender, "This command takes zero arguments.");
 				return true;
 			}
 		}
@@ -212,27 +235,27 @@ public class BasicCommands implements CommandExecutor {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					if(Global.AllPlayers.get(p.getUniqueId()).getClassType() != null) { 
-						p.sendMessage("You already have a class!");
+						AmulyzeRPG.sendMessage(p, "You already have a class!");
 						return true;
 					}
 					else { // If the player doesn't have a classtype, let's the pick
 						if(setClass(p.getUniqueId(), args[0])) { // If this method returns true, we have set the classtype
-							p.sendMessage("You have selected " + args[0] + " as your class!");
+							AmulyzeRPG.sendMessage(p, "You have selected " + (Global.AllPlayers.get(p.getUniqueId()).getClassColor()) + args[0] + ChatColor.WHITE + " as your class!");
 							return true;
 						}
 						else { // If the method returns false, we weren't able to set the classtype
-							p.sendMessage("That's not a class that's playable! Current classes: Archer, Beserker, Mage, Rogue, or Warrior");
+							AmulyzeRPG.sendMessage(p, "That's not a class that's playable! Current classes: Archer, Beserker, Mage, Rogue, or Warrior");
 							return true;
 						}
 					}
 				}
 				else { // Needs to be a player to select a classtype
-					sender.sendMessage("You need to be a player to use this command.");
+					AmulyzeRPG.sendMessage(sender, "You need to be a player to use this command.");
 					return true;
 				}
 			}
 			else { // Argument length doesn't match
-				sender.sendMessage("This command takes one argument.");
+				AmulyzeRPG.sendMessage(sender, "This command takes one argument.");
 				return true;
 			}
 		}
@@ -241,15 +264,15 @@ public class BasicCommands implements CommandExecutor {
 				Player target = Bukkit.getServer().getPlayer(args[0]);
 				Bukkit.getServer().getOnlinePlayers();
 				if(target == null) { //Checks if player is online
-					sender.sendMessage("That player isn't online!");
+					AmulyzeRPG.sendMessage(sender, "That player isn't online!");
 					return true;
 				}
 				setLvl(target.getUniqueId(), args[1]); //Sets player's lvl
-				sender.sendMessage(args[0] + "'s level changed to " + args[1] + ".");
+				AmulyzeRPG.sendMessage(sender, args[0] + "'s level changed to " + args[1] + ".");
 				return true;
 			}
 			else { //If argument length doesn't match
-				sender.sendMessage("This command takes two arguments.");
+				AmulyzeRPG.sendMessage(sender, "This command takes two arguments.");
 				return true;
 			}
 		}
@@ -258,34 +281,34 @@ public class BasicCommands implements CommandExecutor {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
 					if (Global.AllPlayers.get(player.getUniqueId()).getPlayerRole() != null) {
-						sender.sendMessage("You already have a role!");
+						AmulyzeRPG.sendMessage(sender, "You already have a role!");
 						return true;
 					}
 					else {
 						if (setRole(player.getUniqueId(), args[0])) {
-							player.sendMessage("You have selected " + args[0] + " as your role!");
+							AmulyzeRPG.sendMessage(player, "You have selected " + args[0] + " as your role!");
 							return true;
 						} 
 						else {
-							player.sendMessage("Unknown or mistyped role! Current roles: Brew_Master, Farmer, Miner");
+							AmulyzeRPG.sendMessage(player, "Unknown or mistyped role! Current roles: Brew_Master, Farmer, Miner");
 							return true;
 						}
 					}
 				} 
 				else {
-					sender.sendMessage("Only players may use this command.");
+					AmulyzeRPG.sendMessage(sender, "Only players may use this command.");
 					return true;
 				}
 			}
 			else {
-				sender.sendMessage("This command only takes one argument.");
+				AmulyzeRPG.sendMessage(sender, "This command only takes one argument.");
 				return true;
 			}
 		}
 		else if(cmd.getName().equalsIgnoreCase("global")) {
 			if (sender instanceof Player) { //Console may not use this command...use /say instead
 				if (args.length == 0) { //if the user doesn't say anything
-					sender.sendMessage("You must say at least one word!");
+					AmulyzeRPG.sendMessage(sender, "You must say at least one word!");
 					return true;
 				} 
 				else {
@@ -295,7 +318,7 @@ public class BasicCommands implements CommandExecutor {
 				}
 			} 
 			else {
-				sender.sendMessage("You must a player to use this command.");
+				AmulyzeRPG.sendMessage(sender, "You must a player to use this command.");
 			}
 		}
 		return false;
@@ -321,7 +344,7 @@ public class BasicCommands implements CommandExecutor {
 		p.setLevel(iLvl);
 		p.setExp(0.0f);
 		p.setDisplayName("[Lvl " + iLvl + "] " + p.getName());
-		p.sendMessage("An admin has set your level to " + iLvl + ".");
+		AmulyzeRPG.sendMessage(p, "An admin has set your level to " + iLvl + ".");
 	}
 	
 	private int getLvl(UUID player) {

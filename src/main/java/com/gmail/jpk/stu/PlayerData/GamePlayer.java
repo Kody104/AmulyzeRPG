@@ -84,40 +84,34 @@ public class GamePlayer implements Serializable{
 	}
 	
 	public String getPlayerName() {
-		String output = ChatColor.GOLD + "[Lvl " + Lvl + "] ";
-		
+		String output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + getClassColor() + Name + ChatColor.WHITE;
+		return output;
+	}
+	
+	public ChatColor getClassColor() {
 		if (classType == null) {
-			output += ChatColor.WHITE + Name;
-			return output;
+			return ChatColor.WHITE;
 		}
 		
 		switch (classType) {
 			case ARCHER:
-				output += ChatColor.GREEN + Name + ChatColor.WHITE;
-			break;
+				return ChatColor.GREEN;
 			
 			case BESERKER:
-				output += ChatColor.LIGHT_PURPLE + Name + ChatColor.WHITE;
-			break;
+				return ChatColor.LIGHT_PURPLE;
 			
 			case MAGE:
-				output += ChatColor.BLUE + Name + ChatColor.WHITE;
-			break;
+				return ChatColor.BLUE;
 			
 			case ROGUE:
-				output += ChatColor.DARK_GRAY + Name + ChatColor.WHITE;
-			break;
+				return ChatColor.DARK_GRAY;
 			
 			case WARRIOR:
-				output += ChatColor.DARK_RED + Name + ChatColor.WHITE;
-			break;
+				return ChatColor.DARK_RED;
 			
 			default:
-				output += ChatColor.WHITE + Name;
-			break;
+				return ChatColor.WHITE;
 		}
-		
-		return output;
 	}
 	
 	public int getLvl() {

@@ -32,8 +32,6 @@ import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.Ability;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
-import com.gmail.jpk.stu.PlayerData.GamePlayer.ClassType;
-import com.gmail.jpk.stu.Recipes.CustomItem;
 
 /**
  * 
@@ -112,14 +110,13 @@ public final class BasicListener implements Listener {
 			
 			//TODO: What should we send the player on their first join?
 			//    : Basic commands? Class info? Link to a wiki? (TSHC)
-			player.sendMessage(ChatColor.GOLD + "Welcome to Amulyze!");
+			AmulyzeRPG.sendMessage(player, "Welcome to Amulyze!");
 		} 
 		else {
 			joinMessage = player.getDisplayName() + " has returned to their adventure!";
 			
-			//TODO: What should we send player's upon returning?
-			//    : Town updates? Custom reminders (I think this would be interesting)? (TSHC)
-			player.sendMessage(ChatColor.GOLD + "Welcome back!");
+			AmulyzeRPG.sendMessage(player, "Welcome back!");
+			player.performCommand("memos");
 		}
 		
 		e.setJoinMessage(joinMessage);
@@ -173,33 +170,29 @@ public final class BasicListener implements Listener {
 		if (message.equals(message.toUpperCase())) //If the player is using caps, the range will be further.
 			range = 100;
 
-		sender.sendMessage("<" + player.getPlayerName() + "> " + message); //Sends chatter what they sent		
+		AmulyzeRPG.sendMessage(sender, "<" + player.getPlayerName() + "> " + message); //Sends chatter what they sent		
 		
 		for(Entity entity : sender.getNearbyEntities(range, range, range)){ // For every entity near player with 50 blocks
 			if(entity instanceof Player) { // If entity is a player
 				Player recieve = (Player) entity;
-				recieve.sendMessage("<" + player.getPlayerName() + "> " + e.getMessage()); // Send player the chat
+				AmulyzeRPG.sendMessage(recieve, "<" + player.getPlayerName() + "> " + e.getMessage()); // Send player the chat
 				InRange.add(recieve); // Add the player to a collection
 			}
 		}
 		
 		if(InRange.isEmpty()) { // If no one was in range of the chat.
-			if(range == 50){
-				sender.sendMessage("You speak, but no one can hear your message. Try shouting. Or using /global for global chat.");
-			}
-			else {
-				sender.sendMessage("You speak, but no one can hear your message. Try using /global for global chat.");
-			}
+			Global.amChat(sender, "No one is close enough to here you message! Trying shouting or using /global <message>");
 		}
 		else if(InRange.size() < 5) { // If less than 5 people were in range of the chat.
 			String names = InRange.get(0).getName();
 			for(int i = 1; i < InRange.size(); i++) {
 				names += "," + InRange.get(i).getName();
 			}
-			sender.sendMessage(names + " has heard the message.");
+			
+			Global.amChat(sender, names + " has heard your message.");
 		}
 		else { // If 5 or more people were in range of the chat.
-			sender.sendMessage(InRange.size() + " people have heard the message.");
+			Global.amChat(sender, InRange.size() + " people have heard your message.");
 		}
 		
 		AmulyzeRPG.info(sender.getName() + ": " + message);
@@ -286,12 +279,10 @@ public final class BasicListener implements Listener {
 					Player victim = (Player) le;
 					double Dmg = e.getDamage();
 					e.setDamage(Dmg);
-					if(Global.AllPlayers.get(attacker.getUniqueId()).getInfoOn()) { //If attacker has chat on
-						attacker.sendMessage("You hit " + victim.getName() + " for " + Dmg + " damage!");
-					}
-					if(Global.AllPlayers.get(victim.getUniqueId()).getInfoOn()) { //If victim has chat on
-						victim.sendMessage(attacker.getName() + " hit you for " + Dmg + " damage!"); 
-					}
+					
+					Global.amChat(attacker, String.format("You hit %s for \u00A74%.2f\u00A7f damage!", victim.getName(), Dmg));
+					Global.amChat(victim, String.format("%s has hit you for \u00A74%.2f\u00A7f damage!", attacker.getName(), Dmg));
+	
 					break;
 				}
 				break;
@@ -404,9 +395,7 @@ public final class BasicListener implements Listener {
 			EntityDamageByEntityEvent ev = (EntityDamageByEntityEvent) entity.getLastDamageCause();
 			if(ev.getDamager() instanceof Player) { // If the killer is the player
 				Player killer = (Player) ev.getDamager();
-				if(Global.AllPlayers.get(killer.getUniqueId()).getInfoOn()) { //Checks for player's chaton
-					killer.sendMessage("You have slain " + e.getEntityType().toString().toLowerCase());
-				}
+				Global.amChat(killer, "You have slain " + e.getEntityType().toString().toLowerCase());
 				switch(entity.getType()) { //Gives experience depending on who the dead entity is. These are all default minecraft values.
 				case BLAZE:
 					e.setDroppedExp(10);
