@@ -16,11 +16,11 @@ public class Ability implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private enum AbilityData {
-		ENRAGE(GamePlayer.ClassType.WARRIOR, 5000, 0.5f, 5.0f, 0, 0, "ENRAGE", "Increases your attack by "),
-		VANISH(GamePlayer.ClassType.ROGUE, 10000, 0.0f, 0.0f, 1000, 5000, "VANISH", "You are able to stealth for this long in seconds: "),
-		FIREBALL(GamePlayer.ClassType.MAGE, 2500, 0.5f, 7.5f, 0, 0, "FIREBALL", "Send a fireball at your target that hits for "),
-		FLASH(GamePlayer.ClassType.BESERKER, 1500, 0.0f, 0.0f, 0, 0, "FLASH", "Instantly leaps to your target"),
-		BACKSTEP(GamePlayer.ClassType.ARCHER, 2500, 0.0f, 0.0f, 0, 0, "BACKSTEP", "Instantly steps back from anything around");
+		ENRAGE(GamePlayer.ClassType.WARRIOR, 5000L, 0.5f, 5.0f, 10, 50, "ENRAGE", "Increases your attack by "),
+		VANISH(GamePlayer.ClassType.ROGUE, 10000L, 0.0f, 0.0f, 10, 50, "VANISH", "You are able to vanish for this long in seconds: "),
+		FIREBALL(GamePlayer.ClassType.MAGE, 2500L, 0.5f, 7.5f, 0, 0, "FIREBALL", "Send a fireball at your target that hits for "),
+		FLASH(GamePlayer.ClassType.BESERKER, 1500L, 0.0f, 0.0f, 0, 0, "FLASH", "Instantly leaps to your target"),
+		BACKSTEP(GamePlayer.ClassType.ARCHER, 2500L, 0.0f, 0.0f, 0, 0, "BACKSTEP", "Instantly steps back from anything around");
 		
 		
 		private List<String> lore;
@@ -28,11 +28,11 @@ public class Ability implements Serializable{
 		private long cooldown;
 		private float minMultiplier;
 		private float maxMultiplier;
-		private long minTime;
-		private long maxTime;
+		private int minTime;
+		private int maxTime;
 		
 		AbilityData(GamePlayer.ClassType neededClass, long cooldown,
-				float minMultiplier, float maxMultiplier, long minTime, long maxTime, String... lore) {
+				float minMultiplier, float maxMultiplier, int minTime, int maxTime, String... lore) {
 			this.lore = new ArrayList<String>();
 			for(String s : lore) {
 				this.lore.add(s);
@@ -51,7 +51,7 @@ public class Ability implements Serializable{
 	private GamePlayer.ClassType reqClassType; // The ability's required classtype
 	private long Cooldown;
 	private float Multiplier; // The variable of certain spells
-	private long Duration; // Duration of certain spells
+	private int Duration; // Duration of certain spells
 	
 	public Ability(GamePlayer.ClassType playerType) {
 		Random r = new Random(System.currentTimeMillis()); // Seed is current time
@@ -69,29 +69,37 @@ public class Ability implements Serializable{
 		this.Cooldown = a.cooldown;
 		/* Randomly generates a multiplier for the ability through the min and max */
 		this.Multiplier = (a.minMultiplier + (a.maxMultiplier - a.minMultiplier)) * r.nextFloat();
-		//this.Duration = r.nextLong(((a.maxTime - a.minTime) + 1)) + a.minTime;
-		this.Duration = (a.minTime + (a.maxTime - a.minTime)) * r.nextLong();
+		this.Duration = r.nextInt(((a.maxTime - a.minTime) + 1)) + a.minTime;
+	//	this.Duration = (a.minTime + (a.maxTime - a.minTime)) * r.nextLong();
 		if(this.WhatIs.isEmpty()) {
 			this.WhatIs.add(a.lore.get(0));
 			this.WhatIs.add(a.lore.get(1));
 			if(Multiplier != 0.0f) {
 				this.WhatIs.add(String.format("%.2f", Multiplier));
 			}
-			else {
-				this.WhatIs.add(String.format("%d", (Duration / 1000)));
+			if(Duration != 0){
+				this.WhatIs.add(String.format("%d", (Duration / 10)));
 				AmulyzeRPG.info(String.format("%d", Duration));
 			}
+			/*else {
+				this.WhatIs.add(String.format(""));
+			}
+			*/
 		}
-		else {
+		/*else {
 			this.WhatIs.set(0, a.lore.get(0));
 			this.WhatIs.set(1, a.lore.get(1));
 			if(Multiplier != 0.0f) {
 				this.WhatIs.set(2, String.format("%.2f", Multiplier));
 			}
+			else if(Duration != 0){
+				this.WhatIs.set(2, String.format("%d", (Duration / 10)));
+			}
 			else {
-				this.WhatIs.set(2, String.format("%d", (Duration / 1000)));
+				this.WhatIs.add(String.format(""));
 			}
 		}
+		*/
 		}
 	
 	public String getName() {
@@ -114,7 +122,7 @@ public class Ability implements Serializable{
 		return Multiplier;
 	}
 	
-	public long getDuration() {
+	public int getDuration() {
 		return Duration;
 	}
 }

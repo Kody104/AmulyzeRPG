@@ -234,8 +234,8 @@ public class GamePlayer implements Serializable{
 		}
 	}
 	
-	public int getCurrentItemsSize() {
-		return currentItems.size();
+	public Map<Integer, RollItem> getCurrentItems() {
+		return currentItems;
 	}
 	
 	public void setMemos(ArrayList<String> memos) {

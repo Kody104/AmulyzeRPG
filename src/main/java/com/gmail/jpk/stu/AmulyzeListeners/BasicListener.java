@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,6 +32,8 @@ import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
@@ -356,12 +359,16 @@ public final class BasicListener implements Listener {
 					GamePlayer aPlayer = Global.getPlayer(attacker);
 					Player victim = (Player) le;
 					double Dmg = e.getDamage();
-					int count = 0;
-					while(aPlayer.hasActiveAbility()) {
-						RollItem i = aPlayer.getActiveAbilityItem(count);
-						if(i.getAbility().getName().equalsIgnoreCase("enrage")) {
-							Dmg += i.getAbility().getMultiplier();
-							i.setIsActive(false);
+					if(aPlayer.hasActiveAbility()) { // If player has an active ability
+						for(int i = 0; i < aPlayer.getCurrentItems().size(); i++) { // For all roll items
+							if(aPlayer.hasRollItem(i)) { // Safety check for null pointer
+								RollItem ri = aPlayer.getRollItem(i); // Get roll item
+								if(ri.getIsActive()) { // If that roll item is active
+									if(ri.getAbility().getName().equalsIgnoreCase("enrage")) { // If it's enrage
+										Dmg += ri.getAbility().getMultiplier();
+									}
+								}
+							}
 						}
 					}
 					e.setDamage(Dmg);
@@ -401,12 +408,16 @@ public final class BasicListener implements Listener {
 					Player attacker = (Player) e.getDamager();
 					GamePlayer player = Global.getPlayer(attacker);
 					double Dmg = e.getDamage();
-					int count = 0;
-					while(player.hasActiveAbility()) {
-						RollItem i = player.getActiveAbilityItem(count);
-						if(i.getAbility().getName().equalsIgnoreCase("enrage")) {
-							Dmg += i.getAbility().getMultiplier();
-							i.setIsActive(false);
+					if(player.hasActiveAbility()) { // If player has an active ability
+						for(int i = 0; i < player.getCurrentItems().size(); i++) { // For all roll items
+							if(player.hasRollItem(i)) { // Safety check for null pointer
+								RollItem ri = player.getRollItem(i); // Get roll item
+								if(ri.getIsActive()) { // If that roll item is active
+									if(ri.getAbility().getName().equalsIgnoreCase("enrage")) { // If it's enrage
+										Dmg += ri.getAbility().getMultiplier();
+									}
+								}
+							}
 						}
 					}
 					e.setDamage(Dmg);
@@ -548,6 +559,37 @@ public final class BasicListener implements Listener {
 											item.setIsActive(true);
 											item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
 											p.sendMessage("You are enraged!");
+											/* This used Minecraft ticks (100 milliseconds per tick) */
+											BukkitTask enrageWearOff = new Task(item.getAbility().getName(), p).runTaskLater(plugin, item.getAbility().getDuration());
+										}
+										else {
+											p.sendMessage(String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
+											/* Check out task.java (it basically just toggles item off) */
+										}
+									}
+									else if(item.getAbility().getName().equalsIgnoreCase("vanish")) { // Ability: VANISH
+										if(System.currentTimeMillis() >= item.getNextTime()) {
+											item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
+											for(Player others : Bukkit.getWorld(p.getWorld().getName()).getPlayers()) { // Hide player from every other player
+												others.hidePlayer(p);
+											}
+											p.sendMessage("You have vanished!");
+											/* This used Minecraft ticks (100 milliseconds per tick) */
+											BukkitTask vanishWearOff = new Task(item.getAbility().getName(), p).runTaskLater(plugin, item.getAbility().getDuration());
+											/* Check out task.java (it basically just toggles item off) */
+										}
+										else {
+											p.sendMessage(String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
+										}
+									}
+									else if(item.getAbility().getName().equalsIgnoreCase("fireball")) { // Ability: FIREBALL
+										if(System.currentTimeMillis() >= item.getNextTime()) {
+											item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
+											/* Spawns fireball right in front of caster */
+											Fireball f = p.getWorld().spawn(p.getEyeLocation().add(p.getLocation().getDirection()), Fireball.class);
+											f.setShooter(p);
+											/* ^ Unsure if this is necessary ^ */
+											p.sendMessage("You have cast fireball!");
 										}
 										else {
 											p.sendMessage(String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
