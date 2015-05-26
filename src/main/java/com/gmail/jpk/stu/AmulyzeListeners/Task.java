@@ -22,19 +22,30 @@ public class Task extends BukkitRunnable{
 	
 	@Override
 	public void run() {
-		switch(abilityName.toLowerCase()) {
+		switch(abilityName.toLowerCase()) { // switch case depending on ability
 		case "vanish":
-			for(Player p : Bukkit.getWorld(player.getWorld().getName()).getPlayers()) {
+			for(Player p : Bukkit.getWorld(player.getWorld().getName()).getPlayers()) { // Shows stealthed player
 				p.showPlayer(player);
 			}
 			player.sendMessage("You vanish has worn off!");
 			break;
 		case "enrage":
 			for(RollItem i : gPlayer.getCurrentItems().values()) {
-				if(i.getIsActive()) {
+				if(i.getIsActive()) { // Turns off enrage
 					if(i.getAbility().getName().equalsIgnoreCase(abilityName)) {
 						i.setIsActive(false);
 						player.sendMessage("Your enrage has ended!");
+						break;
+					}
+				}
+			}
+			break;
+		case "beserkrage":
+			for(RollItem i : gPlayer.getCurrentItems().values()) {
+				if(i.getIsActive()) { // Turns off beserk rage
+					if(i.getAbility().getName().equalsIgnoreCase(abilityName)) {
+						i.setIsActive(false);
+						player.sendMessage("Your beserking rage has ended!");
 						break;
 					}
 				}
