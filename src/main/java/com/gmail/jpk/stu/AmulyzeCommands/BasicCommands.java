@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -194,15 +195,7 @@ public class BasicCommands implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("quitclass")) {
 			if(args.length == 0) { // No arguments for this command
 				Player player = (Player) sender;
-				GamePlayer gplayer = Global.getPlayer(player);
-				
-				if (gplayer.getClassType() == null) {
-					AmulyzeRPG.sendMessage(sender, "You currently do not have a class!");
-					return true;
-				}
-				
-				AmulyzeRPG.sendMessage(sender, "You have quit your class: " + gplayer.getClassColor() + gplayer.getClassType());
-				gplayer.setClassType(null);
+				QuitClass(player);
 				return true;
 			}
 			else {
@@ -388,28 +381,61 @@ public class BasicCommands implements CommandExecutor {
 		
 	}
 	
-	private boolean rollItem(Player p) {
-		ItemStack i = p.getItemInHand(); // Item in hand
-		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
-		if(player.getClassType() != null){
-			if(i.getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If the item is ours
-				Ability gen = new Ability(player.getClassType()); // Create an ability for it
-				RollItem rolled = new RollItem(i, gen);
-				if(player.addRollItem(p.getInventory().getHeldItemSlot(), rolled)) {
-					ItemMeta meta = i.getItemMeta();
-					meta.setLore(null);
-					i.setItemMeta(meta); // Set item lore
-					meta.setLore(rolled.getAbility().getWhatis());
-					i.setItemMeta(meta); // Sets item lore
-					for(String s : gen.getWhatis()) {
-						p.sendMessage(s);
+	private void QuitClass(Player p) {
+		GamePlayer player = Global.getPlayer(p);
+		
+		if (player.getClassType() == null) {
+			AmulyzeRPG.sendMessage(p, "You currently do not have a class!");
+		}
+		
+		AmulyzeRPG.sendMessage(p, "You have quit your class: " + player.getClassColor() + player.getClassType());
+		player.setClassType(null);
+		
+		Inventory inven = p.getInventory();
+		
+		for(int i = 0; i < 4; i++) {
+			if(inven.getContents()[i] != null) {
+				if(inven.getContents()[i].hasItemMeta()) {
+					if(inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("roll item")) {
+						inven.clear(i);
 					}
 				}
-				else {
-					p.sendMessage("You need to drop one of your current roll items.");
-					return false;
+			}
+			if(player.hasRollItem(i)) {
+				player.getRollItem(i).setIsActive(false);
+				player.deleteRollItem(i);
+			}
+		}
+		
+		for(Player players : Bukkit.getWorld(p.getWorld().getName()).getPlayers()) {
+			players.showPlayer(p);
+		}
+	}
+	
+	private boolean rollItem(Player p) {
+		if(p.getItemInHand().hasItemMeta()) { // Safety check for null
+			ItemStack i = p.getItemInHand(); // Item in hand
+			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+			if(player.getClassType() != null){
+				if(i.getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If the item is ours
+					Ability gen = new Ability(player.getClassType()); // Create an ability for it
+					RollItem rolled = new RollItem(i, gen);
+					if(player.addRollItem(p.getInventory().getHeldItemSlot(), rolled)) {
+						ItemMeta meta = i.getItemMeta();
+						meta.setLore(null);
+						i.setItemMeta(meta); // Set item lore
+						meta.setLore(rolled.getAbility().getWhatis());
+						i.setItemMeta(meta); // Sets item lore
+						for(String s : gen.getWhatis()) {
+							p.sendMessage(s);
+						}
+					}
+					else {
+						p.sendMessage("You need to drop one of your current roll items.");
+						return false;
+					}
+					return true;
 				}
-				return true;
 			}
 		}
 		return false;
