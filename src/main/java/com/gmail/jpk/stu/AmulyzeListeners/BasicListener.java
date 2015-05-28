@@ -1,7 +1,9 @@
 package com.gmail.jpk.stu.AmulyzeListeners;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -10,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LightningStrike;
@@ -24,6 +27,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -423,9 +427,30 @@ public final class BasicListener implements Listener {
 						Player victim = (Player) le;
 						double Dmg = e.getDamage();
 						e.setDamage(Dmg);
-						
 						Global.amChat(victim, String.format("Lightning has hit you for \u00A74%.2f\u00A7f damage!", Dmg));
 						break;
+					}
+					else if(e.getDamager() instanceof Arrow) {
+						Player victim = (Player) le;
+						double Dmg = e.getDamage();
+						e.setDamage(Dmg);
+						Arrow arrow = (Arrow) e.getDamager();
+						
+						if(arrow.getShooter() instanceof Player) {
+							Player attacker = (Player) arrow.getShooter();
+							Global.amChat(attacker, String.format("Your arrow has hit %s for \u00A74%.2f\u00A7f damage!", victim.getName(), Dmg));
+						}
+						
+						if(ArrowTask.getElementalArrows().containsKey(arrow)) { // If the arrow is an elemental arrow
+							victim.addPotionEffect(new PotionEffect(ArrowTask.getElementalArrows().get(arrow), 75, 1)); // Add the element to the player
+							Global.amChat(victim, String.format("A %s arrow has hit you for \u00A74%.2f\u00A7f damage!", ArrowTask.getElementalArrows().get(arrow).getName().toLowerCase(), Dmg));
+							ArrowTask.getElementalArrows().remove(arrow); // Remove arrow from list of arrows
+							break;
+						}
+						else {
+							Global.amChat(victim, String.format("An arrow has hit you for \u00A74%.2f\u00A7f damage!", Dmg));
+							break;
+						}
 					}
 				}
 				break;
@@ -484,6 +509,22 @@ public final class BasicListener implements Listener {
 					
 					Global.amChat(attacker, String.format("You hit %s for \u00A74%.2f\u00A7f damage!", le.getType(), Dmg));
 					break;
+				}
+				else if(e.getDamager() instanceof Arrow) {
+					double Dmg = e.getDamage();
+					e.setDamage(Dmg);
+					Arrow arrow = (Arrow) e.getDamager();
+					
+					if(arrow.getShooter() instanceof Player) {
+						Player attacker = (Player) arrow.getShooter();
+						Global.amChat(attacker, String.format("Your arrow has hit %s for \u00A74%.2f\u00A7f damage!", le.getType(), Dmg));
+					}
+					
+					if(ArrowTask.getElementalArrows().containsKey((Arrow)e.getDamager())) { // If the arrow is an elemental arrow
+						le.addPotionEffect(new PotionEffect(ArrowTask.getElementalArrows().get(arrow), 75, 1)); // Add the arrow's element to the player
+						ArrowTask.getElementalArrows().remove(arrow); // Remove the arrow from the list of arrows
+						break;
+					}
 				}
 				break;
 			}
@@ -570,7 +611,7 @@ public final class BasicListener implements Listener {
 									}
 									else if(item.getAbility().getName().equalsIgnoreCase("blind")) {
 										if(System.currentTimeMillis() >= item.getNextTime()) {
-											le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, item.getAbility().getDuration(), 1));
+											le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, item.getAbility().getDuration(), 1));  // Adds blind to player
 											item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
 											Global.amChat(p, "You have blinded " + e.getRightClicked().getType());
 										}
@@ -591,32 +632,61 @@ public final class BasicListener implements Listener {
 	public void onPlayerCloseInventory(InventoryCloseEvent e) { // Checks if player drops ability to reset HashMap
 		Player p = (Player) e.getPlayer();
 		GamePlayer player = Global.getPlayer(p);
-		if(player.getClassType() != null) {
-			Inventory inven = p.getInventory();
-			for(int i = 0; i < 4; i++) { //For the first four slots on the quickbar
-				if(inven.getContents()[i] != null) {
-					if(inven.getContents()[i].hasItemMeta()) { // Safety check for null pointer
-						if(!(inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item"))) {
-							if(player.hasRollItem(i)) {;
-								player.getRollItem(i).setIsActive(false);
-								player.deleteRollItem(i); // If the player had a roll item there, it deletes it from the hashmap
-							}
+		Inventory inven = p.getInventory();
+		for (int i = 0; i < 4; i++) { // For the first four slots on the quickbar
+			if (inven.getContents()[i] != null) {
+				if (inven.getContents()[i].hasItemMeta()) { // Safety check for null pointer
+					if (!(inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item"))) {
+						if (player.hasRollItem(i)) {
+							player.getRollItem(i).setIsActive(false);
+							player.deleteRollItem(i); // If the player had a roll item there, it deletes it from the hashmap
 						}
-						//TODO: Figure out how to drag roll items back into one of the first four slots
 					}
+					// TODO: Figure out how to drag roll items back into one of the first four slots
 				}
-				else {
-					if(player.hasRollItem(i)) {
-						player.getRollItem(i).setIsActive(false);
-						player.deleteRollItem(i);
+			} 
+			else {
+				if (player.hasRollItem(i)) {
+					player.getRollItem(i).setIsActive(false);
+					player.deleteRollItem(i);
+				}
+			}
+		}
+		for (int i = 4; i < inven.getSize(); i++) { // Check rest of inventory for roll items that shouldn't be there
+			if (inven.getContents()[i] != null) {
+				if (inven.getContents()[i].hasItemMeta()) { // Safety check for null pointer
+					if ((inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item"))) {
+						inven.clear(i);
 					}
 				}
 			}
-			for(int i = 4; i < inven.getSize(); i++) {
-				if(inven.getContents()[i] != null) {
-					if(inven.getContents()[i].hasItemMeta()) { // Safety check for null pointer
-						if((inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item"))) {
-							inven.clear(i);
+		}
+	}
+	
+	@EventHandler
+	public void onEntityShootBowEvent(EntityShootBowEvent e) {
+		if(e.getEntity() instanceof Player) { // If shooter is player
+			Player p = (Player) e.getEntity();
+			GamePlayer player = Global.getPlayer(p);
+			if(player.getClassType() != null) { // If player has a classtype
+				Inventory in = p.getInventory();
+				for(int i = 0; i < 4; i++) { // For the first for slots of their inventory
+					if(in.getContents()[i] != null) { // If the inventory slot isn't empty
+						if(in.getContents()[i].hasItemMeta()) { // If the item has itemmeta
+							if(in.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If the item is ours
+								if(player.getRollItem(i) != null) { // Safety check to make sure it's there
+									RollItem item = player.getRollItem(i);
+									if(item.getAbility().getReqClassType() == player.getClassType()) { // If the ability is the same as the player's classtype
+										if(item.getAbility().getName().equalsIgnoreCase("poisonshot")) { // Ability: POISONSHOT
+											Arrow arrow = (Arrow) e.getProjectile();
+											ArrowTask.getElementalArrows().put(arrow, PotionEffectType.POISON); // Add to elemental arrows list
+											if(!ArrowTask.getIsRunning()) { // If cleanup is already running, don't reinitiliaze it
+												new ArrowTask().runTaskLater(plugin, 250); // Else run it ~10 secs later
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -625,7 +695,7 @@ public final class BasicListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerInteract(PlayerInteractEvent e){ 
+	public void onPlayerInteract(PlayerInteractEvent e) { 
 		Player p = e.getPlayer();
 		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
 		if(player.getClassType() != null) {
@@ -652,7 +722,7 @@ public final class BasicListener implements Listener {
 												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
 												Global.amChat(p, "You are enraged!");
 												/* This used Minecraft ticks (100 milliseconds per tick) */
-												new Task(item.getAbility().getName(), p).runTaskLater(plugin, item.getAbility().getDuration());
+												new AbilityTask(item.getAbility().getName(), p).runTaskLater(plugin, item.getAbility().getDuration());
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -732,7 +802,7 @@ public final class BasicListener implements Listener {
 										else if(item.getAbility().getName().equalsIgnoreCase("beserkrage")) { // Ability: BESERKRAGE
 											if(System.currentTimeMillis() >= item.getNextTime()) { // Cooldown equation
 												item.setIsActive(true);
-												new Task(item.getAbility().getName(), p).runTaskLater(plugin, item.getAbility().getDuration());
+												new AbilityTask(item.getAbility().getName(), p).runTaskLater(plugin, item.getAbility().getDuration());
 												Global.amChat(p, "You are beserking rage!");
 												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
 											}

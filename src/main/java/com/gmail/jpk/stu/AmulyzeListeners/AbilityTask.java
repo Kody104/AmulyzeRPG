@@ -7,13 +7,13 @@ import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
 import com.gmail.jpk.stu.Recipes.RollItem;
 
-public class Task extends BukkitRunnable{
+public class AbilityTask extends BukkitRunnable{
 	
 	private String abilityName;
 	private Player player;
 	private GamePlayer gPlayer;
 	
-	public Task(String abilityName, Player player){
+	public AbilityTask(String abilityName, Player player){
 		this.abilityName = abilityName;
 		this.player = player;
 		gPlayer = Global.getPlayer(player);

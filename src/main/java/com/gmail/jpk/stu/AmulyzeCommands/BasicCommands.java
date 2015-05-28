@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -72,7 +73,7 @@ public class BasicCommands implements CommandExecutor {
 						}
 						else {
 							AmulyzeRPG.sendMessage(p, "This item can't be rolled.");
-							return false;
+							return true;
 						}
 					}
 					else {
@@ -418,6 +419,10 @@ public class BasicCommands implements CommandExecutor {
 			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
 			if(player.getClassType() != null){
 				if(i.getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If the item is ours
+					if(i.getType() == Material.BOW && player.getClassType() != GamePlayer.ClassType.ARCHER) {
+						AmulyzeRPG.sendMessage(p, "You can't roll this unless you are an archer!");
+						return false;
+					}
 					Ability gen = new Ability(player.getClassType()); // Create an ability for it
 					RollItem rolled = new RollItem(i, gen);
 					if(player.addRollItem(p.getInventory().getHeldItemSlot(), rolled)) {
