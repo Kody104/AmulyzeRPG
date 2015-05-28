@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -383,6 +384,7 @@ public final class BasicListener implements Listener {
 											for(Player players : attacker.getWorld().getPlayers()) {
 												players.showPlayer(attacker);
 											}
+											ri.setNextTime(System.currentTimeMillis() + ri.getAbility().getCooldown());
 											Global.amChat(attacker, "Your stealth has ended!");
 										}
 									}
@@ -498,6 +500,7 @@ public final class BasicListener implements Listener {
 											for(Player players : attacker.getWorld().getPlayers()) {
 												players.showPlayer(attacker);
 											}
+											ri.setNextTime(System.currentTimeMillis() + ri.getAbility().getCooldown());
 											Global.amChat(attacker, "Your stealth has ended!");
 										}
 									}
@@ -684,6 +687,25 @@ public final class BasicListener implements Listener {
 												new ArrowTask().runTaskLater(plugin, 250); // Else run it ~10 secs later
 											}
 										}
+										// TODO: Figure out how to fire more than one arrow
+										/* else if(item.getAbility().getName().equalsIgnoreCase("trishot")) {
+											Arrow one = p.getWorld().spawn(p.getEyeLocation().add(p.getLocation().getDirection()), Arrow.class);
+											one.getLocation().setX(one.getLocation().getX() - 1.5d);
+											one.getLocation().setZ(one.getLocation().getZ() - 1.5d);
+											one.setVelocity(p.getLocation().getDirection().multiply(3.0d));
+											one.setShooter(p);
+											Arrow two = p.getWorld().spawn(p.getEyeLocation().add(p.getLocation().getDirection()), Arrow.class);
+											two.getLocation().setX(two.getLocation().getX() + 1.5d);
+											two.getLocation().setZ(two.getLocation().getZ() + 1.5d);
+											two.setVelocity(p.getLocation().getDirection().multiply(3.0d));
+											two.setShooter(p);
+											Arrow three = p.getWorld().spawn(p.getEyeLocation().add(p.getLocation().getDirection()), Arrow.class);
+											three.getLocation().setX(three.getLocation().getX() + 2.5d);
+											three.getLocation().setZ(three.getLocation().getZ() + 2.5d);
+											three.setVelocity(p.getLocation().getDirection().multiply(3.0d));
+											three.setShooter(p);
+										}
+										*/
 									}
 								}
 							}
@@ -755,7 +777,6 @@ public final class BasicListener implements Listener {
 										}
 										else if(item.getAbility().getName().equalsIgnoreCase("ambush")) { // Ability: AMBUSH
 											if(System.currentTimeMillis() >= item.getNextTime()) {
-												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
 												for(Player others : Bukkit.getWorld(p.getWorld().getName()).getPlayers()) { // Hide player from every other player
 													others.hidePlayer(p);
 												}
@@ -782,6 +803,18 @@ public final class BasicListener implements Listener {
 												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
 												p.getWorld().strikeLightning(p.getTargetBlock(null, 30).getLocation()); //The player's lightning strikes anywhere within 30 blocks
 												Global.amChat(p, "You have cast lightning!");
+											}
+											else {
+												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
+											}
+										}
+										else if(item.getAbility().getName().equalsIgnoreCase("teleport")) { // Ability: TELEPORT
+											if(System.currentTimeMillis() >= item.getNextTime()) {
+												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
+												Location loc = p.getTargetBlock(null, 20).getLocation(); // Sets the teleport block
+												loc.setDirection(p.getLocation().getDirection()); // Sets player's direction to look the same
+												p.teleport(loc); // Teleports the player to their target within 30 blocks
+												Global.amChat(p, "You have cast teleport!");
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));

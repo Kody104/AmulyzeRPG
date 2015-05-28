@@ -18,14 +18,16 @@ public class Ability implements Serializable{
 	private enum AbilityData {
 		HOOK(GamePlayer.ClassType.WARRIOR, 6000L, 25, 0.0f, 0.0f, 0, 0, "HOOK", "Drags your target to you"),
 		ENRAGE(GamePlayer.ClassType.WARRIOR, 5000L, 25, 0.5f, 5.0f, 10, 50, "ENRAGE", "Increases your armor by "),
-		BLIND(GamePlayer.ClassType.ROGUE, 10000L, 25, 0.0f, 0.0f, 25, 125, "BLIND", "Blinds target for this long is second "),
+		BLIND(GamePlayer.ClassType.ROGUE, 5000L, 25, 0.0f, 0.0f, 25, 125, "BLIND", "Blinds target for this long is second "),
 		AMBUSH(GamePlayer.ClassType.ROGUE, 6500L, 25, 0.0f, 0.0f, 0, 0, "AMBUSH", "Stealths you and multiplies your first attack in stealth by 1.5"),
-		LIGHTNING(GamePlayer.ClassType.MAGE, 10000L, 25, 0.0f, 0.0f, 0, 0, "LIGHTNING", "Strikes lightning at your target"),
-		FIREBALL(GamePlayer.ClassType.MAGE, 3500L, 25, 0.0f, 0.0f, 0, 0, "FIREBALL", "Send a fireball at your target"),
+		LIGHTNING(GamePlayer.ClassType.MAGE, 5500L, 25, 0.0f, 0.0f, 0, 0, "LIGHTNING", "Strikes lightning at your target"),
+		FIREBALL(GamePlayer.ClassType.MAGE, 3000L, 25, 0.0f, 0.0f, 0, 0, "FIREBALL", "Send a fireball at your target"),
+		TELEPORT(GamePlayer.ClassType.MAGE, 6000L, 25, 0.0f, 0.0f, 0, 0, "TELEPORT", "Teleports you to your desired location"),
 		BESERKRAGE(GamePlayer.ClassType.BESERKER, 5000L, 25, 1.0f, 6.0f, 10, 50, "BESERK RAGE", "Increases your damage, but decreases your armor by "),
 		LEAP(GamePlayer.ClassType.BESERKER, 1500L, 25, 0.0f, 0.0f, 0, 0, "LEAP", "Instantly leaps ahead"),
 		BACKSTEP(GamePlayer.ClassType.ARCHER, 2500L, 25, 0.0f, 0.0f, 0, 0, "BACKSTEP", "Instantly steps back from target"),
 		POISONSHOT(GamePlayer.ClassType.ARCHER, 0L, 25, 0.0f, 0.0f, 0, 0, "POISONSHOT", "Shoots poison arrows with every shot");
+		// TRISHOT(GamePlayer.ClassType.ARCHER, 0L, 25, 0.0f, 0.0f, 0, 0, "TRISHOT", "Shoots three arrows with every shot");
 		
 		
 		private List<String> lore;

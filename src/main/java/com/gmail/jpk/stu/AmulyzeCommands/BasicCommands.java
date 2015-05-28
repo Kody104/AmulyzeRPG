@@ -315,6 +315,24 @@ public class BasicCommands implements CommandExecutor {
 				AmulyzeRPG.sendMessage(sender, "You must a player to use this command.");
 			}
 		}
+		else if(cmd.getName().equalsIgnoreCase("sethome")) {
+			if(sender instanceof Player) {
+				if(args.length == 0) {
+					Player p = (Player) sender;
+					setHome(p);
+					AmulyzeRPG.sendMessage(p, "Home has been set!");
+					return true;
+				}
+				else {
+					AmulyzeRPG.sendMessage(sender, "This command takes zero arguments.");
+					return true;
+				}
+			}
+			else {
+				AmulyzeRPG.sendMessage(sender, "This command can only be used by players.");
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -411,6 +429,10 @@ public class BasicCommands implements CommandExecutor {
 		for(Player players : Bukkit.getWorld(p.getWorld().getName()).getPlayers()) {
 			players.showPlayer(p);
 		}
+	}
+	
+	private void setHome(Player p) {
+		p.setBedSpawnLocation(p.getLocation(), true); // Sets player's respawn point
 	}
 	
 	private boolean rollItem(Player p) {

@@ -49,6 +49,11 @@ commands:
     usage: /roll
     permission: AmulyzeRPG.roll
     permission-message: You don't have permission.
+  sethome:
+    description: Sets the player's respawn point
+    usage: /sethome
+    permission: AmulyzeRPG.sethome
+    permission-message: You don't have permission.
   memos:
     description: Allows the player to manage memos
     usage: /memo <add | clear | delete | pop> <number | message>
@@ -67,6 +72,8 @@ permissions:
       AmulyzeRPG.setclass: true
       AmulyzeRPG.setlvl: true
       AmulyzeRPG.setrole: true
+      AmulyzeRPG.roll: true
+      AmulyzeRPG.sethome: true
       AmulyzeRPG.memos: true
   AmulyzeRPG.amchat:
     description: Toggles amulyze chat for player.
@@ -94,6 +101,9 @@ permissions:
     default: true
   AmulyzeRPG.roll:
     description: Rolls player's item
+    default: true
+  AmulyzeRPG.sethome:
+    description: Sets the player's respawn point
     default: true
   AmulyzeRPG.memos:
     description: Allows players to use memos
