@@ -415,7 +415,7 @@ public class BasicCommands implements CommandExecutor {
 		for(int i = 0; i < 4; i++) {
 			if(inven.getContents()[i] != null) {
 				if(inven.getContents()[i].hasItemMeta()) {
-					if(inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("roll item")) {
+					if(inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Ability")) {
 						inven.clear(i);
 					}
 				}
@@ -452,6 +452,7 @@ public class BasicCommands implements CommandExecutor {
 						meta.setLore(null);
 						i.setItemMeta(meta); // Set item lore
 						meta.setLore(rolled.getAbility().getWhatis());
+						meta.setDisplayName("ABILITY");
 						i.setItemMeta(meta); // Sets item lore
 						for(String s : gen.getWhatis()) {
 							p.sendMessage(s);

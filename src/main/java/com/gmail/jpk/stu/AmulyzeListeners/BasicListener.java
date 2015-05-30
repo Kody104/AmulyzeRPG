@@ -1,9 +1,7 @@
 package com.gmail.jpk.stu.AmulyzeListeners;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -368,27 +366,24 @@ public final class BasicListener implements Listener {
 					GamePlayer aPlayer = Global.getPlayer(attacker);
 					Player victim = (Player) le;
 					GamePlayer vPlayer = Global.getPlayer(victim);
-					double Dmg = e.getDamage();			
-					if(aPlayer.hasActiveAbility()) { // If attacker has an active ability
-						for(int i = 0; i < aPlayer.getCurrentItems().size(); i++) { // For all roll items
-							if(aPlayer.hasRollItem(i)) { // Safety check for null pointer
-								RollItem ri = aPlayer.getRollItem(i); // Get roll item
-								if(ri.getIsActive()) { // If that roll item is active
-									if(ri.getAbility().getReqClassType() == aPlayer.getClassType()) {
-										if(ri.getAbility().getName().equalsIgnoreCase("beserkrage")) {
-											Dmg += ri.getAbility().getMultiplier();
-										}
-										if(ri.getAbility().getName().equalsIgnoreCase("ambush")) {
-											Dmg *= 1.5d;
-											ri.setIsActive(false);
-											for(Player players : attacker.getWorld().getPlayers()) {
-												players.showPlayer(attacker);
-											}
-											ri.setNextTime(System.currentTimeMillis() + ri.getAbility().getCooldown());
-											Global.amChat(attacker, "Your stealth has ended!");
-										}
+					double Dmg = e.getDamage();
+					for(int i = 0; i < aPlayer.getCurrentItems().size(); i++) { // For all roll items
+						if(aPlayer.hasRollItem(i)) { // Safety check for null pointer
+							RollItem ri = aPlayer.getRollItem(i); // Get roll item
+							if(ri.getIsActive()) { // If that roll item is active
+								if(ri.getAbility().getReqClassType() == aPlayer.getClassType()) {
+									if(ri.getAbility().getName().equalsIgnoreCase("beserkrage")) {
+										Dmg += ri.getAbility().getMultiplier();
+									}
+									if(ri.getAbility().getName().equalsIgnoreCase("ambush")) {
+										Dmg *= 1.5d;
+										AbilityMethod.PlayerDestealth(attacker, ri);
 									}
 								}
+							}
+							else if(ri.getAbility().getName().equalsIgnoreCase("lifesteal")) {
+								attacker.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 125, 0));
+								Global.amChat(attacker, String.format("Your attack is healing you!"));
 							}
 						}
 					}
@@ -496,12 +491,7 @@ public final class BasicListener implements Listener {
 										}
 										if(ri.getAbility().getName().equalsIgnoreCase("ambush")) {
 											Dmg *= 1.5d;
-											ri.setIsActive(false);
-											for(Player players : attacker.getWorld().getPlayers()) {
-												players.showPlayer(attacker);
-											}
-											ri.setNextTime(System.currentTimeMillis() + ri.getAbility().getCooldown());
-											Global.amChat(attacker, "Your stealth has ended!");
+											AbilityMethod.PlayerDestealth(attacker, ri);
 										}
 									}
 								}
@@ -586,7 +576,7 @@ public final class BasicListener implements Listener {
 			}
 			if(player.getClassType() != null) { // If player has classtype
 				if(p.getItemInHand().hasItemMeta()) { // Safety check for itemmeta
-					if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If item is ours
+					if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Ability")) { // If item is ours
 						Inventory in = p.getInventory();
 						int index = -1;
 						for(int i = 0; i < 4; i++) { // Run through the first 4 items of the quickbar
@@ -614,9 +604,7 @@ public final class BasicListener implements Listener {
 									}
 									else if(item.getAbility().getName().equalsIgnoreCase("blind")) {
 										if(System.currentTimeMillis() >= item.getNextTime()) {
-											le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, item.getAbility().getDuration(), 1));  // Adds blind to player
-											item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
-											Global.amChat(p, "You have blinded " + e.getRightClicked().getType());
+											AbilityMethod.BlindPlayer(le, p, item);
 										}
 										else {
 											Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -639,7 +627,7 @@ public final class BasicListener implements Listener {
 		for (int i = 0; i < 4; i++) { // For the first four slots on the quickbar
 			if (inven.getContents()[i] != null) {
 				if (inven.getContents()[i].hasItemMeta()) { // Safety check for null pointer
-					if (!(inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item"))) {
+					if (!(inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Ability"))) {
 						if (player.hasRollItem(i)) {
 							player.getRollItem(i).setIsActive(false);
 							player.deleteRollItem(i); // If the player had a roll item there, it deletes it from the hashmap
@@ -658,7 +646,7 @@ public final class BasicListener implements Listener {
 		for (int i = 4; i < inven.getSize(); i++) { // Check rest of inventory for roll items that shouldn't be there
 			if (inven.getContents()[i] != null) {
 				if (inven.getContents()[i].hasItemMeta()) { // Safety check for null pointer
-					if ((inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item"))) {
+					if ((inven.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Ability"))) {
 						inven.clear(i);
 					}
 				}
@@ -676,7 +664,7 @@ public final class BasicListener implements Listener {
 				for(int i = 0; i < 4; i++) { // For the first for slots of their inventory
 					if(in.getContents()[i] != null) { // If the inventory slot isn't empty
 						if(in.getContents()[i].hasItemMeta()) { // If the item has itemmeta
-							if(in.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) { // If the item is ours
+							if(in.getContents()[i].getItemMeta().getDisplayName().equalsIgnoreCase("Ability")) { // If the item is ours
 								if(player.getRollItem(i) != null) { // Safety check to make sure it's there
 									RollItem item = player.getRollItem(i);
 									if(item.getAbility().getReqClassType() == player.getClassType()) { // If the ability is the same as the player's classtype
@@ -722,7 +710,7 @@ public final class BasicListener implements Listener {
 		GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
 		if(player.getClassType() != null) {
 			if(p.getItemInHand().hasItemMeta()){
-				if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Roll Item")) {
+				if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Ability")) {
 					if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 						Inventory in = p.getInventory();
 						int index = -1;
@@ -740,11 +728,7 @@ public final class BasicListener implements Listener {
 									if(!item.getIsActive()) {
 										if(item.getAbility().getName().equalsIgnoreCase("enrage")) { //Ability: ENRAGE
 											if(System.currentTimeMillis() >= item.getNextTime()) { // Cooldown equation
-												item.setIsActive(true);
-												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
-												Global.amChat(p, "You are enraged!");
-												/* This used Minecraft ticks (100 milliseconds per tick) */
-												new AbilityTask(item.getAbility().getName(), p).runTaskLater(plugin, item.getAbility().getDuration());
+												AbilityMethod.EnragePlayer(plugin, p, item);
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -753,23 +737,7 @@ public final class BasicListener implements Listener {
 										}
 										else if(item.getAbility().getName().equalsIgnoreCase("hook")) { // Ability: HOOK
 											if(System.currentTimeMillis() >= item.getNextTime()) {
-												Block targetBlock = p.getTargetBlock(null, 30); // The block the player is targeting
-												for(Entity ent : targetBlock.getChunk().getEntities()) { // For the entities inside of the chunk
-													/* If the entity is alive, and the entity is within 2 blocks of the target block */
-													if(ent instanceof LivingEntity && targetBlock.getLocation().distance(ent.getLocation()) <= 2) {
-														if(ent instanceof Player) {
-															Player ep = (Player) ent;
-															if(ep.getUniqueId().equals(p.getUniqueId())) {
-																break;
-															}
-														}
-														Vector vec = p.getLocation().getDirection().multiply(-2.0d); // Invert the player's direction
-														ent.setVelocity(vec); // Give the inversion to the entity
-														Global.amChat(p, "You have hooked " + ent.getType());
-														item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
-													}
-												}
-												
+												AbilityMethod.HookPlayer(p, item);
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -777,11 +745,7 @@ public final class BasicListener implements Listener {
 										}
 										else if(item.getAbility().getName().equalsIgnoreCase("ambush")) { // Ability: AMBUSH
 											if(System.currentTimeMillis() >= item.getNextTime()) {
-												for(Player others : Bukkit.getWorld(p.getWorld().getName()).getPlayers()) { // Hide player from every other player
-													others.hidePlayer(p);
-												}
-												item.setIsActive(true);
-												Global.amChat(p, "You have stealthed!");
+												AbilityMethod.PlayerStealth(p, item);
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -789,10 +753,7 @@ public final class BasicListener implements Listener {
 										}
 										else if(item.getAbility().getName().equalsIgnoreCase("fireball")) { // Ability: FIREBALL
 											if(System.currentTimeMillis() >= item.getNextTime()) {
-												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
-												/* Spawns fireball right in front of caster */
-												p.getWorld().spawn(p.getEyeLocation().add(p.getLocation().getDirection()), Fireball.class);
-												Global.amChat(p, "You have cast fireball!");
+												AbilityMethod.PlayerCastFireball(p, item);
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -800,9 +761,7 @@ public final class BasicListener implements Listener {
 										}
 										else if(item.getAbility().getName().equalsIgnoreCase("lightning")) { // Ability: LIGHTNING
 											if(System.currentTimeMillis() >= item.getNextTime()) {
-												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
-												p.getWorld().strikeLightning(p.getTargetBlock(null, 30).getLocation()); //The player's lightning strikes anywhere within 30 blocks
-												Global.amChat(p, "You have cast lightning!");
+												AbilityMethod.PlayerCastLightning(p, item);
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -810,11 +769,7 @@ public final class BasicListener implements Listener {
 										}
 										else if(item.getAbility().getName().equalsIgnoreCase("teleport")) { // Ability: TELEPORT
 											if(System.currentTimeMillis() >= item.getNextTime()) {
-												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
-												Location loc = p.getTargetBlock(null, 20).getLocation(); // Sets the teleport block
-												loc.setDirection(p.getLocation().getDirection()); // Sets player's direction to look the same
-												p.teleport(loc); // Teleports the player to their target within 30 blocks
-												Global.amChat(p, "You have cast teleport!");
+												AbilityMethod.PlayerCastTeleport(p, item);
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -822,11 +777,7 @@ public final class BasicListener implements Listener {
 										}
 										else if(item.getAbility().getName().equalsIgnoreCase("leap")) { //Ability: LEAP
 											if(System.currentTimeMillis() >= item.getNextTime()) { // Cooldown equation
-												Vector vec = p.getLocation().getDirection().multiply(1.5d); // Sets vector to player's direction * 2
-												p.setVelocity(vec); // Makes player vault in that direction
-												p.setNoDamageTicks(10); // To help player if they vault too high
-												Global.amChat(p, "You have leapt!");
-												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
+												AbilityMethod.PlayerLeap(p, item);
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));
@@ -834,10 +785,7 @@ public final class BasicListener implements Listener {
 										}
 										else if(item.getAbility().getName().equalsIgnoreCase("beserkrage")) { // Ability: BESERKRAGE
 											if(System.currentTimeMillis() >= item.getNextTime()) { // Cooldown equation
-												item.setIsActive(true);
-												new AbilityTask(item.getAbility().getName(), p).runTaskLater(plugin, item.getAbility().getDuration());
-												Global.amChat(p, "You are beserking rage!");
-												item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
+												AbilityMethod.BeserkRagePlayer(plugin, p, item);
 											}
 											else {
 												Global.amChat(p, String.format("You need to wait %d seconds", ((item.getNextTime() - System.currentTimeMillis()) / 1000)));

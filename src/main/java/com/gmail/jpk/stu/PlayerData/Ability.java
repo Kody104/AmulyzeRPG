@@ -16,13 +16,14 @@ public class Ability implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private enum AbilityData {
-		HOOK(GamePlayer.ClassType.WARRIOR, 6000L, 25, 0.0f, 0.0f, 0, 0, "HOOK", "Drags your target to you"),
-		ENRAGE(GamePlayer.ClassType.WARRIOR, 5000L, 25, 0.5f, 5.0f, 10, 50, "ENRAGE", "Increases your armor by "),
+		HOOK(GamePlayer.ClassType.WARRIOR, 6000L, 25, 0.0f, 0.0f, 25, 125, "HOOK", "Drags your target to you and slows them for this long in seconds"),
+		ENRAGE(GamePlayer.ClassType.WARRIOR, 5000L, 25, 1.0f, 5.0f, 10, 50, "ENRAGE", "Increases your armor by "),
 		BLIND(GamePlayer.ClassType.ROGUE, 5000L, 25, 0.0f, 0.0f, 25, 125, "BLIND", "Blinds target for this long is second "),
 		AMBUSH(GamePlayer.ClassType.ROGUE, 6500L, 25, 0.0f, 0.0f, 0, 0, "AMBUSH", "Stealths you and multiplies your first attack in stealth by 1.5"),
 		LIGHTNING(GamePlayer.ClassType.MAGE, 5500L, 25, 0.0f, 0.0f, 0, 0, "LIGHTNING", "Strikes lightning at your target"),
 		FIREBALL(GamePlayer.ClassType.MAGE, 3000L, 25, 0.0f, 0.0f, 0, 0, "FIREBALL", "Send a fireball at your target"),
-		TELEPORT(GamePlayer.ClassType.MAGE, 6000L, 25, 0.0f, 0.0f, 0, 0, "TELEPORT", "Teleports you to your desired location"),
+		TELEPORT(GamePlayer.ClassType.MAGE, 7500L, 25, 0.0f, 0.0f, 0, 0, "TELEPORT", "Teleports you to your desired location"),
+		LIFESTEAL(GamePlayer.ClassType.BESERKER, 0L, 25, 0.0f, 0.0f, 0, 0, "LIFESTEAL", "You heal yourself when you strike an enemy"),
 		BESERKRAGE(GamePlayer.ClassType.BESERKER, 5000L, 25, 1.0f, 6.0f, 10, 50, "BESERK RAGE", "Increases your damage, but decreases your armor by "),
 		LEAP(GamePlayer.ClassType.BESERKER, 1500L, 25, 0.0f, 0.0f, 0, 0, "LEAP", "Instantly leaps ahead"),
 		BACKSTEP(GamePlayer.ClassType.ARCHER, 2500L, 25, 0.0f, 0.0f, 0, 0, "BACKSTEP", "Instantly steps back from target"),
@@ -102,6 +103,9 @@ public class Ability implements Serializable{
 			}
 			if(Duration != 0){
 				if(a.toString().equalsIgnoreCase("blind")) {
+					this.WhatIs.add(String.format("%d", (Duration / 20)));
+				}
+				else if(a.toString().equalsIgnoreCase("hook")) {
 					this.WhatIs.add(String.format("%d", (Duration / 20)));
 				}
 				else {
