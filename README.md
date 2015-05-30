@@ -4,7 +4,8 @@
 
 *21 May, 2015*. Player levels were added, seems to be working.<br/>
 *23 May, 2015*. Began adding Custom Items (Sword A was born!). <br/>
-*24 May, 2015*. Basic Role Integration has begun! First Few Roles: Farmers, Miners, and Brew Masters
+*24 May, 2015*. Basic Role Integration has begun! First Few Roles: Farmers, Miners, and Brew Masters<br />
+*25 May, 2015*. Role expansions, class abilities, annoying bugs, and item rolls added!
 
 ##Cloning
 1. `git clone --recursive https://github.com/Kody104/AmulyzeRPG.git`
