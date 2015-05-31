@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.gmail.jpk.stu.Recipes.RollItem;
 import com.gmail.jpk.stu.Roles.Role;
+import com.gmail.jpk.stu.Roles.Role.RoleType;
 
 /**
  * The GamePlayer class is a representation of the player
@@ -20,7 +21,7 @@ import com.gmail.jpk.stu.Roles.Role;
  * @author Kody104, TSHC
  *
  */
-public class GamePlayer implements Serializable{
+public class GamePlayer implements Serializable {
 	
 	public enum ClassType {
 		ARCHER, BESERKER, MAGE, ROGUE, WARRIOR;
@@ -44,7 +45,7 @@ public class GamePlayer implements Serializable{
 	
 	public GamePlayer(Player p) {
 		classType = null;
-		role = null;
+		role = new Role(null);
 		options = new Options();
 		currentItems = new HashMap<Integer, RollItem>();
 		memos = new ArrayList<String>();
@@ -90,10 +91,6 @@ public class GamePlayer implements Serializable{
 		
 		return true;
 	}
-
-	public boolean hasRole() {
-		return (role == null);
-	}
 	
 	public String getPlayerName() {
 		String output = ChatColor.GOLD + "[Lvl " + Lvl + "] " + getClassColor() + Name + ChatColor.WHITE;
@@ -126,8 +123,20 @@ public class GamePlayer implements Serializable{
 		}
 	}
 	
+	public boolean hasRoleType() {
+		return (role.getRoleType() != null);
+	}
+	
 	public Role getRole() {
 		return role;
+	}
+	
+	public RoleType getRoleType() {
+		return role.getRoleType();
+	}
+	
+	public void setRoleType(RoleType type) {
+		this.role.setRoleType(type);
 	}
 	
 	public int getLvl() {
@@ -224,8 +233,8 @@ public class GamePlayer implements Serializable{
 		this.classType =  classType;
 	}
 	
-	public void deleteRole() {
-		role = null;
+	public void deleteRoleType() {
+		role.setRoleType(null);
 	}
 
 	public void setInfoOn(boolean InfoOn) {

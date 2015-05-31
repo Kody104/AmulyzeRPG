@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -104,7 +105,7 @@ public class Global {
 	 */
 	public static void amChat(Player player, String text) {
 		if (AllPlayers.get(player.getUniqueId()).getInfoOn()) {
-			AmulyzeRPG.sendMessage(player, text);
+			AmulyzeRPG.sendMessage(player, ChatColor.LIGHT_PURPLE + text);
 		} 
 	}
 }

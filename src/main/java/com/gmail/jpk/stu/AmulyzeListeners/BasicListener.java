@@ -183,11 +183,11 @@ public final class BasicListener implements Listener {
 		
 		if(!(Global.containsPlayer(p))) {
 			Global.AllPlayers.put(p.getUniqueId(), new GamePlayer(p)); //Creates new player
-			p.setDisplayName(Global.AllPlayers.get(p.getUniqueId()).getPlayerName());
+			p.setDisplayName(Global.getPlayer(p).getPlayerName());
 		}
 		else {
-			p.setLevel(Global.AllPlayers.get(p.getUniqueId()).getLvl());
-			p.setDisplayName(Global.AllPlayers.get(p.getUniqueId()).getPlayerName());//Sets the player's level to his lvl
+			p.setLevel(Global.getPlayer(p).getLvl());
+			p.setDisplayName(Global.getPlayer(p).getPlayerName());//Sets the player's level to his lvl
 		}
 	}
 	

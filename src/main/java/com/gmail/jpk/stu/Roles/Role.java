@@ -1,71 +1,68 @@
 package com.gmail.jpk.stu.Roles;
 
-import org.bukkit.ChatColor;
+import java.io.Serializable;
+
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
-import com.gmail.jpk.stu.AmulyzeRPG.Global;
 
-public abstract class Role {
+public class Role implements Serializable {
 	
-	private Player player; //The player that has this role
-	private int level; //The level this player is. (Stores direct exp. Their level is the truncated value)
-	private int expNeeded; //The amount of exp for the nextLevel. 
-	private int expGained; //The amount of exp gained so far
+	private static final long serialVersionUID = 1L;
 	
-	public Role(Player player) {
-		this.player = player;
-		this.level = 1;
-		this.expNeeded = getExpNeeded();
-		this.expGained = 0;
+	public enum RoleType {
+		ALCHEMIST, FARMER, MINER, ENGINEER;
 	}
 	
-	public void earnExp(int amount) {
-		expGained += amount; //add the specified amount
+	private RoleType roleType; //What role this player is
+	private int level;         //What level they are
+	private int expGained;     //How much exp. they have gained
+	private int expNeeded;     //How much exp. they need to level up
+	
+	public Role(RoleType type) {
+		this.roleType = type;
+		this.level = 0;
+		this.expGained = 0;
+		this.expNeeded = calcExpNeeded();
+	}
+	
+	private int calcExpNeeded() {
+		double raw = Math.ceil((level * 10) + 4 * (Math.pow(1.2, level + 1)));
+		return (int) raw;
+	}
+	
+	public void grantExperience(Player player, int amount) {
+		expGained += amount;
 		
-		while (expGained >= expNeeded) { //level up while expGained is higher than expNeeded
-			level++; 
-			expNeeded = getExpNeeded(); //Recalculate
+		while (expGained >= expNeeded) {
+			level++;
+			expNeeded = calcExpNeeded();
 			
 			switch (level) {
 				default:
-					AmulyzeRPG.sendMessage(player, "Congralutions! You have reached level "+ ChatColor.GREEN + level + ChatColor.WHITE + " in the role: " + ChatColor.GREEN + Global.getPlayer(player).getRole());
-					break;
+					AmulyzeRPG.sendMessage(player, "Congratulations! You have reached level " + level + " in the " + roleType + " role!");
+				break;
 			}
-		}
+		}		
 	}
 	
-	public void earnReward(RoleTask task) {
-		ItemStack[] items = task.getItems();
+	public void performRoleTask(Player player, RoleTask task) {
 		
-//		if (items.length != 0)
-//			player.getInventory().addItem(task.getItems());
-		
-		if (level > task.getMaxLevel()) {
-			AmulyzeRPG.sendMessage(player, "You are too high of a level to earn experience for this task! No worries, you still earn the bonus items.");
-			return;
-		}
-		
-		AmulyzeRPG.sendMessage(player, "You have earned " + task.getExpGiven());
-		
-		earnExp(task.getExpGiven());
+	}
+	
+	public RoleType getRoleType() {
+		return roleType;
+	}
+	
+	public int getExpGained() {
+		return expGained;
 	}
 	
 	public int getExpNeeded() {
-		return (int) (level * 10 + Math.ceil(3.5 * Math.pow(1.2, level)));
+		return expNeeded;
 	}
 	
-	public int getLevel() {
-		return level;
+	public void setRoleType(RoleType type) {
+		this.roleType = type;
 	}
-	
-	public Player getPlayer() {
-		return player;
-	}
-	
-	public void setLevel(int level) {
-		this.level = level;
-	}
-	
 }
