@@ -4,7 +4,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.gmail.jpk.stu.AmulyzeCommands.BasicCommands;
+import com.gmail.jpk.stu.AmulyzeCommands.AmChat;
+import com.gmail.jpk.stu.AmulyzeCommands.GetClass;
+import com.gmail.jpk.stu.AmulyzeCommands.GetLevel;
+import com.gmail.jpk.stu.AmulyzeCommands.GlobalCommand;
+import com.gmail.jpk.stu.AmulyzeCommands.Memos;
+import com.gmail.jpk.stu.AmulyzeCommands.QuitClass;
+import com.gmail.jpk.stu.AmulyzeCommands.QuitRole;
+import com.gmail.jpk.stu.AmulyzeCommands.Roll;
+import com.gmail.jpk.stu.AmulyzeCommands.SetClass;
+import com.gmail.jpk.stu.AmulyzeCommands.SetHome;
+import com.gmail.jpk.stu.AmulyzeCommands.SetLevel;
+import com.gmail.jpk.stu.AmulyzeCommands.SetRole;
 import com.gmail.jpk.stu.AmulyzeListeners.BasicListener;
 import com.gmail.jpk.stu.Recipes.Recipes;
 
@@ -34,19 +45,20 @@ public final class AmulyzeRPG extends JavaPlugin {
 		info("AmulyzeRPG v0.1 starting up...");
 		Global.Load(this);
 		Recipes.Init(this);
-		BasicCommands exec = new BasicCommands(this);
+		
 		info("Registering commands...");
-		this.getCommand("amchat").setExecutor(exec);
-		this.getCommand("getlvl").setExecutor(exec);
-		this.getCommand("global").setExecutor(exec);
-		this.getCommand("quitclass").setExecutor(exec);
-		this.getCommand("quitrole").setExecutor(exec);
-		this.getCommand("setclass").setExecutor(exec);
-		this.getCommand("setlvl").setExecutor(exec);
-		this.getCommand("setrole").setExecutor(exec);
-		this.getCommand("roll").setExecutor(exec);
-		this.getCommand("sethome").setExecutor(exec);
-		this.getCommand("memos").setExecutor(exec);
+		this.getCommand("amchat").setExecutor(new AmChat(this));
+		this.getCommand("getclass").setExecutor(new GetClass(this));
+		this.getCommand("getlvl").setExecutor(new GetLevel(this));
+		this.getCommand("global").setExecutor(new GlobalCommand(this));
+		this.getCommand("memos").setExecutor(new Memos(this));
+		this.getCommand("quitclass").setExecutor(new QuitClass(this));
+		this.getCommand("quitrole").setExecutor(new QuitRole(this));
+		this.getCommand("roll").setExecutor(new Roll(this));
+		this.getCommand("setclass").setExecutor(new SetClass(this));
+		this.getCommand("setlvl").setExecutor(new SetLevel(this));
+		this.getCommand("setrole").setExecutor(new SetRole(this));
+		this.getCommand("sethome").setExecutor(new SetHome(this));
 		new BasicListener(this);
 		info("AmulyzeRPG  v0.1 has successfully been enabled!");
 	}
