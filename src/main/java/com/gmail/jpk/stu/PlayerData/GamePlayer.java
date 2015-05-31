@@ -36,7 +36,6 @@ public class GamePlayer implements Serializable{
 	private List<String> memos; //reminders this player has set
 	private String Name; //The player's name
 	private int Lvl; //The player's current level
-	private Player player;
 	private double MaxHp;
 	private double Hp;
 	private double Atk;
@@ -50,7 +49,6 @@ public class GamePlayer implements Serializable{
 		currentItems = new HashMap<Integer, RollItem>();
 		memos = new ArrayList<String>();
 		Name = p.getPlayerListName();
-		player = p;
 		MaxHp = 20.0d;
 		Hp = MaxHp;
 		Atk = 0.5d;

@@ -180,6 +180,7 @@ public final class BasicListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent e) {
 		Player p = (Player) e.getPlayer();
+		
 		if(!(Global.containsPlayer(p))) {
 			Global.AllPlayers.put(p.getUniqueId(), new GamePlayer(p)); //Creates new player
 			p.setDisplayName(Global.AllPlayers.get(p.getUniqueId()).getPlayerName());

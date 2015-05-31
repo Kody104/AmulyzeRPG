@@ -19,39 +19,70 @@ public class Global {
 	public static HashMap<UUID, GamePlayer> AllPlayers = new HashMap<UUID, GamePlayer>();
 	
 	public static void Save(JavaPlugin plugin) {
+		AmulyzeRPG.info("Attempting to save player data...");
+		
 		try {
-			AmulyzeRPG.info("Saving Player Data...");
-			File dir = new File("plugins/AmulyzeRPG/"); //Makes file directory
-			dir.mkdirs();
-			File file = new File(dir, "players.aur"); //Creates file
-			FileOutputStream fos = new FileOutputStream(file, false); 
-			ObjectOutputStream out = new ObjectOutputStream(fos);
-			out.writeObject(AllPlayers); //Saves file and directory
-			out.close();
+			File dir = new File("plugins/AmulyzeRPG"); //Get the file, if present
+			File file;
+			FileOutputStream fos;
+			ObjectOutputStream out;
+			
+			AmulyzeRPG.info("Creating the directory.");
+			dir.mkdirs(); //Create the directory
+			
+			AmulyzeRPG.info("Opening fos and out");
+			file = new File(dir, "players.aur"); //Create the data file
+			fos = new FileOutputStream(file, false); //Create a new one, don't append
+			out = new ObjectOutputStream(fos);
+			
+			AmulyzeRPG.info("Saving the hashmap. AllPlayers: " + AllPlayers);
+			out.writeObject(AllPlayers); //Save the hash map
+
+			AmulyzeRPG.info("Closing fos and out");
 			fos.close();
+			out.close();
+			
 			AmulyzeRPG.info("Player Data Saved!");
 		} catch(IOException io) {
-			AmulyzeRPG.info("Player Data save Error... caught it");
+			AmulyzeRPG.info("Any error has occured while trying to save player.aur");
+			AmulyzeRPG.info("Reason: " + io.getCause());
 			io.printStackTrace();
 		}
 	}
 	
 	public static void Load(JavaPlugin plugin)
 	{
+		AmulyzeRPG.info("Attempting to load Player Data...");
+
+		File file = new File("plugins/AmulyzeRPG/players.aur");
+		AllPlayers = new HashMap<UUID, GamePlayer>();
+		FileInputStream fis;
+		ObjectInputStream ois;
+		
+		if (!file.exists()) { 	//Verify that player.aur exists. Can not load hashmap without it. 
+			AmulyzeRPG.info("\"players.ser\" is missing or corrupted.");
+			AmulyzeRPG.info("Program will not attempt to load data");
+			return;
+		} else {
+			AmulyzeRPG.info("\"players.ser\" found! Loading the hashmap data...");
+		}
+		
 		try {
-			AmulyzeRPG.info("Attempting to load Player Data...");
-			File file = new File("plugins/AmulyzeRPG/players.aur"); //Attempts to load from file
-			FileInputStream fin = new FileInputStream(file);
-			ObjectInputStream in = new ObjectInputStream(fin);
-			AllPlayers = (HashMap<UUID, GamePlayer>) in.readObject();
-			in.close();
-			fin.close();
-			plugin.getLogger().info("Player Data Loaded!");
+			fis = new FileInputStream(file);
+			ois = new ObjectInputStream(fis);
+			
+			AllPlayers = (HashMap<UUID, GamePlayer>) ois.readObject();
+			AmulyzeRPG.info("AllPlayers data was successful loaded!");
+			
+			fis.close();
+			ois.close();
 		} catch(IOException io) {
-			AmulyzeRPG.info("Player Data did not load correctly...caught it");
+			AmulyzeRPG.info("Any error has occured while trying to load player.aur");
+			AmulyzeRPG.info("Reason: " + io.getCause());
 			io.printStackTrace();
 		} catch(ClassNotFoundException cnfe) {
-			AmulyzeRPG.info("Player Data did not load correctly...caught it");
+			AmulyzeRPG.info("Any error has occured while trying to load player.aur");
+			AmulyzeRPG.info("Reason: " + cnfe.getCause());
 			cnfe.printStackTrace();
 		}
 	}
