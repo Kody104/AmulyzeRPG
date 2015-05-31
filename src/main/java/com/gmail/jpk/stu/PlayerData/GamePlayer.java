@@ -10,9 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.gmail.jpk.stu.Recipes.RollItem;
-import com.gmail.jpk.stu.Roles.Alchemist;
-import com.gmail.jpk.stu.Roles.Farmer;
-import com.gmail.jpk.stu.Roles.Miner;
 import com.gmail.jpk.stu.Roles.Role;
 
 /**
@@ -29,15 +26,10 @@ public class GamePlayer implements Serializable{
 		ARCHER, BESERKER, MAGE, ROGUE, WARRIOR;
 	}
 	
-	public enum RoleType {
-		BREW_MASTER, FARMER, MINER;
-	}
-	
 	private static final long serialVersionUID = 1L;
 	public static int memoCap = 10; //The maximum number of memos a player can set
 	
 	private ClassType classType; //The player's class (type)
-	private RoleType roleType; //The Player's role
 	private Role role;
 	private Options options; //The player's options
 	private Map<Integer, RollItem> currentItems;
@@ -53,11 +45,12 @@ public class GamePlayer implements Serializable{
 	
 	public GamePlayer(Player p) {
 		classType = null;
-		roleType = null;
+		role = null;
 		options = new Options();
 		currentItems = new HashMap<Integer, RollItem>();
 		memos = new ArrayList<String>();
 		Name = p.getPlayerListName();
+		player = p;
 		Hp = 20.0d;
 		Atk = 0.5d;
 		Mag = 0.5d;
@@ -75,17 +68,6 @@ public class GamePlayer implements Serializable{
 		return true;
 	}
 	
-	public boolean removeMemo(int index) {
-		if (memos.size() == 0 || (index < 0 && index > memos.size() - 1)) {
-			return false;
-		} 
-		else {
-			memos.remove(index);
-		}
-		
-		return true;
-	}
-	
 	public void clearMemos() {
 		memos.clear();
 	}
@@ -97,6 +79,21 @@ public class GamePlayer implements Serializable{
 		memos.remove(0);
 		
 		return true;
+	}
+	
+	public boolean removeMemo(int index) {
+		if (memos.size() == 0 || (index < 0 && index > memos.size() - 1)) {
+			return false;
+		} 
+		else {
+			memos.remove(index);
+		}
+		
+		return true;
+	}
+
+	public boolean hasRole() {
+		return (role == null);
 	}
 	
 	public String getPlayerName() {
@@ -140,10 +137,6 @@ public class GamePlayer implements Serializable{
 	
 	public ClassType getClassType() {
 		return classType;
-	}
-	
-	public RoleType getRoleType() {
-		return roleType;
 	}
 	
 	public RollItem getRollItem(int index) {
@@ -233,24 +226,7 @@ public class GamePlayer implements Serializable{
 	}
 	
 	public void deleteRole() {
-		roleType = null;
 		role = null;
-	}
-	
-	public void setRoleType(RoleType roleType) {
-		switch (roleType) {
-			case BREW_MASTER:
-				role = new Alchemist(player);
-			break;
-			case FARMER:
-				role = new Farmer(player);
-			break;
-			case MINER:
-				role = new Miner(player);
-			break;
-		}
-		
-		this.roleType = roleType;
 	}
 
 	public void setInfoOn(boolean InfoOn) {

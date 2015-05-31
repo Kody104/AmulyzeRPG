@@ -6,11 +6,9 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
@@ -46,7 +44,6 @@ import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
 import com.gmail.jpk.stu.Recipes.RollItem;
-import com.gmail.jpk.stu.PlayerData.GamePlayer.RoleType;
 import com.gmail.jpk.stu.Roles.Role;
 import com.gmail.jpk.stu.Roles.RoleTask;
 
@@ -80,67 +77,8 @@ public final class BasicListener implements Listener {
 	
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
-		GamePlayer player = Global.getPlayer(e.getPlayer());
-		
-		if (player.getRoleType() == null)
-			return;
-		
-		Material type = e.getBlock().getType();
-		Role role = player.getRole();
-		RoleType roleType = player.getRoleType();
-		
-		if (roleType == RoleType.FARMER) {
-			switch (type)
-			{
-				case CROPS:
-					role.earnReward(RoleTask.FARM_WHEAT);
-				break;
-				
-				case MELON_BLOCK:
-					role.earnReward(RoleTask.FARM_MELON);
-				break;
-				
-				case CARROT:
-					role.earnReward(RoleTask.FARM_CARROT);
-				break;
-			
-				default:
-					break;
-			}
-		} 
-		else if (roleType == RoleType.MINER) {			
-			switch (type) {
-				case COAL_ORE:
-					role.earnReward(RoleTask.MINE_COAL);
-				break;
-				
-				case IRON_ORE:
-					role.earnReward(RoleTask.MINE_IRON);
-				break;
-				
-				case GOLD_ORE:
-					role.earnReward(RoleTask.MINE_GOLD);
-				break;
-				
-				case DIAMOND_ORE:
-					role.earnReward(RoleTask.MINE_DMND);
-				break;
-				
-				default:
-					break;
-			}
-		}
-		else if (roleType == RoleType.BREW_MASTER) {
-			switch (type) {
-				case NETHER_WARTS:
-					role.earnReward(RoleTask.EARN_WARTS);
-				break;
-				
-				default:
-					break;
-			}
-		}
-	}
+		//if (gpl.hasRole())
+	} 
 	
 	/**
 	 * 
@@ -167,13 +105,14 @@ public final class BasicListener implements Listener {
 		}
 		
 		double percentThreshhold = (total < 6 ? 0.50 : 0.75); //This is tenative...will be updated as needed
+		double percentAsleep = (double) (part / total);
 		
-		if ( ((double)(part / total) > percentThreshhold) ) {
+		if (percentAsleep > percentThreshhold) {
 			server.broadcastMessage(ChatColor.GOLD + "Enough players are sleeping! Advancing time...");
 			world.setTime(22800); //A few ticks before dawn
 		}
 		else {
-			server.broadcastMessage(ChatColor.GOLD + "Not enough players sleeping to advance time yet! " + (double)(part / total));
+			server.broadcastMessage(ChatColor.GOLD + "" + percentAsleep + "% of players asleep! Not enough to advance time!");
 		}
 	}
 	
@@ -198,10 +137,17 @@ public final class BasicListener implements Listener {
 			AmulyzeRPG.sendMessage(player, "Welcome to Amulyze!");
 		} 
 		else {
-			joinMessage = player.getDisplayName() + " has returned to their adventure!";
+			GamePlayer gpl = Global.getPlayer(player);
 			
+			joinMessage = gpl.getPlayerName() + " has returned to their adventure!";
+			
+			if (gpl.getMemos().size() > 0) {
+				for (String s : gpl.getMemos())
+				player.sendMessage(s);
+			}
+ 			
 			AmulyzeRPG.sendMessage(player, "Welcome back!");
-			player.performCommand("memos");
+			
 		}
 		
 		e.setJoinMessage(joinMessage);

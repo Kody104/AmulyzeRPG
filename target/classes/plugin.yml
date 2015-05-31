@@ -59,6 +59,11 @@ commands:
     usage: /memo <add | clear | delete | pop> <number | message>
     permission: AmulyzeRPG.memo
     permission-message: You don't have permission.
+  getclass:
+    description: Get the class of a player
+    usage: class <name>
+    permission: AmulyzeRPG.getclass
+    permission-message: You don't have permission.
     
 permissions:
   AmulyzeRPG.*:
@@ -76,6 +81,7 @@ permissions:
       AmulyzeRPG.adminroll: true
       AmulyzeRPG.sethome: true
       AmulyzeRPG.memos: true
+      AmulyzeRPG.getclass: true
   AmulyzeRPG.amchat:
     description: Toggles amulyze chat for player.
     default: true
@@ -111,4 +117,7 @@ permissions:
     default: true
   AmulyzeRPG.memos:
     description: Allows players to use memos
+    default: true
+  AmulyzeRPG.getclass:
+    description: Get the player's class
     default: true
