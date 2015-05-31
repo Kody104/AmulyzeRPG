@@ -45,6 +45,11 @@ public class GamePlayer implements Serializable{
 	private String Name; //The player's name
 	private int Lvl; //The player's current level
 	private Player player;
+	private double MaxHp;
+	private double Hp;
+	private double Atk;
+	private double Mag;
+	private double Amr;
 	
 	public GamePlayer(Player p) {
 		classType = null;
@@ -53,6 +58,10 @@ public class GamePlayer implements Serializable{
 		currentItems = new HashMap<Integer, RollItem>();
 		memos = new ArrayList<String>();
 		Name = p.getPlayerListName();
+		Hp = 20.0d;
+		Atk = 0.5d;
+		Mag = 0.5d;
+		Amr = 0.0d;
 	}
 	
 	public boolean addMemo(String memo) {
@@ -182,6 +191,41 @@ public class GamePlayer implements Serializable{
 	
 	public void setLvl(int Lvl) {
 		this.Lvl = Lvl;
+		switch(classType) {
+		case ARCHER:
+			MaxHp = (20) + (Lvl * 6.5d);
+			Atk = (0.5d) + (Lvl * 0.5d);
+			Mag = (0.5d) + (Lvl * 0.0d);
+			Amr = (0.0d) + (Lvl * 0.25d);
+			break;
+		case BESERKER:
+			MaxHp = (20) + (Lvl * 7.0d);
+			Atk = (0.5d) + (Lvl * 0.35d);
+			Mag = (0.5d) + (Lvl * 0.0d);
+			Amr = (0.0d) + (Lvl * 0.25d);
+			break;
+		case MAGE:
+			MaxHp = (20) + (Lvl * 5.5d);
+			Atk = (0.5d) + (Lvl * 0.15d);
+			Mag = (0.5d) + (Lvl * 0.5d);
+			Amr = (0.0d) + (Lvl * 0.25d);
+			break;
+		case ROGUE:
+			MaxHp = (20) + (Lvl * 5.0d);
+			Atk = (0.5d) + (Lvl * 0.5d);
+			Mag = (0.5d) + (Lvl * 0.25d);
+			Amr = (0.5d) + (Lvl * 0.25d);
+			break;
+		case WARRIOR:
+			MaxHp = 20 + (Lvl * 8.5d);
+			Atk = (0.5d) + (Lvl * 0.25d);
+			Mag = (0.5d) + (Lvl * 0.0d);
+			Amr = (0.5d) + (Lvl * 0.5d);
+			break;
+		default:
+			break;
+		
+		}
 	}
 	
 	public void setClassType(ClassType classType) {
@@ -240,6 +284,38 @@ public class GamePlayer implements Serializable{
 	
 	public void setMemos(ArrayList<String> memos) {
 		this.memos = memos;
+	}
+	
+	public void setMaxHp(double MaxHp) {
+		this.MaxHp = MaxHp;
+	}
+	
+	public void setHp(double Hp) {
+		this.Hp = Hp;
+	}
+	
+	public void setAmr(double Amr) {
+		this.Amr = Amr;
+	}
+	
+	public double getMaxHp() {
+		return MaxHp;
+	}
+	
+	public double getHp() {
+		return Hp;
+	}
+	
+	public double getAtk() {
+		return Atk;
+	}
+	
+	public double getMag() {
+		return Mag;
+	}
+	
+	public double getAmr() {
+		return Amr;
 	}
 
 }

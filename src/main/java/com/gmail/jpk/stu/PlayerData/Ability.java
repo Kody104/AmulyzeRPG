@@ -16,18 +16,19 @@ public class Ability implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private enum AbilityData {
-		HOOK(GamePlayer.ClassType.WARRIOR, 6000L, 25, 0.0f, 0.0f, 25, 125, "HOOK", "Drags your target to you and slows them for this long in seconds"),
-		ENRAGE(GamePlayer.ClassType.WARRIOR, 5000L, 25, 1.0f, 5.0f, 10, 50, "ENRAGE", "Increases your armor by "),
-		BLIND(GamePlayer.ClassType.ROGUE, 5000L, 25, 0.0f, 0.0f, 25, 125, "BLIND", "Blinds target for this long is second "),
-		AMBUSH(GamePlayer.ClassType.ROGUE, 6500L, 25, 0.0f, 0.0f, 0, 0, "AMBUSH", "Stealths you and multiplies your first attack in stealth by 1.5"),
-		LIGHTNING(GamePlayer.ClassType.MAGE, 5500L, 25, 0.0f, 0.0f, 0, 0, "LIGHTNING", "Strikes lightning at your target"),
-		FIREBALL(GamePlayer.ClassType.MAGE, 3000L, 25, 0.0f, 0.0f, 0, 0, "FIREBALL", "Send a fireball at your target"),
-		TELEPORT(GamePlayer.ClassType.MAGE, 7500L, 25, 0.0f, 0.0f, 0, 0, "TELEPORT", "Teleports you to your desired location"),
-		LIFESTEAL(GamePlayer.ClassType.BESERKER, 0L, 25, 0.0f, 0.0f, 0, 0, "LIFESTEAL", "You heal yourself when you strike an enemy"),
-		BESERKRAGE(GamePlayer.ClassType.BESERKER, 5000L, 25, 1.0f, 6.0f, 10, 50, "BESERK RAGE", "Increases your damage, but decreases your armor by "),
-		LEAP(GamePlayer.ClassType.BESERKER, 1500L, 25, 0.0f, 0.0f, 0, 0, "LEAP", "Instantly leaps ahead"),
-		BACKSTEP(GamePlayer.ClassType.ARCHER, 2500L, 25, 0.0f, 0.0f, 0, 0, "BACKSTEP", "Instantly steps back from target"),
-		POISONSHOT(GamePlayer.ClassType.ARCHER, 0L, 25, 0.0f, 0.0f, 0, 0, "POISONSHOT", "Shoots poison arrows with every shot");
+		HOOK(GamePlayer.ClassType.WARRIOR, 6000L, 25, 0.0f, 0.0f, 0.0f, 0.5f, 25, 125, "HOOK", "Drags your target to you and slows them for this long in seconds"),
+		ENRAGE(GamePlayer.ClassType.WARRIOR, 5000L, 25, 0.0f, 0.0f, 0.0f, 0.0f, 10, 50, "ENRAGE", "Increases your armor by 50%"),
+		BLIND(GamePlayer.ClassType.ROGUE, 5000L, 25, 0.0f, 0.25f, 0.0f, 0.0f, 25, 125, "BLIND", "Blinds target for this long is seconds "),
+		AMBUSH(GamePlayer.ClassType.ROGUE, 6500L, 25, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, "AMBUSH", "Stealths you and multiplies your first attack in stealth by 50%"),
+		LIGHTNING(GamePlayer.ClassType.MAGE, 5500L, 25, 0.0f, 0.0f, 1.0f, 0.0f, 0, 0, "LIGHTNING", "Strikes lightning at your target"),
+		FIREBALL(GamePlayer.ClassType.MAGE, 3000L, 25, 0.0f, 0.0f, 0.25f, 0.0f, 0, 0, "FIREBALL", "Send a fireball at your target"),
+		TELEPORT(GamePlayer.ClassType.MAGE, 7500L, 25, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, "TELEPORT", "Teleports you to your desired location"),
+		LIFESTEAL(GamePlayer.ClassType.BESERKER, 0L, 25, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, "LIFESTEAL", "You heal yourself for 15% of your damage on hit"),
+		BESERKRAGE(GamePlayer.ClassType.BESERKER, 5000L, 25, 0.0f, 0.0f, 0.0f, 0.0f, 10, 50, "BESERK RAGE", "Increases your damage by 30% and decreases your amr by the same"),
+		LEAP(GamePlayer.ClassType.BESERKER, 1500L, 25, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, "LEAP", "Instantly leaps ahead"),
+		BACKSTEP(GamePlayer.ClassType.ARCHER, 2500L, 25, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, "BACKSTEP", "Instantly steps back from target"),
+		POISONSHOT(GamePlayer.ClassType.ARCHER, 0L, 25, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, "POISONSHOT", "Shoots poison arrows with every shot"),
+		FLAMESHOT(GamePlayer.ClassType.ARCHER, 0L, 25, 0.0f, 0.0f, 0.0f ,0.0f,  0, 0, "FLAMESHOT", "Shoots flame arrows with every shot");
 		// TRISHOT(GamePlayer.ClassType.ARCHER, 0L, 25, 0.0f, 0.0f, 0, 0, "TRISHOT", "Shoots three arrows with every shot");
 		
 		
@@ -35,13 +36,15 @@ public class Ability implements Serializable{
 		private GamePlayer.ClassType neededClass;
 		private long cooldown;
 		private int rollChance;
-		private float minMultiplier;
-		private float maxMultiplier;
+		private float HpScale;
+		private float AtkScale;
+		private float MagScale;
+		private float AmrScale;
 		private int minTime;
 		private int maxTime;
 		
 		AbilityData(GamePlayer.ClassType neededClass, long cooldown, int rollChance,
-				float minMultiplier, float maxMultiplier, int minTime, int maxTime, String... lore) {
+				float HpScale, float AtkScale, float MagScale, float AmrScale, int minTime, int maxTime, String... lore) {
 			this.lore = new ArrayList<String>();
 			for(String s : lore) {
 				this.lore.add(s);
@@ -49,8 +52,10 @@ public class Ability implements Serializable{
 			this.neededClass = neededClass;
 			this.cooldown = cooldown;
 			this.rollChance = rollChance;
-			this.minMultiplier = minMultiplier;
-			this.maxMultiplier = maxMultiplier;
+			this.HpScale = HpScale;
+			this.AtkScale = AtkScale;
+			this.MagScale = MagScale;
+			this.AmrScale = AmrScale;
 			this.minTime = minTime;
 			this.maxTime = maxTime;
 		}
@@ -60,7 +65,10 @@ public class Ability implements Serializable{
 	private List<String> WhatIs; // Explains what the ability does
 	private GamePlayer.ClassType reqClassType; // The ability's required classtype
 	private long Cooldown;
-	private float Multiplier; // The variable of certain spells
+	private float HpScale;// The scale of the player's hp for damage
+	private float AtkScale;
+	private float MagScale;
+	private float AmrScale;
 	private int Duration; // Duration of certain spells
 	
 	public Ability(GamePlayer.ClassType playerType) {
@@ -91,16 +99,16 @@ public class Ability implements Serializable{
 		this.WhatIs = new ArrayList<String>();
 		this.reqClassType = a.neededClass;
 		this.Cooldown = a.cooldown;
+		this.HpScale = a.HpScale;
+		this.AtkScale = a.AtkScale;
+		this.MagScale = a.MagScale;
+		this.AmrScale = a.AmrScale;
 		/* Randomly generates a multiplier for the ability through the min and max */
-		this.Multiplier = (a.minMultiplier + (a.maxMultiplier - a.minMultiplier)) * r.nextFloat();
 		this.Duration = r.nextInt(((a.maxTime - a.minTime) + 1)) + a.minTime;
 	//	this.Duration = (a.minTime + (a.maxTime - a.minTime)) * r.nextLong();
 		if(this.WhatIs.isEmpty()) {
 			this.WhatIs.add(a.lore.get(0));
 			this.WhatIs.add(a.lore.get(1));
-			if(Multiplier != 0.0f) {
-				this.WhatIs.add(String.format("%.2f", Multiplier));
-			}
 			if(Duration != 0){
 				if(a.toString().equalsIgnoreCase("blind")) {
 					this.WhatIs.add(String.format("%d", (Duration / 20)));
@@ -134,6 +142,45 @@ public class Ability implements Serializable{
 		*/
 		}
 	
+	public boolean setAbility(String abilityName) {
+		Random r = new Random(System.currentTimeMillis());
+		AbilityData a = null;
+		for(int i = 0; i < AbilityData.values().length; i++) {
+			if(AbilityData.values()[i].toString().equalsIgnoreCase(abilityName)) {
+				a = AbilityData.values()[i];
+			}
+		}
+		if(a == null) {
+			return false;
+		}
+		this.Name = a.toString(); 
+		this.reqClassType = a.neededClass;
+		this.Cooldown = a.cooldown;
+		this.HpScale = a.HpScale;
+		this.AtkScale = a.AtkScale;
+		this.MagScale = a.MagScale;
+		this.AmrScale = a.AmrScale;
+		/* Randomly generates a multiplier for the ability through the min and max */
+		this.Duration = r.nextInt(((a.maxTime - a.minTime) + 1)) + a.minTime;
+	//	this.Duration = (a.minTime + (a.maxTime - a.minTime)) * r.nextLong();
+		this.WhatIs.clear();
+		this.WhatIs.add(a.lore.get(0));
+		this.WhatIs.add(a.lore.get(1));
+		if(Duration != 0){
+			if(a.toString().equalsIgnoreCase("blind")) {
+				this.WhatIs.add(String.format("%d", (Duration / 20)));
+			}
+			else if(a.toString().equalsIgnoreCase("hook")) {
+				this.WhatIs.add(String.format("%d", (Duration / 20)));
+			}
+			else {
+				this.WhatIs.add(String.format("%d", (Duration / 10)));
+			}
+			AmulyzeRPG.info(String.format("%d", Duration));
+		}
+		return true;
+	}
+	
 	public String getName() {
 		return Name;
 	}
@@ -150,8 +197,20 @@ public class Ability implements Serializable{
 		return Cooldown;
 	}
 	
-	public double getMultiplier() {
-		return Multiplier;
+	public float getHpScale() {
+		return HpScale;
+	}
+	
+	public float getAtkScale() {
+		return AtkScale;
+	}
+	
+	public float getMagScale() {
+		return MagScale;
+	}
+	
+	public float getAmrScale() {
+		return AmrScale;
 	}
 	
 	public int getDuration() {

@@ -73,6 +73,7 @@ permissions:
       AmulyzeRPG.setlvl: true
       AmulyzeRPG.setrole: true
       AmulyzeRPG.roll: true
+      AmulyzeRPG.adminroll: true
       AmulyzeRPG.sethome: true
       AmulyzeRPG.memos: true
   AmulyzeRPG.amchat:
@@ -102,6 +103,9 @@ permissions:
   AmulyzeRPG.roll:
     description: Rolls player's item
     default: true
+  AmulyzeRPG.adminroll:
+    description: Admin rolls an item
+    default: false
   AmulyzeRPG.sethome:
     description: Sets the player's respawn point
     default: true

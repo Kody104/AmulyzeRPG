@@ -13,11 +13,20 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
+import com.gmail.jpk.stu.PlayerData.GamePlayer;
 import com.gmail.jpk.stu.Recipes.RollItem;
 
 public class AbilityMethod {
 	
+	public static double PlayerSetMinecraftHealth(double Dmg, GamePlayer player) {
+		player.setHp(player.getMaxHp() - Dmg);
+		if(player.getHp() <= 0) 
+			return 0.0d;
+		return (player.getHp() * 20.0d) / player.getMaxHp();
+	}
+	
 	public static void HookPlayer(Player p, RollItem item) {
+		GamePlayer player = Global.getPlayer(p);
 		Block targetBlock = p.getTargetBlock(null, 30); // The block the player is targeting
 		for(Entity ent : targetBlock.getChunk().getEntities()) { // For the entities inside of the chunk
 			/* If the entity is alive, and the entity is within 2 blocks of the target block */
@@ -27,9 +36,13 @@ public class AbilityMethod {
 					if(ep.getUniqueId().equals(p.getUniqueId())) {
 						break;
 					}
+					
 				}
+				double Dmg = 0.0d;
+				Dmg = (item.getAbility().getAmrScale() * player.getAmr());
 				LivingEntity le = (LivingEntity) ent;
 				le.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, item.getAbility().getDuration(), 1));
+				le.setHealth(le.getHealth() - Dmg);
 				Vector vec = p.getLocation().getDirection().multiply(-2.0d); // Invert the player's direction
 				le.setVelocity(vec); // Give the inversion to the entity
 				Global.amChat(p, "You have hooked  " + le.getType());
@@ -100,7 +113,6 @@ public class AbilityMethod {
 	public static void PlayerLeap(Player p, RollItem item) {
 		Vector vec = p.getLocation().getDirection().multiply(1.5d); // Sets vector to player's direction * 2
 		p.setVelocity(vec); // Makes player vault in that direction
-		p.setNoDamageTicks(10); // To help player if they vault too high
 		Global.amChat(p, "You have leapt!");
 		item.setNextTime(System.currentTimeMillis() + item.getAbility().getCooldown());
 	}

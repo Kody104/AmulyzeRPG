@@ -366,14 +366,15 @@ public final class BasicListener implements Listener {
 					GamePlayer aPlayer = Global.getPlayer(attacker);
 					Player victim = (Player) le;
 					GamePlayer vPlayer = Global.getPlayer(victim);
-					double Dmg = e.getDamage();
+					double Dmg = aPlayer.getAtk();
+					AmulyzeRPG.info("Dmg: " + Dmg);
 					for(int i = 0; i < aPlayer.getCurrentItems().size(); i++) { // For all roll items
 						if(aPlayer.hasRollItem(i)) { // Safety check for null pointer
 							RollItem ri = aPlayer.getRollItem(i); // Get roll item
 							if(ri.getIsActive()) { // If that roll item is active
 								if(ri.getAbility().getReqClassType() == aPlayer.getClassType()) {
 									if(ri.getAbility().getName().equalsIgnoreCase("beserkrage")) {
-										Dmg += ri.getAbility().getMultiplier();
+										Dmg += (aPlayer.getAtk() * 0.30d);
 									}
 									if(ri.getAbility().getName().equalsIgnoreCase("ambush")) {
 										Dmg *= 1.5d;
@@ -382,8 +383,11 @@ public final class BasicListener implements Listener {
 								}
 							}
 							else if(ri.getAbility().getName().equalsIgnoreCase("lifesteal")) {
-								attacker.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 125, 0));
-								Global.amChat(attacker, String.format("Your attack is healing you!"));
+								double heal = Dmg * 0.15d;
+								if(attacker.getHealth() + heal <= 20) {
+									attacker.setHealth(attacker.getHealth() + heal);
+									Global.amChat(attacker, String.format("Your attack is healing you for %.2f!", heal));
+								}
 							}
 						}
 					}
@@ -394,10 +398,10 @@ public final class BasicListener implements Listener {
 								if(ri.getIsActive()) { // If that roll item is active
 									if(ri.getAbility().getReqClassType() == vPlayer.getClassType()) {
 										if(ri.getAbility().getName().equalsIgnoreCase("beserkrage")) {
-											Dmg += ri.getAbility().getMultiplier();
+											Dmg -= (vPlayer.getAmr() * 0.70d);
 										}
 										if(ri.getAbility().getName().equalsIgnoreCase("enrage")) {
-											Dmg -= ri.getAbility().getMultiplier();
+											Dmg -= (vPlayer.getAmr() * 1.50d);
 										}
 									}
 								}
@@ -439,7 +443,7 @@ public final class BasicListener implements Listener {
 						}
 						
 						if(ArrowTask.getElementalArrows().containsKey(arrow)) { // If the arrow is an elemental arrow
-							victim.addPotionEffect(new PotionEffect(ArrowTask.getElementalArrows().get(arrow), 75, 1)); // Add the element to the player
+							victim.addPotionEffect(new PotionEffect(ArrowTask.getElementalArrows().get(arrow), 75, 0)); // Add the element to the player
 							Global.amChat(victim, String.format("A %s arrow has hit you for \u00A74%.2f\u00A7f damage!", ArrowTask.getElementalArrows().get(arrow).getName().toLowerCase(), Dmg));
 							ArrowTask.getElementalArrows().remove(arrow); // Remove arrow from list of arrows
 							break;
@@ -479,7 +483,8 @@ public final class BasicListener implements Listener {
 				if(e.getDamager() instanceof Player) {
 					Player attacker = (Player) e.getDamager();
 					GamePlayer player = Global.getPlayer(attacker);
-					double Dmg = e.getDamage();
+					double Dmg = player.getAtk();
+					AmulyzeRPG.info("Dmg: " + Dmg);
 					if(player.hasActiveAbility()) { // If player has an active ability
 						for(int i = 0; i < player.getCurrentItems().size(); i++) { // For all roll items
 							if(player.hasRollItem(i)) { // Safety check for null pointer
@@ -487,7 +492,7 @@ public final class BasicListener implements Listener {
 								if(ri.getIsActive()) { // If that roll item is active
 									if(ri.getAbility().getReqClassType() == player.getClassType()) {
 										if(ri.getAbility().getName().equalsIgnoreCase("beserkrage")) { // If it's beserk rage
-											Dmg += ri.getAbility().getMultiplier();
+											Dmg += (player.getAtk() * 0.30d);
 										}
 										if(ri.getAbility().getName().equalsIgnoreCase("ambush")) {
 											Dmg *= 1.5d;
@@ -514,7 +519,7 @@ public final class BasicListener implements Listener {
 					}
 					
 					if(ArrowTask.getElementalArrows().containsKey((Arrow)e.getDamager())) { // If the arrow is an elemental arrow
-						le.addPotionEffect(new PotionEffect(ArrowTask.getElementalArrows().get(arrow), 75, 1)); // Add the arrow's element to the player
+						le.addPotionEffect(new PotionEffect(ArrowTask.getElementalArrows().get(arrow), 75, 0)); // Add the arrow's element to the player
 						ArrowTask.getElementalArrows().remove(arrow); // Remove the arrow from the list of arrows
 						break;
 					}
@@ -674,6 +679,10 @@ public final class BasicListener implements Listener {
 											if(!ArrowTask.getIsRunning()) { // If cleanup is already running, don't reinitiliaze it
 												new ArrowTask().runTaskLater(plugin, 250); // Else run it ~10 secs later
 											}
+										}
+										else if(item.getAbility().getName().equalsIgnoreCase("flameshot")) {
+											Arrow arrow = (Arrow) e.getProjectile();
+											arrow.setFireTicks(15);
 										}
 										// TODO: Figure out how to fire more than one arrow
 										/* else if(item.getAbility().getName().equalsIgnoreCase("trishot")) {
