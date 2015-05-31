@@ -19,7 +19,7 @@ import com.gmail.jpk.stu.Recipes.RollItem;
 public class AbilityMethod {
 	
 	public static double PlayerSetMinecraftHealth(double Dmg, GamePlayer player) {
-		player.setHp(player.getMaxHp() - Dmg);
+		player.setHp(player.getHp() - Dmg);
 		if(player.getHp() <= 0) 
 			return 0.0d;
 		return (player.getHp() * 20.0d) / player.getMaxHp();

@@ -27,11 +27,7 @@ public abstract class BasicCommand implements CommandExecutor {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args) {
-		if (performCommand(sender, args)) {
-			return true;
-		} 
-		
-		return false;
+		return performCommand(sender, args);
 	}
 	
 	public AmulyzeRPG getPlugin() {

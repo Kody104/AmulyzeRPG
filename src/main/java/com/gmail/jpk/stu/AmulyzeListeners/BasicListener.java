@@ -312,8 +312,13 @@ public final class BasicListener implements Listener {
 					GamePlayer aPlayer = Global.getPlayer(attacker);
 					Player victim = (Player) le;
 					GamePlayer vPlayer = Global.getPlayer(victim);
-					double Dmg = aPlayer.getAtk();
-					AmulyzeRPG.info("Dmg: " + Dmg);
+					double Dmg = 0.0d;
+					if(aPlayer.getAtk() >= (vPlayer.getAmr() + 0.5d)) {
+						Dmg = aPlayer.getAtk() - vPlayer.getAmr();
+					}
+					else {
+						Dmg = 0.5d;
+					}
 					for(int i = 0; i < aPlayer.getCurrentItems().size(); i++) { // For all roll items
 						if(aPlayer.hasRollItem(i)) { // Safety check for null pointer
 							RollItem ri = aPlayer.getRollItem(i); // Get roll item
@@ -354,53 +359,64 @@ public final class BasicListener implements Listener {
 							}
 						}
 					}
-					e.setDamage(Dmg);
+					e.setDamage(0);
+					victim.setHealth(AbilityMethod.PlayerSetMinecraftHealth(Dmg, vPlayer));
+					AmulyzeRPG.info("Dmg: " + Dmg + "  MaxHp: " + vPlayer.getMaxHp() + "  Hp: " + vPlayer.getHp());
 					
 					Global.amChat(attacker, String.format("You hit %s for \u00A74%.2f\u00A7f damage!", victim.getName(), Dmg));
 					Global.amChat(victim, String.format("%s has hit you for \u00A74%.2f\u00A7f damage!", attacker.getName(), Dmg));
 	
 					break;
 				}
-				else {
-					if(e.getDamager() instanceof Fireball) {
-						Player victim = (Player) le;
-						double Dmg = e.getDamage();
-						e.setDamage(Dmg);
-						
-						Global.amChat(victim, String.format("A fireball has hit you for \u00A74%.2f\u00A7f damage", Dmg));
+				else if(e.getDamager() instanceof Fireball) {
+					Player victim = (Player) le;
+					double Dmg = e.getDamage();
+					e.setDamage(Dmg);
+					
+					Global.amChat(victim, String.format("A fireball has hit you for \u00A74%.2f\u00A7f damage", Dmg));
+					break;
+				}
+				else if(e.getDamager() instanceof LightningStrike) {
+					Player victim = (Player) le;
+					double Dmg = e.getDamage();
+					e.setDamage(Dmg);
+					Global.amChat(victim, String.format("Lightning has hit you for \u00A74%.2f\u00A7f damage!", Dmg));
+					break;
+				}
+				else if(e.getDamager() instanceof Arrow) {
+					Player victim = (Player) le;
+					double Dmg = e.getDamage();
+					e.setDamage(Dmg);
+					Arrow arrow = (Arrow) e.getDamager();
+					
+					if(arrow.getShooter() instanceof Player) {
+						Player attacker = (Player) arrow.getShooter();
+						Global.amChat(attacker, String.format("Your arrow has hit %s for \u00A74%.2f\u00A7f damage!", victim.getName(), Dmg));
+					}
+					
+					if(ArrowTask.getElementalArrows().containsKey(arrow)) { // If the arrow is an elemental arrow
+						victim.addPotionEffect(new PotionEffect(ArrowTask.getElementalArrows().get(arrow), 75, 0)); // Add the element to the player
+						Global.amChat(victim, String.format("A %s arrow has hit you for \u00A74%.2f\u00A7f damage!", ArrowTask.getElementalArrows().get(arrow).getName().toLowerCase(), Dmg));
+						ArrowTask.getElementalArrows().remove(arrow); // Remove arrow from list of arrows
 						break;
 					}
-					else if(e.getDamager() instanceof LightningStrike) {
-						Player victim = (Player) le;
-						double Dmg = e.getDamage();
-						e.setDamage(Dmg);
-						Global.amChat(victim, String.format("Lightning has hit you for \u00A74%.2f\u00A7f damage!", Dmg));
+					else {
+						Global.amChat(victim, String.format("An arrow has hit you for \u00A74%.2f\u00A7f damage!", Dmg));
 						break;
-					}
-					else if(e.getDamager() instanceof Arrow) {
-						Player victim = (Player) le;
-						double Dmg = e.getDamage();
-						e.setDamage(Dmg);
-						Arrow arrow = (Arrow) e.getDamager();
-						
-						if(arrow.getShooter() instanceof Player) {
-							Player attacker = (Player) arrow.getShooter();
-							Global.amChat(attacker, String.format("Your arrow has hit %s for \u00A74%.2f\u00A7f damage!", victim.getName(), Dmg));
-						}
-						
-						if(ArrowTask.getElementalArrows().containsKey(arrow)) { // If the arrow is an elemental arrow
-							victim.addPotionEffect(new PotionEffect(ArrowTask.getElementalArrows().get(arrow), 75, 0)); // Add the element to the player
-							Global.amChat(victim, String.format("A %s arrow has hit you for \u00A74%.2f\u00A7f damage!", ArrowTask.getElementalArrows().get(arrow).getName().toLowerCase(), Dmg));
-							ArrowTask.getElementalArrows().remove(arrow); // Remove arrow from list of arrows
-							break;
-						}
-						else {
-							Global.amChat(victim, String.format("An arrow has hit you for \u00A74%.2f\u00A7f damage!", Dmg));
-							break;
-						}
 					}
 				}
-				break;
+				else {
+					Player victim = (Player) le;
+					GamePlayer player = Global.getPlayer(victim);
+					double Dmg = 0;
+					if(e.getDamage() >= (player.getAmr() + 0.5d)) {
+						Dmg = e.getDamage() - player.getAmr();
+					}
+					else {
+						Dmg = 0.5d; //TODO: Work mob forumla for damage
+					}
+				}
+			break;
 			/*
 			case SHEEP:
 				break;

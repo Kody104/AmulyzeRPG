@@ -44,10 +44,77 @@ public class Roll extends BasicCommand {
 				return true;
 			}
 		}
+		else if(args.length == 1) {
+			if(sender instanceof Player) {
+				Player p = (Player) sender;
+				if(p.hasPermission("AmulyzeRPG.adminroll")) {
+					GamePlayer player = Global.getPlayer(p);
+					if(player.getClassType() != null) {
+						if(adminRollItem(p, args[0])) {
+							AmulyzeRPG.sendMessage(p, "This item has had it's ability rolled!");
+							return true;
+						}
+						else {
+							AmulyzeRPG.sendMessage(p, "Couldn't find ability!");
+							return true;
+						}
+					}
+					else {
+						AmulyzeRPG.sendMessage(p, "You need to use /setclass and choose your class.");
+						return true;
+					}
+				}
+				else {
+					AmulyzeRPG.sendMessage(p, "You don't have permission.");
+					return true;
+				}
+			}
+			else {
+				AmulyzeRPG.sendMessage(sender, SENDER_NOT_PLAYER);
+				return true;
+			}
+		}
 		else {
 			AmulyzeRPG.sendMessage(sender, "This command takes zero arguments.");
 			return true;
 		}		
+	}
+	
+	private boolean adminRollItem(Player p, String abilityName) {
+		if(p.getItemInHand().hasItemMeta()) { // Safety check for null
+			ItemStack i = p.getItemInHand(); // Item in hand
+			GamePlayer player = Global.AllPlayers.get(p.getUniqueId());
+			if(player.getClassType() != null){
+				if(i.getItemMeta().getDisplayName().equalsIgnoreCase("ability") || i.getItemMeta().getDisplayName().equalsIgnoreCase("roll item")) { // If the item is ours
+					if(i.getType() == Material.BOW && (player.getClassType() != GamePlayer.ClassType.ARCHER)) {
+						AmulyzeRPG.sendMessage(p, "You can't roll this unless you are an archer!");
+						return false;
+					}
+					Ability gen = new Ability(player.getClassType());
+					if(gen.setAbility(abilityName)) {
+						RollItem rolled = new RollItem(i, gen);
+						if(player.addRollItem(p.getInventory().getHeldItemSlot(), rolled)) {
+							ItemMeta meta = i.getItemMeta();
+							meta.setLore(null);
+							i.setItemMeta(meta); // Set item lore
+							meta.setLore(rolled.getAbility().getWhatis());
+							meta.setDisplayName("ABILITY");
+							i.setItemMeta(meta); // Sets item lore
+							for(String s : gen.getWhatis()) {
+								p.sendMessage(s);
+							}
+						}
+						else {
+							p.sendMessage("You need to drop one of your current roll items.");
+							return false;
+						}
+						return true;
+					}
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 	
 	private boolean rollItem(Player p) {

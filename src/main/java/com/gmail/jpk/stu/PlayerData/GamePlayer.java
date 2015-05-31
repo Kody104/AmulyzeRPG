@@ -51,7 +51,8 @@ public class GamePlayer implements Serializable{
 		memos = new ArrayList<String>();
 		Name = p.getPlayerListName();
 		player = p;
-		Hp = 20.0d;
+		MaxHp = 20.0d;
+		Hp = MaxHp;
 		Atk = 0.5d;
 		Mag = 0.5d;
 		Amr = 0.0d;
@@ -200,7 +201,7 @@ public class GamePlayer implements Serializable{
 		case MAGE:
 			MaxHp = (20) + (Lvl * 5.5d);
 			Atk = (0.5d) + (Lvl * 0.15d);
-			Mag = (0.5d) + (Lvl * 0.5d);
+			Mag = (0.5d) + (Lvl * 0.6d);
 			Amr = (0.0d) + (Lvl * 0.25d);
 			break;
 		case ROGUE:
