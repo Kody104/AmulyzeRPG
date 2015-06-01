@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
@@ -25,17 +26,20 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -43,9 +47,10 @@ import org.bukkit.util.Vector;
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
+import com.gmail.jpk.stu.Recipes.Recipes;
 import com.gmail.jpk.stu.Recipes.RollItem;
-import com.gmail.jpk.stu.Roles.Role;
-import com.gmail.jpk.stu.Roles.RoleTask;
+import com.gmail.jpk.stu.Recipes.SpecialItem;
+import com.gmail.jpk.stu.Roles.Role.RoleType;
 
 /**
  * 
@@ -74,11 +79,48 @@ public final class BasicListener implements Listener {
 		this.random = new Random();
 	}
 	
+	@EventHandler
+	public void onPlayerConsume(PlayerItemConsumeEvent e) {
+		Player player = e.getPlayer();
+		ItemStack item = e.getItem();
+		
+		if (item.getItemMeta().getDisplayName().contains("Bread")) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 180, 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 90, 1));
+			return;
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerCraft(CraftItemEvent e) {
+		Player player = (Player) e.getWhoClicked();
+		GamePlayer gpl = Global.getPlayer(player);
+		
+		if (e.getCurrentItem().equals(SpecialItem.farmersBread())) {
+			if (gpl.getRoleType() != RoleType.FARMER) {
+				AmulyzeRPG.sendMessage(player, ChatColor.RED + "You must be a farmer to use this recipe.");
+				e.setCancelled(true);
+				return;
+			}
+		}
+	}
 	
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
-		//if (gpl.hasRole())
+		Player player = e.getPlayer();
+		GamePlayer gpl = Global.getPlayer(player);
+		Block block = e.getBlock();
+		Material material = block.getType();
+	
+		if (!gpl.hasRoleType()) {
+			return;
+		}
+		
+		e.setCancelled(true); //Prevent natural dropping.
+		block.setType(Material.AIR); //Make it appear the block broke
+		
 	} 
+
 	
 	/**
 	 * 

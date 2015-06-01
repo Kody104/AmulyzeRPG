@@ -19,8 +19,8 @@ public enum RoleTask {
 	TEST_TASK(4, 5, new ItemStack(Material.DIAMOND, 1)),
 	TEST_TASK_2(1000, 5);
 	
-	private int maxLevel; //The maximum level the player can be to earn EXP 
 	private int expGiven; //The experience this task gives
+	private int maxLevel; //The maximum level the player can be to earn EXP 
 	private ItemStack[] items; //The items this task gives
 
 	RoleTask(int expGiven, int maxLevel, ItemStack... items) {

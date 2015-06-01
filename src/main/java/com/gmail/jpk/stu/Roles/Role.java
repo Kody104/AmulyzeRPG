@@ -3,15 +3,16 @@ package com.gmail.jpk.stu.Roles;
 import java.io.Serializable;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
+import com.gmail.jpk.stu.AmulyzeRPG.Global;
 
 public class Role implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	public enum RoleType {
-		ALCHEMIST, FARMER, MINER, ENGINEER;
+		FARMER;
 	}
 	
 	private RoleType roleType; //What role this player is
@@ -21,7 +22,7 @@ public class Role implements Serializable {
 	
 	public Role(RoleType type) {
 		this.roleType = type;
-		this.level = 0;
+		this.level = 1;
 		this.expGained = 0;
 		this.expNeeded = calcExpNeeded();
 	}
@@ -31,23 +32,28 @@ public class Role implements Serializable {
 		return (int) raw;
 	}
 	
-	public void grantExperience(Player player, int amount) {
-		expGained += amount;
-		
+	public void performRoleTask(Player player, RoleTask task) {
+		int exp = task.getExpGiven();
+		ItemStack[] stack = task.getItems();
+		player.getInventory().addItem(stack);
+		expGained += exp;
+		Global.amChat(player, "Experience gained: " + expGained);
+		updateLevel(player);
+	}
+	
+	public void updateLevel(Player player) {
 		while (expGained >= expNeeded) {
 			level++;
+			
+			expGained -= expNeeded;
 			expNeeded = calcExpNeeded();
+			expGained = expGained <= 0 ? 0 : expGained;
 			
 			switch (level) {
 				default:
-					AmulyzeRPG.sendMessage(player, "Congratulations! You have reached level " + level + " in the " + roleType + " role!");
-				break;
+					player.sendMessage("Congratulations! You have reached " + roleType + " level " + level);
 			}
-		}		
-	}
-	
-	public void performRoleTask(Player player, RoleTask task) {
-		
+		}
 	}
 	
 	public RoleType getRoleType() {
@@ -62,7 +68,17 @@ public class Role implements Serializable {
 		return expNeeded;
 	}
 	
+	public int getLevel() {
+		return level;
+	}
+	
 	public void setRoleType(RoleType type) {
 		this.roleType = type;
+	}
+	
+	public void setLevel(int level) {
+		this.level = level;
+		this.expGained = 0;
+		this.expNeeded = level + calcExpNeeded();
 	}
 }
