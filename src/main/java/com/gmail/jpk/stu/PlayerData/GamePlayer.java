@@ -9,9 +9,13 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import com.gmail.jpk.stu.PlayerData.skills.Alchemy;
+import com.gmail.jpk.stu.PlayerData.skills.Farming;
+import com.gmail.jpk.stu.PlayerData.skills.Mining;
+import com.gmail.jpk.stu.PlayerData.skills.Skill;
+import com.gmail.jpk.stu.PlayerData.skills.Skill.Skills;
+import com.gmail.jpk.stu.PlayerData.skills.SkillTask;
 import com.gmail.jpk.stu.Recipes.RollItem;
-import com.gmail.jpk.stu.Roles.Role;
-import com.gmail.jpk.stu.Roles.Role.RoleType;
 
 /**
  * The GamePlayer class is a representation of the player
@@ -31,12 +35,14 @@ public class GamePlayer implements Serializable {
 	public static int memoCap = 10; //The maximum number of memos a player can set
 	
 	private ClassType classType; //The player's class (type)
-	private Role role;
+	private List<Skill> skills;
 	private Options options; //The player's options
 	private Map<Integer, RollItem> currentItems;
 	private List<String> memos; //reminders this player has set
 	private String Name; //The player's name
 	private int Lvl; //The player's current level
+	
+	
 	private double MaxHp;
 	private double Hp;
 	private double Atk;
@@ -45,7 +51,10 @@ public class GamePlayer implements Serializable {
 	
 	public GamePlayer(Player p) {
 		classType = null;
-		role = new Role(null);
+		skills = new ArrayList<Skill>();
+		skills.add(new Alchemy());
+		skills.add(new Farming());
+		skills.add(new Mining());
 		options = new Options();
 		currentItems = new HashMap<Integer, RollItem>();
 		memos = new ArrayList<String>();
@@ -61,11 +70,19 @@ public class GamePlayer implements Serializable {
 		if (memos.size() >= memoCap) {
 			return false;
 		} 
-		else {
-			memos.add(memo);
-		}
 		
+		memos.add(memo);
 		return true;
+	}
+	
+	public boolean addRollItem(int index, RollItem i) {
+		if(index < 4) {
+			currentItems.put(index, i);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public void clearMemos() {
@@ -90,6 +107,10 @@ public class GamePlayer implements Serializable {
 		}
 		
 		return true;
+	}
+	
+	public void performSkillTask(Player player, Skill skill, SkillTask task) {
+		skill.performSkillTask(player, task);
 	}
 	
 	public String getPlayerName() {
@@ -121,22 +142,6 @@ public class GamePlayer implements Serializable {
 			default:
 				return ChatColor.WHITE;
 		}
-	}
-	
-	public boolean hasRoleType() {
-		return (role.getRoleType() != null);
-	}
-	
-	public Role getRole() {
-		return role;
-	}
-	
-	public RoleType getRoleType() {
-		return role.getRoleType();
-	}
-	
-	public void setRoleType(RoleType type) {
-		this.role.setRoleType(type);
 	}
 	
 	public int getLvl() {
@@ -186,10 +191,6 @@ public class GamePlayer implements Serializable {
 		return memos;
 	}
 	
-	public void setRole(Role role) {
-		this.role = role;
-	}
-	
 	public void setLvl(int Lvl) {
 		this.Lvl = Lvl;
 		switch(classType) {
@@ -232,10 +233,6 @@ public class GamePlayer implements Serializable {
 	public void setClassType(ClassType classType) {
 		this.classType =  classType;
 	}
-	
-	public void deleteRoleType() {
-		role.setRoleType(null);
-	}
 
 	public void setInfoOn(boolean InfoOn) {
 		this.options.InfoOn = InfoOn;
@@ -250,16 +247,6 @@ public class GamePlayer implements Serializable {
 	
 	public void deleteRollItem(int index) {
 		currentItems.remove(index);
-	}
-	
-	public boolean addRollItem(int index, RollItem i) {
-		if(index < 4) {
-			currentItems.put(index, i);
-			return true;
-		}
-		else {
-			return false;
-		}
 	}
 	
 	public Map<Integer, RollItem> getCurrentItems() {
@@ -300,6 +287,19 @@ public class GamePlayer implements Serializable {
 	
 	public double getAmr() {
 		return Amr;
+	}
+	
+	public Skill getSkill(Skills skill) {
+		switch (skill) {
+			case ALCHEMY:
+				return skills.get(0);
+			case FARMING:
+				return skills.get(1);
+			case MINING:
+				return skills.get(2);
+			default:
+				return null;
+		}
 	}
 
 }

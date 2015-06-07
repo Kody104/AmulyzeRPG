@@ -9,6 +9,11 @@ commands:
     usage: /amchat
     permission: AmulyzeRPG.amchat
     permission-message: You don't have permission. Contact an admin.
+  getclass:
+    description: Get the class of a player
+    usage: class <name>
+    permission: AmulyzeRPG.getclass
+    permission-message: You don't have permission.
   getlvl:
     description: Gets player's lvl.
     usage: /getlvl <player>
@@ -19,50 +24,35 @@ commands:
     usage: /global <message>
     permission: AmulyzeRPG.global
     permission-message: If you see this, you have probably been silenced.
+  memos:
+    description: Allows the player to manage memos
+    usage: /memo <add | clear | delete | pop> <number | message>
+    permission: AmulyzeRPG.memo
+    permission-message: You don't have permission.
   quitclass:
     description: Quits player's lvl.
     usage: /quitclass
     permission: AmulyzeRPG.quitclass
-    permission-message: You don't have permission.
-  quitrole:
-    description: Quits player's role
-    usage: /quitrole
-    permission: AmulyzeRPG.quitrole
-    permission-message: You don't have permission.
-  setclass:
-    description: Sets the player's classtype
-    usage: /setclass <class>
-    permission: AmulyzeRPG.setclass
-    permission-message: You don't have permission.
-  setlvl:
-    description: Sets player's lvl.
-    usage: /setlvl <player>
-    permission: AmulyzeRPG.setlvl
-    permission-message: You don't have permission.
-  setrole:
-    description: Sets the player's role
-    usage: /setrole <role>
-    permission: AmulyzeRPG.setrole
     permission-message: You don't have permission.
   roll:
     description: Rolls player's item
     usage: /roll
     permission: AmulyzeRPG.roll
     permission-message: You don't have permission.
+  setclass:
+    description: Sets the player's classtype
+    usage: /setclass <class>
+    permission: AmulyzeRPG.setclass
+    permission-message: You don't have permission.
   sethome:
     description: Sets the player's respawn point
     usage: /sethome
     permission: AmulyzeRPG.sethome
     permission-message: You don't have permission.
-  memos:
-    description: Allows the player to manage memos
-    usage: /memo <add | clear | delete | pop> <number | message>
-    permission: AmulyzeRPG.memo
-    permission-message: You don't have permission.
-  getclass:
-    description: Get the class of a player
-    usage: class <name>
-    permission: AmulyzeRPG.getclass
+  setlvl:
+    description: Sets player's lvl.
+    usage: /setlvl <player>
+    permission: AmulyzeRPG.setlvl
     permission-message: You don't have permission.
     
 permissions:
@@ -73,10 +63,8 @@ permissions:
       AmulyzeRPG.getlvl: true
       AmulyzeRPG.global: true
       AmulyzeRPG.quitclass: true
-      AmulyzeRPG.quitrole: true
       AmulyzeRPG.setclass: true
       AmulyzeRPG.setlvl: true
-      AmulyzeRPG.setrole: true
       AmulyzeRPG.roll: true
       AmulyzeRPG.adminroll: true
       AmulyzeRPG.sethome: true
@@ -94,18 +82,12 @@ permissions:
   AmulyzeRPG.quitclass:
     description: Quits player's class
     default: true
-  AmulyzeRPG.quitrole:
-    description: Quits player's role
-    default: true
   AmulyzeRPG.setclass:
     description: Sets player's class
     default: true
   AmulyzeRPG.setlvl:
     description: Sets player's lvl.
     default: false
-  AmulyzeRPG.setrole:
-    description: Allows the player to set their role
-    default: true
   AmulyzeRPG.roll:
     description: Rolls player's item
     default: true

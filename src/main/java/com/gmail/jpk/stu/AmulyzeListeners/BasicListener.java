@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -47,10 +48,10 @@ import org.bukkit.util.Vector;
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 import com.gmail.jpk.stu.AmulyzeRPG.Global;
 import com.gmail.jpk.stu.PlayerData.GamePlayer;
-import com.gmail.jpk.stu.Recipes.Recipes;
+import com.gmail.jpk.stu.PlayerData.skills.Skill;
+import com.gmail.jpk.stu.PlayerData.skills.Skill.Skills;
+import com.gmail.jpk.stu.PlayerData.skills.SkillTask;
 import com.gmail.jpk.stu.Recipes.RollItem;
-import com.gmail.jpk.stu.Recipes.SpecialItem;
-import com.gmail.jpk.stu.Roles.Role.RoleType;
 
 /**
  * 
@@ -83,12 +84,6 @@ public final class BasicListener implements Listener {
 	public void onPlayerConsume(PlayerItemConsumeEvent e) {
 		Player player = e.getPlayer();
 		ItemStack item = e.getItem();
-		
-		if (item.getItemMeta().getDisplayName().contains("Bread")) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 180, 1));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 90, 1));
-			return;
-		}
 	}
 	
 	@EventHandler
@@ -96,13 +91,7 @@ public final class BasicListener implements Listener {
 		Player player = (Player) e.getWhoClicked();
 		GamePlayer gpl = Global.getPlayer(player);
 		
-		if (e.getCurrentItem().equals(SpecialItem.farmersBread())) {
-			if (gpl.getRoleType() != RoleType.FARMER) {
-				AmulyzeRPG.sendMessage(player, ChatColor.RED + "You must be a farmer to use this recipe.");
-				e.setCancelled(true);
-				return;
-			}
-		}
+
 	}
 	
 	@EventHandler
@@ -110,15 +99,119 @@ public final class BasicListener implements Listener {
 		Player player = e.getPlayer();
 		GamePlayer gpl = Global.getPlayer(player);
 		Block block = e.getBlock();
-		Material material = block.getType();
-	
-		if (!gpl.hasRoleType()) {
+		Skill farming = gpl.getSkill(Skills.FARMING);
+		Skill mining = gpl.getSkill(Skills.MINING);
+		Skill alchemy = gpl.getSkill(Skills.ALCHEMY);
+		
+		switch (block.getType()) {
+			case CARROT:
+				if (block.getState().getData().toString().contains("7")) {
+					gpl.performSkillTask(player, farming, SkillTask.FARM_CARROT);
+				}
+
+			break;
+			
+			case COCOA:
+				gpl.performSkillTask(player, farming, SkillTask.FARM_COCOA);
+			break;
+			
+			case COAL_ORE:
+				gpl.performSkillTask(player, mining, SkillTask.MINE_COAL);
+			break;
+			
+			case CROPS:
+				if (block.getState().getData().toString().contains("7")) {
+					gpl.performSkillTask(player, farming, SkillTask.FARM_WHEAT);
+				}
+			break;
+			
+			case DIAMOND_ORE:
+				gpl.performSkillTask(player, mining, SkillTask.MINE_DIAMOND);
+			break;
+			
+			case GOLD_ORE:
+				gpl.performSkillTask(player, mining, SkillTask.MINE_GOLD);
+			break;
+			
+			//EXPERIMENTAL
+			case GRAVEL:
+				Location location = block.getLocation();
+				double x = location.getX();
+				double y = location.getY();
+				double z = location.getZ();
+				
+				for (int dy = (int) y - 4; dy < y + 4; dy++) {
+					for (int dx = (int) x - 4; dx < x + 4; dx++) {
+						for (int dz = (int) z - 4; dz < z + 4; dz++) {
+							Block cblock = block.getLocation(new Location(block.getWorld(), dx, dy, dz)).getBlock();
+							if (cblock.getType() == Material.GRAVEL) {
+								cblock.breakNaturally();
+							}
+						}
+					}
+				}
+				
+				
 			return;
+			
+			case LAPIS_ORE:
+				gpl.performSkillTask(player, mining, SkillTask.MINE_LAPIS);
+			break;
+			
+			case IRON_ORE:
+				gpl.performSkillTask(player, mining, SkillTask.MINE_IRON);
+			break;
+				
+			case MELON_BLOCK:
+				gpl.performSkillTask(player, farming, SkillTask.FARM_MELON);
+			break;
+
+			case NETHER_STALK:
+				gpl.performSkillTask(player, alchemy, SkillTask.FARM_WARTS);
+			break;
+			
+			case BROWN_MUSHROOM:
+			case RED_MUSHROOM:
+				gpl.performSkillTask(player, farming, SkillTask.FARM_MUSHROOM);
+			break;
+				
+			case POTATO:
+				if (block.getState().getData().toString().contains("7")) {
+					gpl.performSkillTask(player, farming, SkillTask.FARM_POTATO);
+				}
+			break;
+				
+			case PUMPKIN:
+				gpl.performSkillTask(player, farming, SkillTask.FARM_PUMPKIN);
+			break;
+			
+			case REDSTONE_ORE:
+				gpl.performSkillTask(player, mining, SkillTask.MINE_REDSTONE);
+			break;
+				
+			//EXPERIMENTAL future plans
+			case WOOD:
+				Location loc = block.getLocation();
+				double dx = loc.getX();
+				double dz = loc.getZ();
+				
+				for (double dy = loc.getY() - 5; dy < 10; dy++) {
+					Block cblock = block.getLocation(new Location(block.getWorld(), dx, dy, dz)).getBlock();
+					if (cblock.getType() == Material.WOOD) {
+						cblock.breakNaturally();
+					}
+				}
+				
+				
+			return;
+			
+			default:
+				break;
 		}
 		
-		e.setCancelled(true); //Prevent natural dropping.
-		block.setType(Material.AIR); //Make it appear the block broke
-		
+		e.setCancelled(true);
+		block.setType(Material.AIR); //Make the block look like it broke
+		//TODO Find a better way to give back normal drops. Otherway was way to excessive.
 	} 
 
 	
@@ -244,12 +337,12 @@ public final class BasicListener implements Listener {
 		if (message.equals(message.toUpperCase())) //If the player is using caps, the range will be further.
 			range = 100;
 
-		AmulyzeRPG.sendMessage(sender, "<" + player.getPlayerName() + "> " + message); //Sends chatter what they sent		
+		sender.sendMessage("<" + player.getPlayerName() + "> " + message); //Sends chatter what they sent		
 		
 		for(Entity entity : sender.getNearbyEntities(range, range, range)){ // For every entity near player with 50 blocks
 			if(entity instanceof Player) { // If entity is a player
 				Player recieve = (Player) entity;
-				AmulyzeRPG.sendMessage(recieve, "<" + player.getPlayerName() + "> " + e.getMessage()); // Send player the chat
+				recieve.sendMessage("<" + player.getPlayerName() + "> " + e.getMessage()); // Send player the chat
 				InRange.add(recieve); // Add the player to a collection
 			}
 		}

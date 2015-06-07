@@ -105,7 +105,7 @@ public class Global {
 	 */
 	public static void amChat(Player player, String text) {
 		if (AllPlayers.get(player.getUniqueId()).getInfoOn()) {
-			AmulyzeRPG.sendMessage(player, ChatColor.LIGHT_PURPLE + text);
+			AmulyzeRPG.sendMessage(player, text);
 		} 
 	}
 }

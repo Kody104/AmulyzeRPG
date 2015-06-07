@@ -1,10 +1,14 @@
 package com.gmail.jpk.stu.Recipes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
 
@@ -14,7 +18,9 @@ import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
  * @author Kody104, TSHC
  * @since AmulyzeRPG 0.1
  */
-public class Recipes {
+public final class Recipes {
+	
+	private Recipes() {} //This class can not be instantiated
 	
 	public static ShapelessRecipe seeds = new ShapelessRecipe(new ItemStack(Material.SEEDS, 1)).addIngredient(Material.WHEAT);
 	
@@ -40,16 +46,25 @@ public class Recipes {
 		bow_recipe.shape("DD ", "D D", "DD ");
 		bow_recipe.setIngredient('D', Material.DIAMOND);
 		
-		AmulyzeRPG.info("Creating Farmer's Bread");
-		ShapedRecipe farmersBread = new ShapedRecipe(SpecialItem.farmersBread());
-		farmersBread.shape("WWW", "SBS", "WWW").setIngredient('W', Material.WHEAT).setIngredient('S', Material.SUGAR).setIngredient('B', Material.WATER_BUCKET);
-		
 		server.addRecipe(recipe);
 		server.addRecipe(bow_recipe);
 		server.addRecipe(seeds);
-		server.addRecipe(farmersBread);
 		
 		AmulyzeRPG.info("All Custom Items and Recipes successful created!");
 	}
 	
+	public static ItemStack createItem(ItemStack stack, String displayName, String... lore) {
+		ItemMeta meta = stack.getItemMeta();
+		List<String> loredata = new ArrayList<String>();
+		
+		for (String s : lore) {
+			loredata.add(s);
+		}
+		
+		meta.setDisplayName(displayName);
+		meta.setLore(loredata);
+		stack.setItemMeta(meta);
+		
+		return stack;
+	}
 }

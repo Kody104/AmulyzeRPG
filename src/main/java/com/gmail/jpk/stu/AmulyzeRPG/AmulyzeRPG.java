@@ -10,12 +10,10 @@ import com.gmail.jpk.stu.AmulyzeCommands.GetLevel;
 import com.gmail.jpk.stu.AmulyzeCommands.GlobalCommand;
 import com.gmail.jpk.stu.AmulyzeCommands.Memos;
 import com.gmail.jpk.stu.AmulyzeCommands.QuitClass;
-import com.gmail.jpk.stu.AmulyzeCommands.QuitRole;
 import com.gmail.jpk.stu.AmulyzeCommands.Roll;
 import com.gmail.jpk.stu.AmulyzeCommands.SetClass;
 import com.gmail.jpk.stu.AmulyzeCommands.SetHome;
 import com.gmail.jpk.stu.AmulyzeCommands.SetLevel;
-import com.gmail.jpk.stu.AmulyzeCommands.SetRole;
 import com.gmail.jpk.stu.AmulyzeListeners.BasicListener;
 import com.gmail.jpk.stu.Recipes.Recipes;
 
@@ -31,7 +29,7 @@ import com.gmail.jpk.stu.Recipes.Recipes;
 
 public final class AmulyzeRPG extends JavaPlugin {
 	
-	public static final String TITLE = "<\u00A75[AmulyzeRPG]\u00A7f>: "; //Unicode because it's easier to put into a string then continually separating them.
+	public static final String TITLE = "<\u00A75[Amulyze]\u00A7f> "; //Unicode because it's easier to put into a string then continually separating them.
 	
 	/**
 	 * This method initiates the plugins; it registers the
@@ -53,11 +51,9 @@ public final class AmulyzeRPG extends JavaPlugin {
 		this.getCommand("global").setExecutor(new GlobalCommand(this));
 		this.getCommand("memos").setExecutor(new Memos(this));
 		this.getCommand("quitclass").setExecutor(new QuitClass(this));
-		this.getCommand("quitrole").setExecutor(new QuitRole(this));
 		this.getCommand("roll").setExecutor(new Roll(this));
 		this.getCommand("setclass").setExecutor(new SetClass(this));
 		this.getCommand("setlvl").setExecutor(new SetLevel(this));
-		this.getCommand("setrole").setExecutor(new SetRole(this));
 		this.getCommand("sethome").setExecutor(new SetHome(this));
 		new BasicListener(this);
 		info("AmulyzeRPG  v0.1 has successfully been enabled!");
@@ -105,7 +101,7 @@ public final class AmulyzeRPG extends JavaPlugin {
 	 * @param text the message to tell the sender
 	 */
 	public static void sendMessage(CommandSender sender, String text) {
-		String title = (sender instanceof Player) ? TITLE : "[AmulyzeRPG]: ";
+		String title = (sender instanceof Player) ? TITLE : "[Amulyze]: ";
 		
 		sender.sendMessage(title + text);
 	}
