@@ -9,8 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 
 import com.gmail.jpk.stu.AmulyzeRPG.AmulyzeRPG;
+import com.gmail.jpk.stu.PlayerData.skills.Alchemy;
 
 /**
  * The Recipes class always the creation and addition of custom recipes to the plugin.
@@ -46,9 +48,15 @@ public final class Recipes {
 		bow_recipe.shape("DD ", "D D", "DD ");
 		bow_recipe.setIngredient('D', Material.DIAMOND);
 		
+//		ShapedRecipe eGlowstone = new ShapedRecipe(Alchemy.enhancedGlowstone());
+//		eGlowstone.shape("GGG", "GGG", "GGG").setIngredient('G', Material.GLOWSTONE);
+		
+//		ShapedRecipe minAlcBook = new ShapedRecipe(Alchemy.minorAlcBook());
+		
 		server.addRecipe(recipe);
 		server.addRecipe(bow_recipe);
 		server.addRecipe(seeds);
+//		server.addRecipe(eGlowstone);
 		
 		AmulyzeRPG.info("All Custom Items and Recipes successful created!");
 	}

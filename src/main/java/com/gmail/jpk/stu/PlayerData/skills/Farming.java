@@ -9,6 +9,6 @@ public class Farming extends Skill {
 	}
 	
 	public String toString() {
-		return ChatColor.GREEN + "Farming";
+		return ChatColor.GREEN + "Farming" + ChatColor.WHITE;
 	}	
 }

@@ -54,15 +54,49 @@ public abstract class Skill implements Serializable {
 		double experience = task.getExperience(this.level);
 		ItemStack[] rewards = task.getRewards();
 		
-		Global.amChat(player, String.format("You have earned %.2f experience in %s", experience, this.toString()));
+		if (rollForBonus()) {
+			int offs = level / 5 > 0 ? level / 5 > 1 ? 4 : 2 : 0;
+			double bonus = 3 * (Math.pow(2, offs + (level / 5))); 
+			experience += bonus;
+			player.getInventory().addItem(rewards);
+			player.getInventory().addItem(rewards);
+			
+			AmulyzeRPG.sendMessage(player, ChatColor.GOLD + "You have rolled for a " + ChatColor.GREEN + "bonus " + experience + " experience " + ChatColor.GOLD + "and " + ChatColor.GREEN + "double items!");
+		} else {
+			Global.amChat(player, String.format("You have earned %.2f experience in %s!", experience, this.toString()));
+			player.getInventory().addItem(rewards);
+		}
+		
 		this.earnExperience(player, experience);
-		Global.amChat(player, String.format("Level %d. (%.2f of %d)", level, expGained, expNeeded));
 	}
 	
 	public void resetSkill() {
 		this.level = 1;
 		this.expNeeded = calculateExpNeeded();
 		this.expGained = 0.0;
+	}
+	
+	public boolean rollForBonus() {
+		float chance = (float) (1 + Math.random() * 10);		
+		float factor = 0;
+		
+		if (level <= 5) {
+			factor = 9;
+		}
+		else if (level <= 15) {
+			factor = 8;
+		}
+		else if (level <= 25) {
+			factor = 7.5f;
+		}
+		else if (level <= 35) {
+			factor = 7;
+		}
+		else {
+			factor = 6;
+		}
+		
+		return (chance > factor);
 	}
 	
 	public int calculateExpNeeded() {

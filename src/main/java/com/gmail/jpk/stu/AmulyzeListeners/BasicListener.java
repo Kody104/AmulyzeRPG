@@ -31,6 +31,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -52,6 +53,7 @@ import com.gmail.jpk.stu.PlayerData.skills.Skill;
 import com.gmail.jpk.stu.PlayerData.skills.Skill.Skills;
 import com.gmail.jpk.stu.PlayerData.skills.SkillTask;
 import com.gmail.jpk.stu.Recipes.RollItem;
+import com.gmail.jpk.stu.Recipes.TestItem;
 
 /**
  * 
@@ -87,11 +89,42 @@ public final class BasicListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onBucketFill(PlayerBucketFillEvent e) {
+		Player player = e.getPlayer();
+		GamePlayer gpl = Global.getPlayer(player);
+		
+		if (e.getItemStack().getType() == Material.MILK_BUCKET) {
+			gpl.performSkillTask(player, gpl.getSkill(Skills.FARMING), SkillTask.HARVEST_MILK);
+		}
+	}
+	
+	@EventHandler
 	public void onPlayerCraft(CraftItemEvent e) {
 		Player player = (Player) e.getWhoClicked();
 		GamePlayer gpl = Global.getPlayer(player);
+		Skill farming = gpl.getSkill(Skills.FARMING);
+		Material mat = e.getCurrentItem().getType();
 		
-
+		switch (mat) {
+			case BREAD:
+				gpl.performSkillTask(player, farming, SkillTask.BAKE_BREAD);
+			break;
+			
+			case CAKE:
+				gpl.performSkillTask(player, farming, SkillTask.BAKE_CAKE);
+			break;
+			
+			case COOKIE:
+				gpl.performSkillTask(player, farming, SkillTask.BAKE_COOKIES);
+			break;	
+			
+			case PUMPKIN_PIE:
+				gpl.performSkillTask(player, farming, SkillTask.BAKE_PIE);
+			break;
+			
+			default:
+				return;
+		}
 	}
 	
 	@EventHandler
@@ -203,14 +236,14 @@ public final class BasicListener implements Listener {
 				}
 				
 				
-			return;
+			
 			
 			default:
 				break;
 		}
 		
-		e.setCancelled(true);
-		block.setType(Material.AIR); //Make the block look like it broke
+//		e.setCancelled(true);
+//		block.setType(Material.AIR); //Make the block look like it broke
 		//TODO Find a better way to give back normal drops. Otherway was way to excessive.
 	} 
 

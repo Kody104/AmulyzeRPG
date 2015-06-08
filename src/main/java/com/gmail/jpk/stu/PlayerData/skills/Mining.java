@@ -9,7 +9,7 @@ public class Mining extends Skill {
 	}
 	
 	public String toString() {
-		return ChatColor.DARK_GRAY + "Mining";
+		return ChatColor.DARK_GRAY + "Mining" + ChatColor.WHITE;
 	}
 	
 }
